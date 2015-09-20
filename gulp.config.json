@@ -1,0 +1,15 @@
+{
+  "paths": {
+    "lintCheckFiles": [
+      "src/**/*.js",
+      "!src/front/lib/**",
+      "test/**/*.js",
+      "!node_modules/",
+      "!coverage/"
+    ],
+    "backDocsSrc": "./src/back/**/*.js",
+    "backDocsDist": "./dist/docs/back",
+    "guideDocsSrc": "./docs/guide",
+    "guideDocsDist": "./dist/docs/guide"
+  }
+}

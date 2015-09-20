@@ -1,0 +1,35 @@
+{
+  "name": "back4app-entity",
+  "version": "1.0.0",
+  "description": "back{4}app implementations for the plataform's entity layer",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/back4app/back4app-entity.git"
+  },
+  "keywords": [
+    "back{4}app",
+    "entity",
+    "persistence",
+    "backend",
+    "data",
+    "database",
+    "orm"
+  ],
+  "author": "BACK4APP SERVICOS DIGITAIS LTDA",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/back4app/back4app-entity/issues"
+  },
+  "homepage": "https://github.com/back4app/back4app-entity#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-jscs": "^2.0.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-plumber": "^1.0.1",
+    "jsdoc": "^3.3.2"
+  }
+}
