@@ -1,9 +1,10 @@
 {
-  "name": "back4app-entity",
+  "name": "@back4app/back4app-entity",
   "version": "1.0.0",
   "description": "back{4}app implementations for the plataform's entity layer",
   "main": "index.js",
   "scripts": {
+    "lint": "gulp lint",
     "test": "gulp test"
   },
   "repository": {
@@ -26,10 +27,13 @@
   },
   "homepage": "https://github.com/back4app/back4app-entity#readme",
   "devDependencies": {
+    "chai": "^3.3.0",
     "gulp": "^3.9.0",
     "gulp-jscs": "^2.0.0",
     "gulp-jshint": "^1.11.2",
+    "gulp-mocha": "^2.1.3",
     "gulp-plumber": "^1.0.1",
-    "jsdoc": "^3.3.2"
+    "jsdoc": "^3.3.2",
+    "mocha": "^2.3.3"
   }
 }

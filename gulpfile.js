@@ -6,6 +6,7 @@ var paths = gulpConfig.paths;
 var jshint = require('gulp-jshint');
 var jsxcs = require('gulp-jscs');
 var plumber = require('gulp-plumber');
+var mocha = require('gulp-mocha');
 var exec = require('child_process').exec;
 
 /**
@@ -21,6 +22,14 @@ gulp.task('lint', function () {
 
   return checkFiles
     .pipe(jsxcs());
+});
+
+/**
+ * Task to run mocha tests
+ */
+gulp.task('mocha', function () {
+  return gulp.src(paths.mochaSrc, {read: false})
+    .pipe(mocha({reporter: 'spec'}));
 });
 
 /**
