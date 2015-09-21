@@ -1,3 +1,4 @@
-var entity = require('./entity');
+var Entity = require('./Entity');
 
-module.exports = entity;
+module.exports = {};
+module.exports.Entity = Entity;

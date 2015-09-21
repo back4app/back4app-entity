@@ -11,7 +11,7 @@
       "./tests/unit/**/*.js",
       "!./tests/unit/front"
     ],
-    "backDocsSrc": "./src/back/**/*.js",
+    "backDocsSrc": "./src/back/**/*.test.js",
     "backDocsDist": "./dist/docs/back",
     "guideDocsSrc": "./docs/guide",
     "guideDocsDist": "./dist/docs/guide"
