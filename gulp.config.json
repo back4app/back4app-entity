@@ -8,10 +8,10 @@
       "!coverage/"
     ],
     "mochaSrc": [
-      "./tests/unit/**/*.js",
+      "./tests/unit/**/*.test.js",
       "!./tests/unit/front"
     ],
-    "backDocsSrc": "./src/back/**/*.test.js",
+    "backDocsSrc": "./src/back",
     "backDocsDist": "./dist/docs/back",
     "guideDocsSrc": "./docs/guide",
     "guideDocsDist": "./dist/docs/guide"
