@@ -7,6 +7,8 @@ module.exports = Entity;
 function Entity() {}
 
 /**
- * Extends the base class to create a new entity.
+ * Creates a new entity class by specifying a general one.
+ * @param {Object} specification The new entity specification.
+ * @returns {Entity} The new entity.
  */
-Entity.extend = function () {}
+Entity.specify = function (specification) {};

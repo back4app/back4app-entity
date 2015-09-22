@@ -5,9 +5,9 @@ var expect = require('chai').expect;
 var Entity = require('../../../src/back/Entity');
 
 describe('Entity', function () {
-  describe('.extend()', function () {
+  describe('.specify()', function () {
     it('expect to exist as a static method', function () {
-      expect(Entity).itself.to.respondTo('extend');
+      expect(Entity).itself.to.respondTo('specify');
     });
   });
 });
