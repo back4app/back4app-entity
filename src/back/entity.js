@@ -5,3 +5,8 @@ module.exports = Entity;
  * @constructor
  */
 function Entity() {}
+
+/**
+ * Extends the base class to create a new entity.
+ */
+Entity.extend = function () {}
