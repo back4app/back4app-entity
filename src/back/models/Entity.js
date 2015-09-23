@@ -3,6 +3,7 @@ module.exports = Entity;
 /**
  * Base class for entities.
  * @constructor
+ * @memberof module:back4app/entity/models
  */
 function Entity() {}
 
