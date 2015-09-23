@@ -1,6 +1,5 @@
-var mocha = require('mocha');
-var describe = require('mocha').describe;
-var it = require('mocha').it;
+'use strict';
+
 var expect = require('chai').expect;
 var Entity = require('../../../../src/back/models/Entity');
 

@@ -2,11 +2,11 @@
 // Created by davimacedo on 22/09/15.
 //
 
-var mocha = require('mocha');
-var describe = require('mocha').describe;
-var it = require('mocha').it;
-var expect = require('chai').expect;
-var AssertionError = require('chai').AssertionError;
+'use strict';
+
+var chai = require('chai');
+var expect = chai.expect;
+var AssertionError = chai.AssertionError;
 var classes = require('../../../../src/back/utils/classes');
 
 describe('classes', function () {
@@ -43,26 +43,26 @@ describe('classes', function () {
 
           g.ga1 = ga1;
           g.ga2 = ga2;
-        }
+        };
 
         GeneralClass.prototype.gm1 = function () {
           return 'gm1';
-        }
+        };
 
         GeneralClass.prototype.gm2 = function () {
           return 'gm2';
-        }
+        };
 
         GeneralClass.gsa1 = 'gsa1';
         GeneralClass.gsa2 = 'gsa2';
 
         GeneralClass.gsm1 = function () {
           return 'gsm1';
-        }
+        };
 
         GeneralClass.gsm2 = function () {
           return 'gsm2';
-        }
+        };
 
         SpecificClass = function (ga1, ga2, sa) {
           var s = this;
@@ -70,28 +70,28 @@ describe('classes', function () {
           GeneralClass.call(s, ga1, ga2);
 
           s.sa = sa;
-        }
+        };
 
         classes.generalization(SpecificClass, GeneralClass);
 
         SpecificClass.prototype.gm1 = function () {
           return 'sm1';
-        }
+        };
 
         SpecificClass.prototype.sm = function () {
           return 'sm';
-        }
+        };
 
         SpecificClass.gsa1 = 'ssa1';
         SpecificClass.ssa = 'ssa';
 
         SpecificClass.gsm1 = function () {
           return 'ssm1';
-        }
+        };
 
         SpecificClass.ssm = function () {
           return 'ssm';
-        }
+        };
 
         g = new GeneralClass('ga1', 'ga2');
         s = new SpecificClass('sa1', 'sa2', 'sa');

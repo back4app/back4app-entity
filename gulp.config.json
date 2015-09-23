@@ -3,7 +3,7 @@
     "lintCheckFiles": [
       "src/**/*.js",
       "!src/front/lib/**",
-      "test/**/*.js",
+      "tests/**/*.js",
       "!node_modules/",
       "!coverage/"
     ],

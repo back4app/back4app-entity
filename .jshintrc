@@ -24,9 +24,9 @@
 
     // global for tests
     "it": false,
-    "expect": false,
     "beforeEach": false,
     "describe": false,
-    "before": false
+    "before": false,
+    "context": false
   }
 }

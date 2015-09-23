@@ -2,6 +2,8 @@
 // Created by davimacedo on 22/09/15.
 //
 
+'use strict';
+
 var expect = require('chai').expect;
 
 /**
@@ -13,8 +15,8 @@ module.exports.generalization = generalization;
 
 /**
  * Generalizes the specificClass based on a generalClass.
- * @param {constructor} specificClass The specific class to be generalized.
- * @param {constructor} generalClass The general class on which the
+ * @param {Class} specificClass The specific class to be generalized.
+ * @param {Class} generalClass The general class on which the
  * generalization will be based.
  * @example
  * function GeneralClass() {}

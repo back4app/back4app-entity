@@ -2,6 +2,8 @@
 // Created by davimacedo on 22/09/15.
 //
 
+'use strict';
+
 var Entity = require('../../../../index').Entity;
 
 module.exports = C1;

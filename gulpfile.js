@@ -29,7 +29,9 @@ gulp.task('lint', function () {
  */
 gulp.task('mocha', function () {
   return gulp.src(paths.mochaSrc, {read: false})
-    .pipe(mocha({reporter: 'spec'}));
+    .pipe(mocha({
+      reporter: 'spec'
+    }));
 });
 
 /**

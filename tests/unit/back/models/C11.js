@@ -2,7 +2,9 @@
 // Created by davimacedo on 22/09/15.
 //
 
-var Entity = require('../../../../index').Entity;
+'use strict';
+
+var C1 = require('C1');
 
 module.exports = C11;
 

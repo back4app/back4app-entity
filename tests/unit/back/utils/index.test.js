@@ -2,9 +2,8 @@
 // Created by davimacedo on 22/09/15.
 //
 
-var mocha = require('mocha');
-var describe = require('mocha').describe;
-var it = require('mocha').it;
+'use strict';
+
 var expect = require('chai').expect;
 var utilsIndex = require('../../../..//src/back/utils');
 var classes = require('../../../../src/back/utils/classes');
