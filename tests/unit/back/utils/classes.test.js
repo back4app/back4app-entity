@@ -20,7 +20,7 @@ describe('classes', function () {
         classes.generalization(function () {}, function () {});
       });
 
-      it('expect to throw error with objects', function () {
+      it('expect to throw AssertionError with objects', function () {
         expect(function () {
           classes.generalization({}, {});
         }).to.throw(AssertionError);
@@ -53,12 +53,15 @@ describe('classes', function () {
           return 'gm2';
         }
 
-        GeneralClass.gs1 = function() {
-          return 'gs1';
+        GeneralClass.gsa1 = 'gsa1';
+        GeneralClass.gsa2 = 'gsa2';
+
+        GeneralClass.gsm1 = function () {
+          return 'gsm1';
         }
 
-        GeneralClass.gs2 = function() {
-          return 'gs2';
+        GeneralClass.gsm2 = function () {
+          return 'gsm2';
         }
 
         SpecificClass = function (ga1, ga2, sa) {
@@ -79,12 +82,15 @@ describe('classes', function () {
           return 'sm';
         }
 
-        SpecificClass.gs1 = function () {
-          return 'ss1';
+        SpecificClass.gsa1 = 'ssa1';
+        SpecificClass.ssa = 'ssa';
+
+        SpecificClass.gsm1 = function () {
+          return 'ssm1';
         }
 
-        SpecificClass.ss = function () {
-          return 'ss';
+        SpecificClass.ssm = function () {
+          return 'ssm';
         }
 
         g = new GeneralClass('ga1', 'ga2');
@@ -92,23 +98,69 @@ describe('classes', function () {
       });
 
       it(
-        'expect instance of SpecificClass to be an instance of SpecificClass',
+        'expect instances to be of correct types',
         function () {
           expect(s).to.be.an.instanceof(SpecificClass);
-        }
-      );
-
-      it(
-        'expect instance of SpecificClass to be an instance of GeneralClass',
-        function () {
           expect(s).to.be.an.instanceof(GeneralClass);
+          expect(g).to.be.an.instanceof(GeneralClass);
         }
       );
 
       it(
-        'expect instance of GeneralClass to be an instance of GeneralClass',
+        'expect attributes to be correctly inherited',
         function () {
-          expect(g).to.be.an.instanceof(GeneralClass);
+          expect(g).to.have.property('ga1')
+            .that.equals('ga1');
+          expect(g).to.have.property('ga2')
+            .that.equals('ga2');
+
+          expect(s).to.have.property('ga1')
+            .that.equals('sa1');
+          expect(s).to.have.property('ga2')
+            .that.equals('sa2');
+          expect(s).to.have.property('sa')
+            .that.equals('sa');
+        }
+      );
+
+      it(
+        'expect instance methods to be correctly inherited',
+        function () {
+          expect(g.gm1()).to.equal('gm1');
+          expect(g.gm2()).to.equal('gm2');
+
+          expect(s.gm1()).to.equal('sm1');
+          expect(s.gm2()).to.equal('gm2');
+          expect(s.sm()).to.equal('sm');
+        }
+      );
+
+      it(
+        'expect static attributes to be correctly inherited',
+        function () {
+          expect(GeneralClass).to.have.property('gsa1')
+            .that.equals('gsa1');
+          expect(GeneralClass).to.have.property('gsa2')
+            .that.equals('gsa2');
+
+          expect(SpecificClass).to.have.property('gsa1')
+            .that.equals('ssa1');
+          expect(SpecificClass).to.have.property('gsa2')
+            .that.equals('gsa2');
+          expect(SpecificClass).to.have.property('ssa')
+            .that.equals('ssa');
+        }
+      );
+
+      it(
+        'expect static methods to be correctly inherited',
+        function () {
+          expect(GeneralClass.gsm1()).to.equal('gsm1');
+          expect(GeneralClass.gsm2()).to.equal('gsm2');
+
+          expect(SpecificClass.gsm1()).to.equal('ssm1');
+          expect(SpecificClass.gsm2()).to.equal('gsm2');
+          expect(SpecificClass.ssm()).to.equal('ssm');
         }
       );
     });
