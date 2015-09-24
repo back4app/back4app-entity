@@ -22,14 +22,15 @@ function c1M1(c1M1P1, c1M1P2, c11M1P) {
 
 }
 
-function c11M1(c1M2P1, c1M2P2) {
+function c11M() {
   var toReturn = '';
+  var attribute = null;
 
-  for (var attribute in this.general.type.attributes) {
+  for (attribute in this.general.type.attributes) {
     toReturn += this[attribute];
   }
 
-  for (var attribute in this.type.attributes) {
+  for (attribute in this.type.attributes) {
     toReturn += this[attribute];
   }
 
