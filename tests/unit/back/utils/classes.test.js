@@ -10,7 +10,7 @@ var AssertionError = chai.AssertionError;
 var classes = require('../../../../src/back/utils/classes');
 
 describe('classes', function () {
-  describe('generalizes', function () {
+  describe('~generalize', function () {
     context('interface tests', function () {
       it('expect to exist as an inner method', function () {
         expect(classes).to.respondTo('generalize');

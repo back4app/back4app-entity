@@ -32,3 +32,7 @@ Entity.specify = function (specification) {
 
   return SpecificEntity;
 };
+
+//Entity.prototype.type
+
+//Entity.prototype.general
