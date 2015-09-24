@@ -17,6 +17,6 @@ describe('Entity', function () {
       C1 = require('./C1');
       C11 = require('./C11');
       C2 = require('./C2');
-    })
+    });
   });
 });
