@@ -11,13 +11,14 @@ var expect = require('chai').expect;
  * @module back4app/entity/utils/classes
  */
 module.exports = {};
-module.exports.generalization = generalization;
+module.exports.generalize = generalize;
 
 /**
- * Generalizes the specificClass based on a generalClass.
- * @param {Class} specificClass The specific class to be generalized.
- * @param {Class} generalClass The general class on which the
- * generalization will be based.
+ * Makes the generalClass to generalize the specificClass.
+ * @param {Class} generalClass The general class to generalize the
+ * specificClass.
+ * @param {Class} specificClass The specific class to be generalized by the
+ * generalClass.
  * @example
  * function GeneralClass() {}
  *
@@ -25,11 +26,11 @@ module.exports.generalization = generalization;
  *   GeneralClass.call(this);
  * }
  *
- * classes.generalization(SpecificClass, GeneralClass);
+ * classes.generalize(GeneralClass, SpecificClass);
  */
-function generalization(specificClass, generalClass) {
-  expect(specificClass).to.be.a('function');
+function generalize(generalClass, specificClass) {
   expect(generalClass).to.be.a('function');
+  expect(specificClass).to.be.a('function');
 
   specificClass.prototype = Object.create(generalClass.prototype);
   specificClass.prototype.constructor = specificClass;

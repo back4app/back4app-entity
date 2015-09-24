@@ -3,10 +3,3 @@
 //
 
 'use strict';
-
-module.exports = Entity.specify({
-  name: 'Person',
-  attributes: {
-
-  }
-});

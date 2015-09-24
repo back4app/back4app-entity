@@ -10,23 +10,23 @@ var AssertionError = chai.AssertionError;
 var classes = require('../../../../src/back/utils/classes');
 
 describe('classes', function () {
-  describe('generalization', function () {
+  describe('generalizes', function () {
     context('interface tests', function () {
       it('expect to exist as an inner method', function () {
-        expect(classes).to.respondTo('generalization');
+        expect(classes).to.respondTo('generalize');
       });
 
       it('expect to work with functions', function () {
-        classes.generalization(function () {}, function () {});
+        classes.generalize(function () {}, function () {});
       });
 
       it('expect to throw AssertionError with objects', function () {
         expect(function () {
-          classes.generalization({}, {});
+          classes.generalize({}, {});
         }).to.throw(AssertionError);
 
         expect(function () {
-          classes.generalization(function () {}, {});
+          classes.generalize(function () {}, {});
         }).to.throw(AssertionError);
       });
     });
@@ -72,7 +72,7 @@ describe('classes', function () {
           s.sa = sa;
         };
 
-        classes.generalization(SpecificClass, GeneralClass);
+        classes.generalize(GeneralClass, SpecificClass);
 
         SpecificClass.prototype.gm1 = function () {
           return 'sm1';
