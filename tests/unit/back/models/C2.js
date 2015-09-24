@@ -4,4 +4,4 @@
 
 'use strict';
 
-module.exports = require('C2').specify({});
+module.exports = require('../../../../').specify({});
