@@ -4,7 +4,7 @@
 
 'use strict';
 
-module.exports = require('C1').specify({
+module.exports = require('./C1').specify({
   attributes: {
     c11A1: {
       type: 'Object',
