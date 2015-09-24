@@ -36,8 +36,7 @@ Entity.specify = function (specification) {
 /**
  * This is a read-only property to get the type of an Entity instance. It is
  * just an alias to this.constructor.
- * @memberof module:back4app/entity/models.Entity
- * @name type
+ * @name module:back4app/entity/models.Entity#type
  * @type {module:back4app/entity/models.Entity}
  */
 Object.defineProperty(Entity.prototype, 'type', {
