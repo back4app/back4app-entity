@@ -4,14 +4,36 @@ module.exports = require('../../../../').specify({
   attributes: {
     c1A1: {
       type: 'Boolean',
-      multiplicity: '0..1',
+      multiplicity: '1',
       default: false
     },
     c1A2: {
       type: 'Datetime',
       multiplicity: '0..1',
       default: new Date()
-    }
+    },
+    c1A3: {
+      type: 'Integer',
+      multiplicity: '1..*',
+      default: []
+    },
+    c1A4: {
+      type: 'Object',
+      multiplicity: '*',
+      default: null
+    },
+    c1A5: {
+      type: 'Real',
+      multiplicity: '1'
+    },
+    c1A6: {
+      type: 'String',
+      default: ''
+    },
+    c1A7: {
+      type: 'C2'
+    },
+    c1A8: {}
   },
   methods: {
     c1M1: c1M1,
