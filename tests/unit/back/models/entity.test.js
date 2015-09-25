@@ -46,6 +46,7 @@ describe('Entity', function () {
           .that.equals(C11);
         expect(c2).to.have.property('type')
           .that.equals(C2);
-    });
+      }
+    );
   });
 });
