@@ -19,7 +19,6 @@ module.exports = require('./C1').specify({
 
 function c1M1(c1M1P1, c1M1P2, c11M1P) {
   return this.general.c1M1(c1M1P1, c1M1P2) + c11M1P;
-
 }
 
 function c11M() {
