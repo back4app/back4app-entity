@@ -12,39 +12,78 @@ module.exports = Entity;
 function Entity() {}
 
 /**
+ * This is a read-only property to get the general Entity Class of the current
+ * Entity Class.
+ * @type {Class}
+ */
+Entity.general = null;
+
+/**
  * This is a dictionary with the Entity's attributes.
  * @type {Dictionary}
  */
 Entity.attributes = {};
 
 /**
- * Creates a new entity class by specifying a general one.
- * @param {Object} specification The new entity specification.
- * @returns {module:back4app/entity/models.Entity} The new entity.
+ * Private function used to get the specify function specific for the Entity
+ * class
+ * @param GeneralEntity The GeneralEntity for which the specify function will be
+ * got
+ * @returns {Function} The specify function
  */
-Entity.specify = function (specification) {
-  function SpecificEntity() {}
+Entity._getSpecify = function (GeneralEntity) {
+  return function (specification) {
+    function SpecificEntity() {}
 
-  classes.generalize(Entity, SpecificEntity);
+    classes.generalize(GeneralEntity, SpecificEntity);
 
-  SpecificEntity.attributes = specification.attributes;
-  SpecificEntity.methods = specification.methods;
+    Object.defineProperty(SpecificEntity, 'general', {
+      get: function () {
+        return GeneralEntity;
+      },
+      set: function () {
+        throw new Error('General cannot be changed');
+      }
+    });
 
-  return SpecificEntity;
+    SpecificEntity.attributes = specification.attributes;
+    SpecificEntity.methods = specification.methods;
+
+    SpecificEntity.specify = GeneralEntity._getSpecify(GeneralEntity);
+
+    return SpecificEntity;
+  };
 };
 
 /**
- * This is a read-only property to get the type of an Entity instance. It is
- * just an alias to this.constructor.
- * @name module:back4app/entity/models.Entity#type
- * @type {module:back4app/entity/models.Entity}
+ * Creates a new Entity Class by specifying a general one.
+ * @param {Object} specification The new Entity specification.
+ * @returns {Class} The new Entity Class.
  */
-Object.defineProperty(Entity.prototype, 'type', {
+Entity.specify = Entity._getSpecify(Entity);
+
+/**
+ * Returns the Class of a given entityName
+ * @param entityName
+ * @returns {Class}
+ */
+Entity.new = function (entityName) {
+  return require('../../../tests/unit/back/models/' + entityName);
+};
+
+/**
+ * This is a read-only property to get the Class of an Entity instance. It is
+ * just an alias to this.constructor.
+ * @type {Class}
+ */
+Entity.prototype.class = null;
+
+Object.defineProperty(Entity.prototype, 'class', {
   get: function () {
     return this.constructor;
   },
   set: function () {
-    throw new Error('Type cannot be changed');
+    throw new Error('Class cannot be changed');
   }
 });
 
