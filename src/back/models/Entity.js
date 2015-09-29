@@ -1,5 +1,6 @@
 'use strict';
 
+var expect = require('chai').expect;
 var classes = require('../utils/classes');
 
 module.exports = Entity;
@@ -104,6 +105,7 @@ var _getNewFunction = function (CurrentEntity) {
   return function (entity) {
     var EntityClass = CurrentEntity;
     if (entity) {
+      expect(entity).to.be.a('string');
       EntityClass = require('../../../tests/unit/back/models/' + entity);
     }
 
