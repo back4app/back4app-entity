@@ -77,7 +77,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
       }
     }
 
-    SpecificEntity.Specify = _getSpecifyFunction(SpecificEntity);
+    SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
     SpecificEntity.new = _getNewFunction(SpecificEntity);
 
     return SpecificEntity;
@@ -106,7 +106,12 @@ var _getNewFunction = function (CurrentEntity) {
     var EntityClass = CurrentEntity;
     if (entity) {
       expect(entity).to.be.a('string');
-      EntityClass = require('../../../tests/unit/back/models/' + entity);
+      try {
+        EntityClass = require('../../../tests/unit/back/models/' + entity);
+      }
+      catch (e) {
+        throw new Error('Cannot find Entity \'' + entity + '\'');
+      }
     }
 
     return function () {

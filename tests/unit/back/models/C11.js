@@ -25,11 +25,11 @@ function c11M() {
   var toReturn = '';
   var attribute = null;
 
-  for (attribute in this.general.type.attributes) {
+  for (attribute in this.Entity.General.attributes) {
     toReturn += this[attribute];
   }
 
-  for (attribute in this.type.attributes) {
+  for (attribute in this.Entity.attributes) {
     toReturn += this[attribute];
   }
 
