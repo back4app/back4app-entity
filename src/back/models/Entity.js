@@ -107,9 +107,11 @@ var _getNewFunction = function (currentEntity) {
       entityClass = require('../../../tests/unit/back/models/' + entity);
     }
 
-    var newInstance = {};
-    Object.call(entityClass, newInstance);
-    return newInstance;
+    return function () {
+      var newInstance = {};
+      Object.call(entityClass, newInstance);
+      return newInstance;
+    };
   };
 };
 
@@ -122,6 +124,7 @@ var _getNewFunction = function (currentEntity) {
  * @returns {Function}
  */
 Entity.new = _getNewFunction(Entity);
+Entity.newdavi = _getNewFunction(Entity);
 
 /**
  * This is a read-only property to get the Entity Class of an instance. It is
