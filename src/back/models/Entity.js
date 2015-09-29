@@ -34,6 +34,12 @@ Object.defineProperty(Entity, 'general', {
 Entity.attributes = {};
 
 /**
+ * This is a dictionary with the Entity's methods.
+ * @type {Dictionary}
+ */
+Entity.methods = {};
+
+/**
  * Private function used to get the specify function specific for the current
  * Entity class
  * @memberof module:back4app/entity/models.Entity
@@ -57,10 +63,20 @@ var _getSpecifyFunction = function (GeneralEntity) {
       }
     });
 
-    SpecificEntity.attributes = specification.attributes;
-    SpecificEntity.methods = specification.methods;
+    SpecificEntity.attributes = {};
+    SpecificEntity.methods = {};
 
-    SpecificEntity.specify = _getSpecifyFunction(GeneralEntity);
+    if (specification) {
+      if (specification.attributes) {
+        SpecificEntity.attributes = specification.attributes;
+      }
+
+      if (specification.methods) {
+        SpecificEntity.methods = specification.methods;
+      }
+    }
+
+    SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
 
     return SpecificEntity;
   };
