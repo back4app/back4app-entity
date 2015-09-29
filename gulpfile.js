@@ -57,7 +57,8 @@ function backdocs() {
   exec(
     './node_modules/jsdoc/jsdoc.js ' +
     '-d ' + paths.backDocsDist + ' ' +
-    '-r ' + paths.backDocsSrc,
+    '-r ' + paths.backDocsSrc + ' ' +
+    '--private',
     function (err, stdout, stderr) {
       console.log(stdout);
       console.log(stderr);

@@ -18,6 +18,15 @@ function Entity() {}
  */
 Entity.general = null;
 
+Object.defineProperty(Entity, 'general', {
+  get: function () {
+    return null;
+  },
+  set: function () {
+    throw new Error('General cannot be changed');
+  }
+});
+
 /**
  * This is a dictionary with the Entity's attributes.
  * @type {Dictionary}
@@ -25,13 +34,15 @@ Entity.general = null;
 Entity.attributes = {};
 
 /**
- * Private function used to get the specify function specific for the Entity
- * class
+ * Private function used to get the specify function specific for the current
+ * Entity class
+ * @memberof module:back4app/entity/models.Entity
  * @param GeneralEntity The GeneralEntity for which the specify function will be
  * got
  * @returns {Function} The specify function
+ * @private
  */
-Entity._getSpecify = function (GeneralEntity) {
+var _getSpecifyFunction = function (GeneralEntity) {
   return function (specification) {
     function SpecificEntity() {}
 
@@ -49,7 +60,7 @@ Entity._getSpecify = function (GeneralEntity) {
     SpecificEntity.attributes = specification.attributes;
     SpecificEntity.methods = specification.methods;
 
-    SpecificEntity.specify = GeneralEntity._getSpecify(GeneralEntity);
+    SpecificEntity.specify = _getSpecifyFunction(GeneralEntity);
 
     return SpecificEntity;
   };
@@ -57,10 +68,11 @@ Entity._getSpecify = function (GeneralEntity) {
 
 /**
  * Creates a new Entity Class by specifying a general one.
+ * @function
  * @param {Object} specification The new Entity specification.
  * @returns {Class} The new Entity Class.
  */
-Entity.specify = Entity._getSpecify(Entity);
+Entity.specify = _getSpecifyFunction(Entity);
 
 /**
  * Returns the Class of a given entityName
