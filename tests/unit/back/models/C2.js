@@ -4,4 +4,6 @@
 
 'use strict';
 
-module.exports = require('../../../../').specify({});
+var Entity = require('../../../../');
+
+module.exports = Entity.specify({});
