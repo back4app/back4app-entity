@@ -14,11 +14,11 @@ module.exports = {};
 module.exports.generalize = generalize;
 
 /**
- * Makes the generalClass to generalize the specificClass.
- * @param {Class} generalClass The general class to generalize the
- * specificClass.
- * @param {Class} specificClass The specific class to be generalized by the
- * generalClass.
+ * Makes the GeneralClass to generalize the SpecificClass.
+ * @param {Class} GeneralClass The general class to generalize the
+ * SpecificClass.
+ * @param {Class} SpecificClass The specific class to be generalized by the
+ * GeneralClass.
  * @example
  * function GeneralClass() {}
  *
@@ -28,14 +28,14 @@ module.exports.generalize = generalize;
  *
  * classes.generalize(GeneralClass, SpecificClass);
  */
-function generalize(generalClass, specificClass) {
-  expect(generalClass).to.be.a('function');
-  expect(specificClass).to.be.a('function');
+function generalize(GeneralClass, SpecificClass) {
+  expect(GeneralClass).to.be.a('function');
+  expect(SpecificClass).to.be.a('function');
 
-  specificClass.prototype = Object.create(generalClass.prototype);
-  specificClass.prototype.constructor = specificClass;
+  SpecificClass.prototype = Object.create(GeneralClass.prototype);
+  SpecificClass.prototype.constructor = SpecificClass;
 
-  for (var property in generalClass) {
-    specificClass[property] = generalClass[property];
+  for (var property in GeneralClass) {
+    SpecificClass[property] = GeneralClass[property];
   }
 }

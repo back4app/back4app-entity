@@ -16,9 +16,9 @@ function Entity() {}
  * Entity Class.
  * @type {Class}
  */
-Entity.general = null;
+Entity.General = null;
 
-Object.defineProperty(Entity, 'general', {
+Object.defineProperty(Entity, 'General', {
   get: function () {
     return null;
   },
@@ -43,20 +43,20 @@ Entity.methods = {};
  * Private function used to get the specify function specific for the current
  * Entity class.
  * @memberof module:back4app/entity/models.Entity
- * @param {Class} currentEntity The currentEntity for which the specify function
+ * @param {Class} CurrentEntity The currentEntity for which the specify function
  * will be got.
  * @returns {Function} The specify function.
  * @private
  */
-var _getSpecifyFunction = function (currentEntity) {
+var _getSpecifyFunction = function (CurrentEntity) {
   return function (specification) {
     function SpecificEntity() {}
 
-    classes.generalize(currentEntity, SpecificEntity);
+    classes.generalize(CurrentEntity, SpecificEntity);
 
-    Object.defineProperty(SpecificEntity, 'general', {
+    Object.defineProperty(SpecificEntity, 'General', {
       get: function () {
-        return currentEntity;
+        return CurrentEntity;
       },
       set: function () {
         throw new Error('General cannot be changed');
@@ -76,7 +76,7 @@ var _getSpecifyFunction = function (currentEntity) {
       }
     }
 
-    SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
+    SpecificEntity.Specify = _getSpecifyFunction(SpecificEntity);
     SpecificEntity.new = _getNewFunction(SpecificEntity);
 
     return SpecificEntity;
@@ -95,22 +95,20 @@ Entity.specify = _getSpecifyFunction(Entity);
  * Private function used to get the new function specific for the current Entiy
  * class.
  * @memberof module:back4app/entity/models.Entity
- * @param {Class} currentEntity The current entity class for which the new
+ * @param {Class} CurrentEntity The current entity class for which the new
  * function will be created.
  * @returns {Function} The new function.
  * @private
  */
-var _getNewFunction = function (currentEntity) {
+var _getNewFunction = function (CurrentEntity) {
   return function (entity) {
-    var entityClass = currentEntity;
+    var EntityClass = CurrentEntity;
     if (entity) {
-      entityClass = require('../../../tests/unit/back/models/' + entity);
+      EntityClass = require('../../../tests/unit/back/models/' + entity);
     }
 
     return function () {
-      var newInstance = {};
-      Object.call(entityClass, newInstance);
-      return newInstance;
+      return new EntityClass();
     };
   };
 };
@@ -131,9 +129,9 @@ Entity.newdavi = _getNewFunction(Entity);
  * just an alias to this.constructor.
  * @type {Class}
  */
-Entity.prototype.entity = null;
+Entity.prototype.Entity = null;
 
-Object.defineProperty(Entity.prototype, 'entity', {
+Object.defineProperty(Entity.prototype, 'Entity', {
   get: function () {
     return this.constructor;
   },

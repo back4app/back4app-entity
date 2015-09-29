@@ -34,17 +34,17 @@ describe('Entity', function () {
     });
   });
 
-  describe('#entity', function () {
+  describe('#Entity', function () {
     it(
-      'expect to exist as an inner method and return the right type',
+      'expect to exist as an inner property and contain the right class',
       function () {
-        expect(entity).to.have.property('entity')
+        expect(entity).to.have.property('Entity')
           .that.equals(Entity);
-        expect(c1).to.have.property('entity')
+        expect(c1).to.have.property('Entity')
           .that.equals(C1);
-        expect(c11).to.have.property('entity')
+        expect(c11).to.have.property('Entity')
           .that.equals(C11);
-        expect(c2).to.have.property('entity')
+        expect(c2).to.have.property('Entity')
           .that.equals(C2);
       }
     );
