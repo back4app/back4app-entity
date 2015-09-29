@@ -122,7 +122,6 @@ var _getNewFunction = function (CurrentEntity) {
  * @returns {Function}
  */
 Entity.new = _getNewFunction(Entity);
-Entity.newdavi = _getNewFunction(Entity);
 
 /**
  * This is a read-only property to get the Entity Class of an instance. It is
