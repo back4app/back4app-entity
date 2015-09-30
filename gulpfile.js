@@ -1,5 +1,6 @@
 'use strict';
 
+var path = require('path');
 var gulp = require('gulp');
 var gulpConfig = require('./gulp.config.json');
 var paths = gulpConfig.paths;
@@ -28,7 +29,10 @@ gulp.task('lint', function () {
  * Task to run mocha tests
  */
 gulp.task('mocha', function () {
-  require('./').settings.ENTITIESPATH = '../../../tests/unit/back/models/';
+  require('./').settings.ENTITIESPATH = path.join(
+    __dirname,
+    'tests/unit/back/models/'
+  );
   return gulp.src(paths.mochaSrc, {read: false})
     .pipe(mocha({
       reporter: 'spec'

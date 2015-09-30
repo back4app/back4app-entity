@@ -13,6 +13,6 @@ module.exports = {};
  * always that on of them is referenced in the code.
  * @type {string}
  * @example
- * settings.ENTITIESPATH = '../../../tests/unit/back/models/';
+ * settings.ENTITIESPATH = path.join(__dirname, 'tests/unit/back/models/');
  */
 module.exports.ENTITIESPATH = '';
