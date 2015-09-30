@@ -89,4 +89,20 @@ describe('Entity', function () {
       }
     );
   });
+
+  describe('#General', function () {
+    it(
+      'expect to exist as an inner property and contain the right class',
+      function () {
+        expect(entity).to.have.property('General')
+          .that.equals(null);
+        expect(c1).to.have.property('General')
+          .that.equals(Entity);
+        expect(c11).to.have.property('General')
+          .that.equals(C1);
+        expect(c2).to.have.property('General')
+          .that.equals(Entity);
+      }
+    );
+  });
 });
