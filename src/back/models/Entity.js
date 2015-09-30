@@ -149,6 +149,9 @@ Entity.new = _getNewFunction(Entity);
 /**
  * This is a read-only property to get the Entity Class of an instance.
  * @type {Class}
+ * @example
+ * var entity = new Entity();
+ * console.log(entity.Entity == Entity) // Logs true
  */
 Entity.prototype.Entity = null;
 
