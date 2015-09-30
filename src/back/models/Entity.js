@@ -179,8 +179,55 @@ var _getSpecifyFunction = function (CurrentEntity) {
       }
     });
 
-    SpecificEntity.attributes = {};
-    SpecificEntity.methods = {};
+    Object.defineProperty(SpecificEntity, 'attributes', {
+      get: function () {
+        var attributes = {};
+
+        var visitedEntities = [];
+        var CurrentEntity = SpecificEntity;
+        while (CurrentEntity && visitedEntities.indexOf(CurrentEntity) === -1) {
+          for (var attribute in CurrentEntity.specification.attributes) {
+            if (!attributes.hasOwnProperty(attribute)) {
+              attributes[attribute] =
+                CurrentEntity.specification.attributes[attribute];
+            }
+          }
+
+          visitedEntities.push(CurrentEntity);
+          CurrentEntity = CurrentEntity.General;
+        }
+
+        return attributes;
+      },
+      set: function () {
+        throw  new Error('Attributes cannot be changed');
+      }
+    });
+
+    Object.defineProperty(SpecificEntity, 'methods', {
+      get: function () {
+        var methods = {};
+
+        var visitedEntities = [];
+        var CurrentEntity = SpecificEntity;
+        while (CurrentEntity && visitedEntities.indexOf(CurrentEntity) === -1) {
+          for (var method in CurrentEntity.specification.methods) {
+            if (!methods.hasOwnProperty(method)) {
+              methods[method] =
+                CurrentEntity.specification.methods[method];
+            }
+          }
+
+          visitedEntities.push(CurrentEntity);
+          CurrentEntity = CurrentEntity.General;
+        }
+
+        return methods;
+      },
+      set: function () {
+        throw  new Error('Methods cannot be changed');
+      }
+    });
 
     SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
     SpecificEntity.new = _getNewFunction(SpecificEntity);
