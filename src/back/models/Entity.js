@@ -1,6 +1,8 @@
 'use strict';
 
+var path = require('path');
 var expect = require('chai').expect;
+var settings = require('../settings');
 var classes = require('../utils/classes');
 var errors = require('./errors');
 
@@ -121,7 +123,7 @@ var _getNewFunction = function (CurrentEntity) {
     if (entity) {
       expect(entity).to.be.a('string');
       try {
-        EntityClass = require('../../../tests/unit/back/models/' + entity);
+        EntityClass = require(path.join(settings.ENTITIESPATH, entity));
       }
       catch (e) {
         throw new errors.EntityNotFoundError(

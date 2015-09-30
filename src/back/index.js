@@ -1,3 +1,4 @@
+var settings = require('./settings');
 var models = require('./models');
 
 /**
@@ -5,4 +6,5 @@ var models = require('./models');
  * @module back4app/entity
  */
 module.exports = {};
+module.exports.settings = settings;
 module.exports.models = models;
