@@ -80,6 +80,15 @@ var _getSpecifyFunction = function (CurrentEntity) {
     SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
     SpecificEntity.new = _getNewFunction(SpecificEntity);
 
+    Object.defineProperty(SpecificEntity.prototype, 'Entity', {
+      get: function () {
+        return SpecificEntity;
+      },
+      set: function () {
+        throw new Error('Entity cannot be changed');
+      }
+    });
+
     return SpecificEntity;
   };
 };
@@ -131,17 +140,32 @@ var _getNewFunction = function (CurrentEntity) {
 Entity.new = _getNewFunction(Entity);
 
 /**
- * This is a read-only property to get the Entity Class of an instance. It is
- * just an alias to this.constructor.
+ * This is a read-only property to get the Entity Class of an instance.
  * @type {Class}
  */
 Entity.prototype.Entity = null;
 
 Object.defineProperty(Entity.prototype, 'Entity', {
   get: function () {
-    return this.constructor;
+    return Entity;
   },
   set: function () {
     throw new Error('Entity cannot be changed');
+  }
+});
+
+/**
+ * This is a read-only property to get the general Entity Class of an instance.
+ * This is just an alias to this.Entity.General.
+ * @type {Entity}
+ */
+Entity.prototype.General = null;
+
+Object.defineProperty(Entity.prototype, 'General', {
+  get: function () {
+    return this.Entity.General;
+  },
+  set: function () {
+    throw new Error('General cannot be changed');
   }
 });
