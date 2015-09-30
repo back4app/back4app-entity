@@ -31,17 +31,17 @@ module.exports.EntityNotFoundError = EntityNotFoundError;
  * }
  */
 function EntityNotFoundError(entity, innerError) {
-  expect(entity).to.be.a('string');
-  expect(innerError).to.be.an.instanceof(Error);
-
   this.name = 'EntityNotFoundError';
 
-  this.message =
-    'Cannot find Entity' +
-    (entity ? ' "' + entity + '"' : '');
+  this.message = 'Cannot find Entity';
+  if (entity) {
+    expect(entity).to.be.a('string');
+    this.message += ' "' + entity + '"';
+  }
 
   this.stack = (new Error(this.message)).stack;
-  if (innerError && innerError.stack) {
+  if (innerError) {
+    expect(innerError).to.be.an.instanceof(Error);
     this.stack += '\n\n' + innerError.stack;
   }
 }
