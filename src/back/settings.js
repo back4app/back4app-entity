@@ -13,5 +13,7 @@ module.exports = {};
  * always that on of them is referenced in the code.
  * @type {string}
  * @constant
+ * @example
+ * settings.ENTITIESPATH = '../../../tests/unit/back/models/';
  */
-module.exports.ENTITIESPATH = '../../../tests/unit/back/models/';
+module.exports.ENTITIESPATH = null;

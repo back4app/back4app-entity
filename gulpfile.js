@@ -28,6 +28,7 @@ gulp.task('lint', function () {
  * Task to run mocha tests
  */
 gulp.task('mocha', function () {
+  require('./').settings.ENTITIESPATH = '../../../tests/unit/back/models/';
   return gulp.src(paths.mochaSrc, {read: false})
     .pipe(mocha({
       reporter: 'spec'
