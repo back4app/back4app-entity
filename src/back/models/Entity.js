@@ -168,6 +168,10 @@ Object.defineProperty(Entity.prototype, 'Entity', {
  * This is a read-only property to get the general Entity Class of an instance.
  * This is just an alias to this.Entity.General.
  * @type {Entity}
+ * @example
+ * var MyEntity = Entity.specify();
+ * var myEntity = new MyEntity();
+ * console.log(myEntity.General == Entity) // Logs true
  */
 Entity.prototype.General = null;
 
