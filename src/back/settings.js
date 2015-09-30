@@ -12,8 +12,7 @@ module.exports = {};
  * Constant with the path to the entities. It will be used to find the entities
  * always that on of them is referenced in the code.
  * @type {string}
- * @constant
  * @example
  * settings.ENTITIESPATH = '../../../tests/unit/back/models/';
  */
-module.exports.ENTITIESPATH = null;
+module.exports.ENTITIESPATH = '';
