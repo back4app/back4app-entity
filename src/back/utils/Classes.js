@@ -7,14 +7,16 @@
 var expect = require('chai').expect;
 
 /**
- * Contains utilities functions to be used with classes around the project.
+ * Contains utilities functions to be used with classes around the project. This
+ * module is not exported to be used outside this project.
  * @module back4app/entity/utils/classes
  */
 module.exports = {};
 module.exports.generalize = generalize;
 
 /**
- * Makes the GeneralClass to generalize the SpecificClass.
+ * Makes the GeneralClass to generalize the SpecificClass. This function is not
+ * exported to be used outside this project.
  * @param {Class} GeneralClass The general class to generalize the
  * SpecificClass.
  * @param {Class} SpecificClass The specific class to be generalized by the

@@ -4,6 +4,7 @@ var path = require('path');
 var expect = require('chai').expect;
 var settings = require('../settings');
 var classes = require('../utils/classes');
+var attributes = require('./attributes');
 var errors = require('./errors');
 
 module.exports = Entity;
@@ -15,7 +16,45 @@ module.exports = Entity;
  * @example
  * var entity = new Entity();
  */
-function Entity() {}
+function Entity() {
+  /**
+   * This is a read-only property to get the Entity Class of an instance.
+   * @type {Class}
+   * @example
+   * var entity = new Entity();
+   * console.log(entity.Entity == Entity); // Logs true
+   */
+  this.Entity = null;
+
+  Object.defineProperty(this, 'Entity', {
+    get: function () {
+      return Entity;
+    },
+    set: function () {
+      throw new Error('Entity cannot be changed');
+    }
+  });
+
+  /**
+   * This is a read-only property to get the general Entity Class of an
+   * instance. This is just an alias to this.Entity.General.
+   * @type {Entity}
+   * @example
+   * var MyEntity = Entity.specify();
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.General == Entity); // Logs true
+   */
+  this.General = null;
+
+  Object.defineProperty(this, 'General', {
+    get: function () {
+      return this.Entity.General;
+    },
+    set: function () {
+      throw new Error('General cannot be changed');
+    }
+  });
+}
 
 /**
  * This is a read-only property to get the general Entity Class of the current
@@ -35,11 +74,13 @@ Object.defineProperty(Entity, 'General', {
   }
 });
 
+Entity.specification = null;
+
 /**
  * This is a dictionary with the Entity's attributes.
  * @type {Dictionary}
  */
-Entity.attributes = {};
+Entity.attributes = new attributes.AttributeCollection();
 
 /**
  * This is a dictionary with the Entity's methods.
@@ -58,7 +99,18 @@ Entity.methods = {};
  */
 var _getSpecifyFunction = function (CurrentEntity) {
   return function (specification) {
-    function SpecificEntity() {}
+    function SpecificEntity() {
+      CurrentEntity.call(this);
+
+      Object.defineProperty(this, 'Entity', {
+        get: function () {
+          return SpecificEntity;
+        },
+        set: function () {
+          throw new Error('Entity cannot be changed');
+        }
+      });
+    }
 
     classes.generalize(CurrentEntity, SpecificEntity);
 
@@ -86,15 +138,6 @@ var _getSpecifyFunction = function (CurrentEntity) {
 
     SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
     SpecificEntity.new = _getNewFunction(SpecificEntity);
-
-    Object.defineProperty(SpecificEntity.prototype, 'Entity', {
-      get: function () {
-        return SpecificEntity;
-      },
-      set: function () {
-        throw new Error('Entity cannot be changed');
-      }
-    });
 
     return SpecificEntity;
   };
@@ -151,41 +194,3 @@ var _getNewFunction = function (CurrentEntity) {
  * var c1 = c1NewFunction();
  */
 Entity.new = _getNewFunction(Entity);
-
-/**
- * This is a read-only property to get the Entity Class of an instance.
- * @type {Class}
- * @example
- * var entity = new Entity();
- * console.log(entity.Entity == Entity) // Logs true
- */
-Entity.prototype.Entity = null;
-
-Object.defineProperty(Entity.prototype, 'Entity', {
-  get: function () {
-    return Entity;
-  },
-  set: function () {
-    throw new Error('Entity cannot be changed');
-  }
-});
-
-/**
- * This is a read-only property to get the general Entity Class of an instance.
- * This is just an alias to this.Entity.General.
- * @type {Entity}
- * @example
- * var MyEntity = Entity.specify();
- * var myEntity = new MyEntity();
- * console.log(myEntity.General == Entity) // Logs true
- */
-Entity.prototype.General = null;
-
-Object.defineProperty(Entity.prototype, 'General', {
-  get: function () {
-    return this.Entity.General;
-  },
-  set: function () {
-    throw new Error('General cannot be changed');
-  }
-});

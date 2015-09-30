@@ -3,6 +3,9 @@
 //
 
 var Entity = require('./Entity');
+var EntitySpecification = require('./EntitySpecification');
+var attributes = require('./attributes');
+var methods = require('./methods');
 var errors = require('./errors');
 
 /**
@@ -11,4 +14,7 @@ var errors = require('./errors');
  */
 module.exports = {};
 module.exports.Entity = Entity;
+module.exports.EntitySpecification = EntitySpecification;
+module.exports.attributes = attributes;
+module.exports.methods = methods;
 module.exports.errors = errors;
