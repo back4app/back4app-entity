@@ -4,7 +4,7 @@ var path = require('path');
 var expect = require('chai').expect;
 var settings = require('../settings');
 var classes = require('../utils/classes');
-var attributes = require('./attributes');
+var EntitySpecification = require('./EntitySpecification');
 var errors = require('./errors');
 
 module.exports = Entity;
@@ -74,19 +74,52 @@ Object.defineProperty(Entity, 'General', {
   }
 });
 
+/**
+ * This is the specification of the current Entity Class.
+ * @type {EntitySpecification}
+ */
 Entity.specification = null;
 
-/**
- * This is a dictionary with the Entity's attributes.
- * @type {Dictionary}
- */
-Entity.attributes = new attributes.AttributeCollection();
+var _specification = new EntitySpecification();
+
+Object.defineProperty(Entity, 'specification', {
+  get: function () {
+    return _specification;
+  },
+  set: function () {
+    throw  new Error('Specification cannot be changed');
+  }
+});
 
 /**
- * This is a dictionary with the Entity's methods.
+ * This is a dictionary with a consolidation of the Entity's attributes.
  * @type {Dictionary}
  */
-Entity.methods = {};
+Entity.attributes = null;
+
+Object.defineProperty(Entity, 'attributes', {
+  get: function () {
+    return {};
+  },
+  set: function () {
+    throw  new Error('Attributes cannot be changed');
+  }
+});
+
+/**
+ * This is a dictionary with a consolidation of the Entity's methods.
+ * @type {Dictionary}
+ */
+Entity.methods = null;
+
+Object.defineProperty(Entity, 'methods', {
+  get: function () {
+    return {};
+  },
+  set: function () {
+    throw  new Error('Methods cannot be changed');
+  }
+});
 
 /**
  * Private function used to get the specify function specific for the current
@@ -123,18 +156,31 @@ var _getSpecifyFunction = function (CurrentEntity) {
       }
     });
 
-    SpecificEntity.attributes = {};
-    SpecificEntity.methods = {};
+    var _specificEntitySpecification = null;
 
     if (specification) {
-      if (specification.attributes) {
-        SpecificEntity.attributes = specification.attributes;
-      }
+      expect(specification).to.be.an('object');
 
-      if (specification.methods) {
-        SpecificEntity.methods = specification.methods;
+      if (specification instanceof EntitySpecification) {
+        _specificEntitySpecification = specification;
+      } else {
+        _specificEntitySpecification = new EntitySpecification(specification);
       }
+    } else {
+      _specificEntitySpecification = new EntitySpecification();
     }
+
+    Object.defineProperty(SpecificEntity, 'specification', {
+      get: function () {
+        return _specificEntitySpecification;
+      },
+      set: function () {
+        throw  new Error('Specification cannot be changed');
+      }
+    });
+
+    SpecificEntity.attributes = {};
+    SpecificEntity.methods = {};
 
     SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
     SpecificEntity.new = _getNewFunction(SpecificEntity);
