@@ -9,6 +9,8 @@ module.exports = Entity;
  * Base class for entities.
  * @constructor
  * @memberof module:back4app/entity/models
+ * @example
+ * var entity = new Entity();
  */
 function Entity() {}
 
@@ -16,6 +18,8 @@ function Entity() {}
  * This is a read-only property to get the general Entity Class of the current
  * Entity Class.
  * @type {Class}
+ * @example
+ * var generalAttributes = SpecificEntity.General.attributes;
  */
 Entity.General = null;
 
@@ -102,7 +106,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
 Entity.specify = _getSpecifyFunction(Entity);
 
 /**
- * Private function used to get the new function specific for the current Entiy
+ * Private function used to get the new function specific for the current Entity
  * class.
  * @memberof module:back4app/entity/models.Entity
  * @param {Class} CurrentEntity The current entity class for which the new

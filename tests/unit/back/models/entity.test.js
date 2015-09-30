@@ -34,6 +34,22 @@ describe('Entity', function () {
     });
   });
 
+  describe('.General', function () {
+    it(
+      'expect to exist as a static property and contain the right class',
+      function () {
+        expect(Entity).to.have.property('General')
+          .that.equals(null);
+        expect(C1).to.have.property('General')
+          .that.equals(Entity);
+        expect(C11).to.have.property('General')
+          .that.equals(C1);
+        expect(C2).to.have.property('General')
+          .that.equals(Entity);
+      }
+    );
+  });
+
   describe('#Entity', function () {
     it(
       'expect to exist as an inner property and contain the right class',
