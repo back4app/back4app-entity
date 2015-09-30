@@ -140,6 +140,9 @@ var _getNewFunction = function (CurrentEntity) {
  * created. If the parameter is not given, the function will create instances of
  * the current Entity Class.
  * @returns {Function}
+ * @example
+ * var c1NewFunction = Entity.new('C1');
+ * var c1 = c1NewFunction();
  */
 Entity.new = _getNewFunction(Entity);
 

@@ -50,6 +50,30 @@ describe('Entity', function () {
     );
   });
 
+  describe('.new', function () {
+    it('expect to exist', function () {
+      expect(Entity).itself.to.respondTo('new');
+      expect(C1).itself.to.respondTo('new');
+      expect(C11).itself.to.respondTo('new');
+      expect(C2).itself.to.respondTo('new');
+    });
+
+    it(
+      'expect to return a function that create new instances of the right' +
+      'classes',
+      function () {
+        expect(Entity.new()()).to.be.an.instanceof(Entity);
+        expect(Entity.new('C1')()).to.be.an.instanceof(C1);
+        expect(Entity.new('C11')()).to.be.an.instanceof(C11);
+        expect(Entity.new('C2')()).to.be.an.instanceof(C2);
+        expect(C1.new()()).to.be.an.instanceof(C1);
+        expect(C11.new()()).to.be.an.instanceof(C11);
+        expect(C2.new()()).to.be.an.instanceof(C2);
+      }
+    )
+
+  })
+
   describe('#Entity', function () {
     it(
       'expect to exist as an inner property and contain the right class',
