@@ -1,6 +1,6 @@
 'use strict';
 
-var Entity = require('../../../../');
+var Entity = require('../../../../').models.Entity;
 
 module.exports = Entity.specify({
   attributes: {

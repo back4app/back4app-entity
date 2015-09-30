@@ -3,6 +3,7 @@
 //
 
 var Entity = require('./Entity');
+var errors = require('./errors');
 
 /**
  * Contains base classes to model the entities.
@@ -10,3 +11,4 @@ var Entity = require('./Entity');
  */
 module.exports = {};
 module.exports.Entity = Entity;
+module.exports.errors = errors;

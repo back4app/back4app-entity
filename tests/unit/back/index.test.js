@@ -2,10 +2,11 @@
 
 var expect = require('chai').expect;
 var backIndex = require('../../../src/back');
-var Entity = require('../../../src/back/models/Entity');
+var models = require('../../../src/back/models');
 
 describe('backIndex', function () {
-  it('expect to export Entity', function () {
-    expect(backIndex).to.equal(Entity);
+  it('expect to export models in the models property', function () {
+    expect(backIndex).to.have.property('models')
+      .that.equals(models);
   });
 });

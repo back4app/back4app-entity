@@ -70,9 +70,8 @@ describe('Entity', function () {
         expect(C11.new()()).to.be.an.instanceof(C11);
         expect(C2.new()()).to.be.an.instanceof(C2);
       }
-    )
-
-  })
+    );
+  });
 
   describe('#Entity', function () {
     it(

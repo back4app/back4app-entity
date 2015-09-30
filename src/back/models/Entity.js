@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect;
 var classes = require('../utils/classes');
+var errors = require('./errors');
 
 module.exports = Entity;
 
@@ -123,7 +124,10 @@ var _getNewFunction = function (CurrentEntity) {
         EntityClass = require('../../../tests/unit/back/models/' + entity);
       }
       catch (e) {
-        throw new Error('Cannot find Entity \'' + entity + '\'');
+        throw new errors.EntityNotFoundError(
+          entity,
+          e
+        );
       }
     }
 
