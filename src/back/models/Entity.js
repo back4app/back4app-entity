@@ -174,6 +174,14 @@ var _getSpecifyFunction = function (CurrentEntity) {
       var attributes = arguments[0];
       var methods = arguments[1];
 
+      if (attributes) {
+        expect(attributes).to.be.an('object');
+      }
+
+      if (methods) {
+        expect(methods).to.be.an('object');
+      }
+
       _specificEntitySpecification = new EntitySpecification(
         attributes,
         methods
