@@ -17,6 +17,7 @@ module.exports = EntitySpecification;
  * @name EntitySpecification
  * @param
  * {?(module:back4app/entity/models/attributes.AttributeCollection|
+ * module:back4app/entity/models/attributes.Attribute[]|
  * Object.<string, (module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * attributes The new entity specification attributes. It can be given as an
@@ -26,6 +27,7 @@ module.exports = EntitySpecification;
  * {@link module:back4app/entity/models/attributes.AttributeCollection}.
  * @param
  * {?(module:back4app/entity/models/methods.MethodCollection|
+ * module:back4app/entity/models/methods.Method[]|
  * Object.<string, (module:back4app/entity/models/methods.Method|Object)>)}
  * methods The new entity specification methods. It can be given as an instance
  * of
@@ -41,6 +43,7 @@ module.exports = EntitySpecification;
  * @param {?Object} [specification] The new Entity specification.
  * @param
  * {?(module:back4app/entity/models/attributes.AttributeCollection|
+ * module:back4app/entity/models/attributes.Attribute[]|
  * Object.<string, (module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * [specification.attributes] The new entity specification attributes. It can be
@@ -50,6 +53,7 @@ module.exports = EntitySpecification;
  * {@link module:back4app/entity/models/attributes.AttributeCollection}.
  * @param
  * {?(module:back4app/entity/models/methods.MethodCollection|
+ * module:back4app/entity/models/methods.Method[]|
  * Object.<string, (module:back4app/entity/models/methods.Method|Object)>)}
  * [specification.methods] The new entity specification methods. It can be
  * given as an instance of
