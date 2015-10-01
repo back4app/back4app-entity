@@ -54,6 +54,7 @@ function Attribute() {
    * @readonly
    */
   this.name = null;
+  var _name = null;
 
   /**
    * This is the attribute type.
@@ -62,6 +63,7 @@ function Attribute() {
    * @readonly
    */
   this.type = null;
+  var _type = 'Object';
 
   /**
    * This is the attribute's multiplicity.
@@ -70,6 +72,7 @@ function Attribute() {
    * @readonly
    */
   this.multiplicity = null;
+  var _multiplicity = '1';
 
   /**
    * This is the attribute's default expression.
@@ -78,6 +81,93 @@ function Attribute() {
    * @readonly
    */
   this.default = null;
+  var _default = null;
+
+  if (arguments.length === 1 && typeof arguments[0] !== 'string') {
+    var attribute = arguments[0];
+
+    expect(attribute).to.be.an('object');
+
+    for (var property in attribute) {
+      expect(['name', 'type', 'multiplicity', 'default']).to.include(property);
+    }
+
+    expect(attribute).to.have.ownProperty('name');
+
+    _name = attribute.name;
+
+    if (attribute.hasOwnProperty('type')) {
+      expect(attribute.type).to.be.a('string');
+
+      _type = attribute.type;
+    }
+
+    if (attribute.hasOwnProperty('multiplicity')) {
+      expect(attribute.multiplicity).to.be.a('string');
+
+      _multiplicity = attribute.multiplicity;
+    }
+
+    if (attribute.hasOwnProperty('default')) {
+      _default = attribute.default;
+    }
+  } else {
+    expect(arguments[0]).to.be.a('string');
+
+    _name = arguments[0];
+
+    if (arguments.length > 1) {
+      expect(arguments[1]).to.be.a('string');
+
+      _type = arguments[1];
+    }
+
+    if (arguments.length > 2) {
+      expect(arguments[2]).to.be.a('string');
+
+      _multiplicity = arguments[2];
+    }
+
+    if (arguments.length > 3) {
+      _default = arguments[3];
+    }
+  }
+
+  Object.defineProperty(this, 'name', {
+    get: function () {
+      return _name;
+    },
+    set: function () {
+      throw new Error('Name cannot be changed.');
+    }
+  });
+
+  Object.defineProperty(this, 'type', {
+    get: function () {
+      return _type;
+    },
+    set: function () {
+      throw new Error('Name cannot be changed.');
+    }
+  });
+
+  Object.defineProperty(this, 'multiplicity', {
+    get: function () {
+      return _multiplicity;
+    },
+    set: function () {
+      throw new Error('Name cannot be changed.');
+    }
+  });
+
+  Object.defineProperty(this, 'default', {
+    get: function () {
+      return _default;
+    },
+    set: function () {
+      throw new Error('Name cannot be changed.');
+    }
+  });
 }
 
 /**
