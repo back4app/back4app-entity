@@ -131,7 +131,9 @@ Object.defineProperty(Entity, 'methods', {
  * @private
  */
 var _getSpecifyFunction = function (CurrentEntity) {
-  return function (specification) {
+  return function () {
+    expect(arguments).to.have.length.below(3);
+
     function SpecificEntity() {
       CurrentEntity.call(this);
 
@@ -158,7 +160,9 @@ var _getSpecifyFunction = function (CurrentEntity) {
 
     var _specificEntitySpecification = null;
 
-    if (specification) {
+    if (arguments.length === 1) {
+      var specification = arguments[0];
+
       expect(specification).to.be.an('object');
 
       if (specification instanceof EntitySpecification) {
@@ -166,6 +170,14 @@ var _getSpecifyFunction = function (CurrentEntity) {
       } else {
         _specificEntitySpecification = new EntitySpecification(specification);
       }
+    } else if (arguments.length > 1) {
+      var attributes = arguments[0];
+      var methods = arguments[1];
+
+      _specificEntitySpecification = new EntitySpecification(
+        attributes,
+        methods
+      );
     } else {
       _specificEntitySpecification = new EntitySpecification();
     }
@@ -238,8 +250,50 @@ var _getSpecifyFunction = function (CurrentEntity) {
 
 /**
  * Creates a new Entity Class by specifying a general one.
+ * @memberof module:back4app/entity/models.Entity
+ * @name specify
+ * @function
+ * @param {module:back4app/entity/models.EntitySpecification} specification The
+ * new Entity specification.
+ * @returns {Class} The new Entity Class.
+ */
+/**
+ * Creates a new Entity Class by specifying a general one.
+ * @memberof module:back4app/entity/models.Entity
+ * @name specify
+ * @function
+ * @param {module:back4app/entity/models/attributes.AttributeCollection|Object}
+ * attributes The new entity specification attributes. It can be given as an
+ * instance of
+ * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
+ * object, as specified in
+ * {@link module:back4app/entity/models/attributes.AttributeCollection}.
+ * @param {module:back4app/entity/models/methods.MethodCollection|Object}
+ * methods The new entity specification methods. It can be given as an instance
+ * of
+ * {@link module:back4app/entity/models/methods.MethodCollection} or an
+ * object, as specified in
+ * {@link module:back4app/entity/models/methods.MethodCollection}.
+ * @returns {Class} The new Entity Class.
+ */
+/**
+ * Creates a new Entity Class by specifying a general one.
+ * @memberof module:back4app/entity/models.Entity
+ * @name specify
  * @function
  * @param {Object} specification The new Entity specification.
+ * @param {module:back4app/entity/models/attributes.AttributeCollection|Object}
+ * specification.attributes The new entity specification attributes. It can be
+ * given as an instance of
+ * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
+ * object, as specified in
+ * {@link module:back4app/entity/models/attributes.AttributeCollection}.
+ * @param {module:back4app/entity/models/methods.MethodCollection|Object}
+ * specification.methods The new entity specification methods. It can be
+ * given as an instance of
+ * {@link module:back4app/entity/models/methods.MethodCollection} or an
+ * object, as specified in
+ * {@link module:back4app/entity/models/methods.MethodCollection}.
  * @returns {Class} The new Entity Class.
  */
 Entity.specify = _getSpecifyFunction(Entity);
@@ -255,6 +309,8 @@ Entity.specify = _getSpecifyFunction(Entity);
  */
 var _getNewFunction = function (CurrentEntity) {
   return function (entity) {
+    expect(arguments).to.have.length.below(2);
+
     var EntityClass = CurrentEntity;
     if (entity) {
       expect(entity).to.be.a('string');

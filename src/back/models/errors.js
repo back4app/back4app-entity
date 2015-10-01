@@ -31,6 +31,8 @@ module.exports.EntityNotFoundError = EntityNotFoundError;
  * }
  */
 function EntityNotFoundError(entity, innerError) {
+  expect(arguments).to.have.length.below(3);
+
   this.name = 'EntityNotFoundError';
 
   this.message = 'Cannot find Entity';

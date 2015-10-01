@@ -17,9 +17,9 @@ module.exports.generalize = generalize;
 /**
  * Makes the GeneralClass to generalize the SpecificClass. This function is not
  * exported to be used outside this project.
- * @param {Class} GeneralClass The general class to generalize the
+ * @param {!Class} GeneralClass The general class to generalize the
  * SpecificClass.
- * @param {Class} SpecificClass The specific class to be generalized by the
+ * @param {!Class} SpecificClass The specific class to be generalized by the
  * GeneralClass.
  * @example
  * function GeneralClass() {}
@@ -31,6 +31,7 @@ module.exports.generalize = generalize;
  * classes.generalize(GeneralClass, SpecificClass);
  */
 function generalize(GeneralClass, SpecificClass) {
+  expect(arguments).to.have.length(2);
   expect(GeneralClass).to.be.a('function');
   expect(SpecificClass).to.be.a('function');
 
