@@ -95,5 +95,47 @@ function AttributeCollection(attributes) {
  * expression of the attribute.
  */
 AttributeCollection.prototype.add = function () {
-  expect(arguments).to.have.length.below(5);
+  expect(arguments).to.have.length.within(1, 5);
+
+  var attribute = null;
+  var name = null;
+
+  if (arguments.length === 1) {
+    attribute = arguments[0];
+  } else if (arguments.length === 2) {
+    attribute = arguments[0];
+    name = arguments[1];
+  } else {
+    attribute = new (Function.prototype.bind.apply(
+      Attribute,
+      [null].concat(arguments)
+    ))();
+  }
+
+  expect(attribute).to.be.an('object');
+
+  if (name) {
+    expect(name).to.be.a('string');
+
+    if (attribute.name) {
+      expect(attribute.name).to.equal(name);
+    } else {
+      attribute.name = name;
+    }
+  }
+
+  if (!(attribute instanceof Attribute)) {
+    attribute = new Attribute(attribute);
+  }
+
+  expect(this).to.not.have.ownProperty(attribute.name);
+
+  Object.defineProperty(this, attribute.name, {
+    get: function () {
+      return attribute;
+    },
+    set: function () {
+      throw new Error('Attribute cannot be changed');
+    }
+  });
 };
