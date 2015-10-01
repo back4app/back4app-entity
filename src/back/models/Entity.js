@@ -261,8 +261,8 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * @memberof module:back4app/entity/models.Entity
  * @name specify
  * @function
- * @param {?module:back4app/entity/models.EntitySpecification} specification The
- * new Entity specification.
+ * @param {?module:back4app/entity/models.EntitySpecification} [specification]
+ * The new Entity specification.
  * @returns {Class} The new Entity Class.
  */
 /**
@@ -294,7 +294,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * @memberof module:back4app/entity/models.Entity
  * @name specify
  * @function
- * @param {?Object} specification The new Entity specification.
+ * @param {?Object} [specification] The new Entity specification.
  * @param
  * {?(module:back4app/entity/models/attributes.AttributeCollection|
  * Object.<string, (module:back4app/entity/models/attributes.Attribute|

@@ -38,7 +38,7 @@ module.exports = EntitySpecification;
  * @constructor
  * @memberof module:back4app/entity/models
  * @name EntitySpecification
- * @param {?Object} specification The new Entity specification.
+ * @param {?Object} [specification] The new Entity specification.
  * @param
  * {?(module:back4app/entity/models/attributes.AttributeCollection|
  * Object.<string, (module:back4app/entity/models/attributes.Attribute|
