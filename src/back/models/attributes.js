@@ -16,8 +16,33 @@ module.exports.AttributeCollection = AttributeCollection;
 
 /**
  * Holds an Entity Attribute information.
- * @constructor
  * @memberof module:back4app/entity/models/attributes
+ * @name Attribute
+ * @constructor
+ * @param {!Object} attribute This is the attribute to be added. It can be
+ * passed as an Object.
+ * @param {!string} attribute.name It is the name of the attribute.
+ * @param {!string} [attribute.type='Object'] It is the type of the attribute.
+ * It is optional and if not passed it will assume 'Object' as the default
+ * value.
+ * @param {!string} [attribute.multiplicity='1'] It is the multiplicity of the
+ * attribute. It is optional and if not passed it will assume '1' as the default
+ * value.
+ * @param {?(boolean|number|string|Object|function)} [attribute.default] It is
+ * the default expression of the attribute.
+ */
+/**
+ * Holds an Entity Attribute information.
+ * @memberof module:back4app/entity/models/attributes
+ * @name Attribute
+ * @constructor
+ * @param {!string} name It is the name of the attribute.
+ * @param {!string} [type='Object'] It is the type of the attribute. It is
+ * optional and if not passed it will assume 'Object' as the default value.
+ * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
+ * It is optional and if not passed it will assume '1' as the default value.
+ * @param {?(boolean|number|string|Object|function)} [default] It is the default
+ * expression of the attribute.
  */
 function Attribute() {}
 
