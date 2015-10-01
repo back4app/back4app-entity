@@ -175,7 +175,7 @@ function Attribute() {
  * @constructor
  * @memberof module:back4app/entity/models/attributes
  * @param {?(module:back4app/entity/models/attributes.Attribute[]|
- * Object.<string, (module:back4app/entity/models/attributes.Attribute|
+ * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * [attributes] The attributes to be added in the collection. They can be given
  * as an Array or a Dictionary of

@@ -97,7 +97,8 @@ Object.defineProperty(Entity, 'specification', {
 
 /**
  * This is a dictionary with a consolidation of the Entity's attributes.
- * @type {!Object.<string, module:back4app/entity/models/attributes.Attribute>}
+ * @type
+ * {!Object.<!string, !module:back4app/entity/models/attributes.Attribute>}
  * @readonly
  */
 Entity.attributes = null;
@@ -113,7 +114,7 @@ Object.defineProperty(Entity, 'attributes', {
 
 /**
  * This is a dictionary with a consolidation of the Entity's methods.
- * @type {!Object.<string, module:back4app/entity/models/methods.Method>}
+ * @type {!Object.<!string, !module:back4app/entity/models/methods.Method>}
  * @readonly
  */
 Entity.methods = null;
@@ -279,7 +280,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * @param
  * {?(module:back4app/entity/models/attributes.AttributeCollection|
  * module:back4app/entity/models/attributes.Attribute[]|
- * Object.<string, (module:back4app/entity/models/attributes.Attribute|
+ * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * attributes The new entity specification attributes. It can be given as an
  * instance of
@@ -288,8 +289,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * {@link module:back4app/entity/models/attributes.AttributeCollection}.
  * @param
  * {?(module:back4app/entity/models/methods.MethodCollection|
- * module:back4app/entity/models/methods.Method[]|
- * Object.<string, (module:back4app/entity/models/methods.Method|Object)>)}
+ * Object.<!string, !function>)}
  * methods The new entity specification methods. It can be given as an instance
  * of
  * {@link module:back4app/entity/models/methods.MethodCollection} or an
@@ -306,7 +306,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * @param
  * {?(module:back4app/entity/models/attributes.AttributeCollection|
  * module:back4app/entity/models/attributes.Attribute[]|
- * Object.<string, (module:back4app/entity/models/attributes.Attribute|
+ * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * [specification.attributes] The new entity specification attributes. It can be
  * given as an instance of
@@ -315,8 +315,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * {@link module:back4app/entity/models/attributes.AttributeCollection}.
  * @param
  * {?(module:back4app/entity/models/methods.MethodCollection|
- * module:back4app/entity/models/methods.Method[]|
- * Object.<string, (module:back4app/entity/models/methods.Method|Object)>)}
+ * Object.<!string, !function>)}
  * [specification.methods] The new entity specification methods. It can be
  * given as an instance of
  * {@link module:back4app/entity/models/methods.MethodCollection} or an
