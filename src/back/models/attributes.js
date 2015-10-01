@@ -44,7 +44,41 @@ module.exports.AttributeCollection = AttributeCollection;
  * @param {?(boolean|number|string|Object|function)} [default] It is the default
  * expression of the attribute.
  */
-function Attribute() {}
+function Attribute() {
+  expect(arguments).to.have.length.within(1, 4);
+
+  /**
+   * This is the attribute' name.
+   * @name module:back4app/entity/models/attributes.Attribute#name
+   * @type {!string}
+   * @readonly
+   */
+  this.name = null;
+
+  /**
+   * This is the attribute type.
+   * @name module:back4app/entity/models/attributes.Attribute#type
+   * @type {!string}
+   * @readonly
+   */
+  this.type = null;
+
+  /**
+   * This is the attribute's multiplicity.
+   * @name module:back4app/entity/models/attributes.Attribute#multiplicity
+   * @type {!string}
+   * @readonly
+   */
+  this.multiplicity = null;
+
+  /**
+   * This is the attribute's default expression.
+   * @name module:back4app/entity/models/attributes.Attribute#default
+   * @type {?(boolean|number|string|Object|function)}
+   * @readonly
+   */
+  this.default = null;
+}
 
 /**
  * Collection of Entity Attributes.
