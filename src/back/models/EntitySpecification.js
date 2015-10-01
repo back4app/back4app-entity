@@ -15,13 +15,16 @@ module.exports = EntitySpecification;
  * @constructor
  * @memberof module:back4app/entity/models
  * @name EntitySpecification
- * @param {module:back4app/entity/models/attributes.AttributeCollection|Object}
+ * @param
+ * {(module:back4app/entity/models/attributes.AttributeCollection|
+ * Object.<string, (Attribute|Object)>)}
  * attributes The new entity specification attributes. It can be given as an
  * instance of
  * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
  * object, as specified in
  * {@link module:back4app/entity/models/attributes.AttributeCollection}.
- * @param {module:back4app/entity/models/methods.MethodCollection|Object}
+ * @param {(module:back4app/entity/models/methods.MethodCollection|
+ * Object.<string, (Method|Object)>)}
  * methods The new entity specification methods. It can be given as an instance
  * of
  * {@link module:back4app/entity/models/methods.MethodCollection} or an
@@ -34,13 +37,16 @@ module.exports = EntitySpecification;
  * @memberof module:back4app/entity/models
  * @name EntitySpecification
  * @param {Object} specification The new Entity specification.
- * @param {module:back4app/entity/models/attributes.AttributeCollection|Object}
+ * @param
+ * {(module:back4app/entity/models/attributes.AttributeCollection|
+ * Object.<string, (Attribute|Object)>)}
  * specification.attributes The new entity specification attributes. It can be
  * given as an instance of
  * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
  * object, as specified in
  * {@link module:back4app/entity/models/attributes.AttributeCollection}.
- * @param {module:back4app/entity/models/methods.MethodCollection|Object}
+ * @param {(module:back4app/entity/models/methods.MethodCollection|
+ * Object.<string, (Method|Object)>)}
  * specification.methods The new entity specification methods. It can be
  * given as an instance of
  * {@link module:back4app/entity/models/methods.MethodCollection} or an

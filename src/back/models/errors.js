@@ -19,8 +19,8 @@ module.exports.EntityNotFoundError = EntityNotFoundError;
  * Error class to be used when an Entity was references and the platform was not
  * able to find it.
  * @constructor
- * @param {String} message The error message to be displayed.
- * @param {Error} innerError The inner error.
+ * @param {?string} message The entity name to be displayed.
+ * @param {?Error} [innerError] The inner error.
  * @memberof module:back4app/entity/models/errors
  * @example
  * try {

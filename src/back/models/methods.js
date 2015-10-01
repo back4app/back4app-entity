@@ -7,13 +7,14 @@
  * @module back4app/entity/models/methods
  */
 module.exports = {};
+module.exports.Method = Method;
 module.exports.MethodCollection = MethodCollection;
+
+function Method() {}
 
 /**
  * Collection of Entity Methods.
  * @constructor
  * @memberof module:back4app/entity/models/methods
- * @example
- * var methodCollection = new MethodCollection();
  */
 function MethodCollection() {}

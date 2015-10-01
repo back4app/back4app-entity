@@ -7,13 +7,14 @@
  * @module back4app/entity/models/attributes
  */
 module.exports = {};
+module.exports.Attribute = Attribute;
 module.exports.AttributeCollection = AttributeCollection;
+
+function Attribute() {}
 
 /**
  * Collection of Entity Attributes.
  * @constructor
  * @memberof module:back4app/entity/models/attributes
- * @example
- * var attributeCollection = new AttributeCollection();
  */
 function AttributeCollection() {}

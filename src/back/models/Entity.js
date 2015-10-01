@@ -93,7 +93,7 @@ Object.defineProperty(Entity, 'specification', {
 
 /**
  * This is a dictionary with a consolidation of the Entity's attributes.
- * @type {Dictionary}
+ * @type {Object.<string, module:back4app/entity/models/attributes.Attribute>}
  */
 Entity.attributes = null;
 
@@ -108,7 +108,7 @@ Object.defineProperty(Entity, 'attributes', {
 
 /**
  * This is a dictionary with a consolidation of the Entity's methods.
- * @type {Dictionary}
+ * @type {Object.<string, module:back4app/entity/models/methods.Method>}
  */
 Entity.methods = null;
 
@@ -127,7 +127,7 @@ Object.defineProperty(Entity, 'methods', {
  * @memberof module:back4app/entity/models.Entity
  * @param {Class} CurrentEntity The currentEntity for which the specify function
  * will be got.
- * @returns {Function} The specify function.
+ * @returns {function} The specify function.
  * @private
  */
 var _getSpecifyFunction = function (CurrentEntity) {
@@ -270,13 +270,16 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * @memberof module:back4app/entity/models.Entity
  * @name specify
  * @function
- * @param {module:back4app/entity/models/attributes.AttributeCollection|Object}
+ * @param
+ * {(module:back4app/entity/models/attributes.AttributeCollection|
+ * Object.<string, (Attribute|Object)>)}
  * attributes The new entity specification attributes. It can be given as an
  * instance of
  * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
  * object, as specified in
  * {@link module:back4app/entity/models/attributes.AttributeCollection}.
- * @param {module:back4app/entity/models/methods.MethodCollection|Object}
+ * @param {(module:back4app/entity/models/methods.MethodCollection|
+ * Object.<string, (Method|Object)>)}
  * methods The new entity specification methods. It can be given as an instance
  * of
  * {@link module:back4app/entity/models/methods.MethodCollection} or an
@@ -290,13 +293,16 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * @name specify
  * @function
  * @param {Object} specification The new Entity specification.
- * @param {module:back4app/entity/models/attributes.AttributeCollection|Object}
+ * @param
+ * {(module:back4app/entity/models/attributes.AttributeCollection|
+ * Object.<string, (Attribute|Object)>)}
  * specification.attributes The new entity specification attributes. It can be
  * given as an instance of
  * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
  * object, as specified in
  * {@link module:back4app/entity/models/attributes.AttributeCollection}.
- * @param {module:back4app/entity/models/methods.MethodCollection|Object}
+ * @param {(module:back4app/entity/models/methods.MethodCollection|
+ * Object.<string, (Method|Object)>)}
  * specification.methods The new entity specification methods. It can be
  * given as an instance of
  * {@link module:back4app/entity/models/methods.MethodCollection} or an
@@ -312,7 +318,7 @@ Entity.specify = _getSpecifyFunction(Entity);
  * @memberof module:back4app/entity/models.Entity
  * @param {Class} CurrentEntity The current entity class for which the new
  * function will be created.
- * @returns {Function} The new function.
+ * @returns {function} The new function.
  * @private
  */
 var _getNewFunction = function (CurrentEntity) {
@@ -342,10 +348,10 @@ var _getNewFunction = function (CurrentEntity) {
 /**
  * Returns a function that creates new instances of an Entity Class.
  * @function
- * @param {String} entity The Entity Class of which the new instances will be
+ * @param {string} entity The Entity Class of which the new instances will be
  * created. If the parameter is not given, the function will create instances of
  * the current Entity Class.
- * @returns {Function}
+ * @returns {function}
  * @example
  * var c1NewFunction = Entity.new('C1');
  * var c1 = c1NewFunction();
