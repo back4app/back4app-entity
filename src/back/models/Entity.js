@@ -19,7 +19,8 @@ module.exports = Entity;
 function Entity() {
   /**
    * This is a read-only property to get the Entity Class of an instance.
-   * @type {Class}
+   * @type {!Class}
+   * @readonly
    * @example
    * var entity = new Entity();
    * console.log(entity.Entity == Entity); // Logs true
@@ -38,7 +39,8 @@ function Entity() {
   /**
    * This is a read-only property to get the general Entity Class of an
    * instance. This is just an alias to this.Entity.General.
-   * @type {Class}
+   * @type {!Class}
+   * @readonly
    * @example
    * var MyEntity = Entity.specify();
    * var myEntity = new MyEntity();
@@ -59,7 +61,8 @@ function Entity() {
 /**
  * This is a read-only property to get the general Entity Class of the current
  * Entity Class.
- * @type {Class}
+ * @type {?Class}
+ * @readonly
  * @example
  * var generalAttributes = SpecificEntity.General.attributes;
  */
@@ -76,7 +79,8 @@ Object.defineProperty(Entity, 'General', {
 
 /**
  * This is the specification of the current Entity Class.
- * @type {module:back4app/entity/models.EntitySpecification}
+ * @type {!module:back4app/entity/models.EntitySpecification}
+ * @readonly
  */
 Entity.specification = null;
 
@@ -93,7 +97,8 @@ Object.defineProperty(Entity, 'specification', {
 
 /**
  * This is a dictionary with a consolidation of the Entity's attributes.
- * @type {Object.<string, module:back4app/entity/models/attributes.Attribute>}
+ * @type {!Object.<string, module:back4app/entity/models/attributes.Attribute>}
+ * @readonly
  */
 Entity.attributes = null;
 
@@ -108,7 +113,8 @@ Object.defineProperty(Entity, 'attributes', {
 
 /**
  * This is a dictionary with a consolidation of the Entity's methods.
- * @type {Object.<string, module:back4app/entity/models/methods.Method>}
+ * @type {!Object.<string, module:back4app/entity/models/methods.Method>}
+ * @readonly
  */
 Entity.methods = null;
 

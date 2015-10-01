@@ -66,8 +66,9 @@ function EntitySpecification() {
 
   /**
    * Collection of specific attributes of an entity.
-   * @memberof module:back4app/entity/models.EntitySpecification
-   * @type {module:back4app/entity/models/attributes.AttributeCollection}
+   * @name module:back4app/entity/models.EntitySpecification#attributes
+   * @type {!module:back4app/entity/models/attributes.AttributeCollection}
+   * @readonly
    */
   this.attributes = null;
 
@@ -75,8 +76,9 @@ function EntitySpecification() {
 
   /**
    * Collection of specific methods of an entity.
-   * @memberof module:back4app/entity/models.EntitySpecification
-   * @type {module:back4app/entity/models/methods.MethodCollection}
+   * @name module:back4app/entity/models.EntitySpecification#attributes
+   * @type {!module:back4app/entity/models/methods.MethodCollection}
+   * @readonly
    */
   this.methods = null;
 
