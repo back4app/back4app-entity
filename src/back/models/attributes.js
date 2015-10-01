@@ -10,6 +10,11 @@ module.exports = {};
 module.exports.Attribute = Attribute;
 module.exports.AttributeCollection = AttributeCollection;
 
+/**
+ * Holds an Entity Attribute information.
+ * @constructor
+ * @memberof module:back4app/entity/models/attributes
+ */
 function Attribute() {}
 
 /**

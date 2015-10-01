@@ -10,6 +10,11 @@ module.exports = {};
 module.exports.Method = Method;
 module.exports.MethodCollection = MethodCollection;
 
+/**
+ * Holds an Entity Method information.
+ * @constructor
+ * @memberof module:back4app/entity/models/methods
+ */
 function Method() {}
 
 /**
