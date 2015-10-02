@@ -31,19 +31,30 @@ module.exports.EntityNotFoundError = EntityNotFoundError;
  * }
  */
 function EntityNotFoundError(entity, innerError) {
-  expect(arguments).to.have.length.below(3);
+  expect(arguments).to.have.length.below(
+    3,
+    'Invalid arguments length when creating a new EntityNotFoundError'
+  );
 
   this.name = 'EntityNotFoundError';
 
   this.message = 'Cannot find Entity';
   if (entity) {
-    expect(entity).to.be.a('string');
+    expect(entity).to.be.a(
+      'string',
+      'Invalid argument "entity" when creating a new EntityNotFoundError ' +
+      '(it has to be a string)'
+    );
     this.message += ' "' + entity + '"';
   }
 
   this.stack = (new Error(this.message)).stack;
   if (innerError) {
-    expect(innerError).to.be.an.instanceof(Error);
+    expect(innerError).to.be.an.instanceof(
+      Error,
+      'Invalid argument "innerError" when creating a new EntityNotFoundError ' +
+      '(it has to be an Error)'
+    );
     this.stack += '\n\n' + innerError.stack;
   }
 }

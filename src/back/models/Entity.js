@@ -139,7 +139,10 @@ Object.defineProperty(Entity, 'methods', {
  */
 var _getSpecifyFunction = function (CurrentEntity) {
   return function () {
-    expect(arguments).to.have.length.below(3);
+    expect(arguments).to.have.length.below(
+      3,
+      'Invalid arguments length when specifying an Entity'
+    );
 
     function SpecificEntity() {
       CurrentEntity.call(this);
@@ -170,7 +173,10 @@ var _getSpecifyFunction = function (CurrentEntity) {
     if (arguments.length === 1) {
       var specification = arguments[0];
 
-      expect(specification).to.be.an('object');
+      expect(specification).to.be.an(
+        'object',
+        'Invalid argument type when specifying an Entity'
+      );
 
       if (specification instanceof EntitySpecification) {
         _specificEntitySpecification = specification;
@@ -182,11 +188,19 @@ var _getSpecifyFunction = function (CurrentEntity) {
       var methods = arguments[1];
 
       if (attributes) {
-        expect(attributes).to.be.an('object');
+        expect(attributes).to.be.an(
+          'object',
+          'Invalid property "attributes" when specifying an Entity (it has ' +
+          'to be an object)'
+        );
       }
 
       if (methods) {
-        expect(methods).to.be.an('object');
+        expect(methods).to.be.an(
+          'object',
+          'Invalid property "methods" when specifying an Entity (it has to ' +
+          'be an object)'
+        );
       }
 
       _specificEntitySpecification = new EntitySpecification(
@@ -336,11 +350,18 @@ Entity.specify = _getSpecifyFunction(Entity);
  */
 var _getNewFunction = function (CurrentEntity) {
   return function (entity) {
-    expect(arguments).to.have.length.below(2);
+    expect(arguments).to.have.length.below(
+      2,
+      'Invalid arguments length when creating a new Entity function'
+    );
 
     var EntityClass = CurrentEntity;
     if (entity) {
-      expect(entity).to.be.a('string');
+      expect(entity).to.be.a(
+        'string',
+        'Invalid argument when creating a new Entity function (it has to be ' +
+        'a string'
+      );
       try {
         EntityClass = require(path.join(settings.ENTITIESPATH, entity));
       }

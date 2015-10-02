@@ -31,9 +31,20 @@ module.exports.generalize = generalize;
  * classes.generalize(GeneralClass, SpecificClass);
  */
 function generalize(GeneralClass, SpecificClass) {
-  expect(arguments).to.have.length(2);
-  expect(GeneralClass).to.be.a('function');
-  expect(SpecificClass).to.be.a('function');
+  expect(arguments).to.have.length(
+    2,
+    'Invalid argument length when generalizing classes'
+  );
+  expect(GeneralClass).to.be.a(
+    'function',
+    'Invalid argument "GeneralClass" when generalizing classes (it has to be ' +
+    'a function)'
+  );
+  expect(SpecificClass).to.be.a(
+    'function',
+    'Invalid argument "SpecificClass" when generalizing classes (ut has to ' +
+    'be a function)'
+  );
 
   SpecificClass.prototype = Object.create(GeneralClass.prototype);
   SpecificClass.prototype.constructor = SpecificClass;

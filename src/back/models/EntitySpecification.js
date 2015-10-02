@@ -60,7 +60,10 @@ module.exports = EntitySpecification;
  * {@link module:back4app/entity/models/methods.MethodCollection}.
  */
 function EntitySpecification() {
-  expect(arguments).to.have.length.below(3);
+  expect(arguments).to.have.length.below(
+    3,
+    'Invalid arguments length when creating a new EntitySpecification'
+  );
 
   /**
    * Collection of specific attributes of an entity.
@@ -85,13 +88,24 @@ function EntitySpecification() {
   if (arguments.length === 1) {
     var specification = arguments[0];
 
-    expect(specification).to.be.an('object');
+    expect(specification).to.be.an(
+      'object',
+      'Invalid argument type when creating a new EntitySpecification'
+    );
     for (var property in specification) {
-      expect(['attributes', 'methods']).to.include(property);
+      expect(['attributes', 'methods']).to.include(
+        property,
+        'Invalid property when creating a new EntitySpecification (valid ' +
+        'properties are "attributes" and "methods")'
+      );
     }
 
     if (specification.attributes) {
-      expect(specification.attributes).to.be.an('object');
+      expect(specification.attributes).to.be.an(
+        'object',
+        'Invalid property "attributes" when creating a new ' +
+        'EntitySpecification (it has to be an object)'
+      );
 
       if (specification.attributes instanceof attributes.AttributeCollection) {
         _attributes = specification.attributes;
@@ -103,7 +117,11 @@ function EntitySpecification() {
     }
 
     if (specification.methods) {
-      expect(specification.methods).to.be.an('object');
+      expect(specification.methods).to.be.an(
+        'object',
+        'Invalid property "methods" when creating a new EntitySpecification ' +
+        '(it has to be an object)'
+      );
 
       if (specification.methods instanceof methods.MethodCollection) {
         _methods = specification.methods;
@@ -118,7 +136,11 @@ function EntitySpecification() {
     var methodsArgument = arguments[1];
 
     if (attributesArgument) {
-      expect(attributesArgument).to.be.an('object');
+      expect(attributesArgument).to.be.an(
+        'object',
+        'Invalid argument "attributes" when creating a new ' +
+        'EntitySpecification (it has to be an object)'
+      );
 
       if (attributesArgument instanceof attributes.AttributeCollection) {
         _attributes = attributesArgument;
@@ -130,7 +152,11 @@ function EntitySpecification() {
     }
 
     if (methodsArgument) {
-      expect(methodsArgument).to.be.an('object');
+      expect(methodsArgument).to.be.an(
+        'object',
+        'Invalid argument "methods" when creating a new EntitySpecification ' +
+        '(it has to be an object)'
+      );
 
       if (methodsArgument instanceof methods.MethodCollection) {
         _methods = methodsArgument;

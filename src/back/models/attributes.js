@@ -45,7 +45,11 @@ module.exports.AttributeCollection = AttributeCollection;
  * expression of the attribute.
  */
 function Attribute() {
-  expect(arguments).to.have.length.within(1, 4);
+  expect(arguments).to.have.length.within(
+    1,
+    4,
+    'Invalid arguments length when creating an Attribute'
+  );
 
   /**
    * This is the attribute' name.
@@ -86,24 +90,42 @@ function Attribute() {
   if (arguments.length === 1 && typeof arguments[0] !== 'string') {
     var attribute = arguments[0];
 
-    expect(attribute).to.be.an('object');
+    expect(attribute).to.be.an(
+      'object',
+      'Invalid argument type when creating an Attribute'
+    );
 
     for (var property in attribute) {
-      expect(['name', 'type', 'multiplicity', 'default']).to.include(property);
+      expect(['name', 'type', 'multiplicity', 'default']).to.include(
+        property,
+        'Invalid property when creating an Attribute (valid properties are ' +
+        '"name", "type", "multiplicity" and "default")'
+      );
     }
 
-    expect(attribute).to.have.ownProperty('name');
+    expect(attribute).to.have.ownProperty(
+      'name',
+      'Property "name" is required when creating an Attribute'
+    );
 
     _name = attribute.name;
 
     if (attribute.hasOwnProperty('type')) {
-      expect(attribute.type).to.be.a('string');
+      expect(attribute.type).to.be.a(
+        'string',
+        'Invalid property "type" when creating an Attribute (it has to be a ' +
+        'string)'
+      );
 
       _type = attribute.type;
     }
 
     if (attribute.hasOwnProperty('multiplicity')) {
-      expect(attribute.multiplicity).to.be.a('string');
+      expect(attribute.multiplicity).to.be.a(
+        'string',
+        'Invalid property "multiplicity" when creating an Attribute (it has to ' +
+        'be a string'
+      );
 
       _multiplicity = attribute.multiplicity;
     }
@@ -112,18 +134,30 @@ function Attribute() {
       _default = attribute.default;
     }
   } else {
-    expect(arguments[0]).to.be.a('string');
+    expect(arguments[0]).to.be.a(
+      'string',
+      'Invalid argument "name" when creating an Attribute (it has to be a ' +
+      'string)'
+    );
 
     _name = arguments[0];
 
     if (arguments.length > 1) {
-      expect(arguments[1]).to.be.a('string');
+      expect(arguments[1]).to.be.a(
+        'string',
+        'Invalid argument "type" when creating an Attribute (it has to be a ' +
+        'string)'
+      );
 
       _type = arguments[1];
     }
 
     if (arguments.length > 2) {
-      expect(arguments[2]).to.be.a('string');
+      expect(arguments[2]).to.be.a(
+        'string',
+        'Invalid argument "multiplicity when creating an Attribute (it has ' +
+        'to be a string'
+      );
 
       _multiplicity = arguments[2];
     }
@@ -182,20 +216,34 @@ function Attribute() {
  * {@link module:back4app/entity/models/attributes.Attribute}.
  */
 function AttributeCollection(attributes) {
-  expect(arguments).to.have.length.below(2);
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when creating an AttributeCollection'
+  );
 
   if (attributes) {
-    expect(attributes).to.be.an('object');
+    expect(attributes).to.be.an(
+      'object',
+      'Invalid argument type when creating an AttributeCollection'
+    );
 
     if (attributes instanceof Array) {
       for (var i = 0; i < attributes.length; i++) {
-        expect(attributes[i]).to.be.an('object');
+        expect(attributes[i]).to.be.an(
+          'object',
+          'Invalid attribute type in the attributes array when creating an ' +
+          'AttributeCollection'
+        );
 
         this.add(attributes[i]);
       }
     } else {
       for (var attribute in attributes) {
-        expect(attributes[attribute]).to.be.an('object');
+        expect(attributes[attribute]).to.be.an(
+          'object',
+          'Invalid attribute type in the attributes object when creating an ' +
+          'AttributeCollection'
+        );
 
         this.add(attributes[attribute], attribute);
       }
@@ -244,7 +292,12 @@ function AttributeCollection(attributes) {
  * expression of the attribute.
  */
 AttributeCollection.prototype.add = function () {
-  expect(arguments).to.have.length.within(1, 5);
+  expect(arguments).to.have.length.within(
+    1,
+    4,
+    'Invalid arguments length when adding an attribute in an ' +
+    'AttributeCollection'
+  );
 
   var attribute = null;
   var name = null;
@@ -261,13 +314,24 @@ AttributeCollection.prototype.add = function () {
     ))();
   }
 
-  expect(attribute).to.be.an('object');
+  expect(attribute).to.be.an(
+    'object',
+    'Invalid argument type when adding an attribute in an AttributeCollection'
+  );
 
   if (name) {
-    expect(name).to.be.a('string');
+    expect(name).to.be.a(
+      'string',
+      'Invalid argument "name" when adding an attribute in an ' +
+      'AttributeCollection (it has to be a string)'
+    );
 
     if (attribute.name) {
-      expect(attribute.name).to.equal(name);
+      expect(attribute.name).to.equal(
+        name,
+        'The name given in argument and the name given in the attribute ' +
+        'object should be equal'
+      );
     } else {
       attribute.name = name;
     }
@@ -277,7 +341,10 @@ AttributeCollection.prototype.add = function () {
     attribute = new Attribute(attribute);
   }
 
-  expect(this).to.not.have.ownProperty(attribute.name);
+  expect(this).to.not.have.ownProperty(
+    attribute.name,
+    'Duplicated attribute name'
+  );
 
   Object.defineProperty(this, attribute.name, {
     get: function () {
