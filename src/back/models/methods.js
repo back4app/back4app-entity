@@ -79,6 +79,7 @@ MethodCollection.add = function (methodCollection, func, name) {
     },
     set: function () {
       throw new Error('Method cannot be changed');
-    }
+    },
+    enumerable: true
   });
 };

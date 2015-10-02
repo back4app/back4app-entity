@@ -173,7 +173,8 @@ function Attribute() {
     },
     set: function () {
       throw new Error('Name cannot be changed.');
-    }
+    },
+    enumerable: true
   });
 
   Object.defineProperty(this, 'type', {
@@ -182,7 +183,8 @@ function Attribute() {
     },
     set: function () {
       throw new Error('Name cannot be changed.');
-    }
+    },
+    enumerable: true
   });
 
   Object.defineProperty(this, 'multiplicity', {
@@ -191,7 +193,8 @@ function Attribute() {
     },
     set: function () {
       throw new Error('Name cannot be changed.');
-    }
+    },
+    enumerable: true
   });
 
   Object.defineProperty(this, 'default', {
@@ -200,7 +203,8 @@ function Attribute() {
     },
     set: function () {
       throw new Error('Name cannot be changed.');
-    }
+    },
+    enumerable: true
   });
 }
 
@@ -354,6 +358,7 @@ AttributeCollection.add = function () {
     },
     set: function () {
       throw new Error('Attribute cannot be changed');
-    }
+    },
+    enumerable: true
   });
 };

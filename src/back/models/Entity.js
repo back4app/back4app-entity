@@ -74,7 +74,8 @@ Object.defineProperty(Entity, 'General', {
   },
   set: function () {
     throw new Error('General cannot be changed');
-  }
+  },
+  enumerable: true
 });
 
 /**
@@ -92,7 +93,8 @@ Object.defineProperty(Entity, 'specification', {
   },
   set: function () {
     throw  new Error('Specification cannot be changed');
-  }
+  },
+  enumerable: true
 });
 
 /**
@@ -109,7 +111,8 @@ Object.defineProperty(Entity, 'attributes', {
   },
   set: function () {
     throw  new Error('Attributes cannot be changed');
-  }
+  },
+  enumerable: true
 });
 
 /**
@@ -125,7 +128,8 @@ Object.defineProperty(Entity, 'methods', {
   },
   set: function () {
     throw  new Error('Methods cannot be changed');
-  }
+  },
+  enumerable: true
 });
 
 /**
@@ -165,7 +169,8 @@ var _getSpecifyFunction = function (CurrentEntity) {
       },
       set: function () {
         throw new Error('General cannot be changed');
-      }
+      },
+      enumerable: true
     });
 
     var _specificEntitySpecification = null;
@@ -217,7 +222,8 @@ var _getSpecifyFunction = function (CurrentEntity) {
       },
       set: function () {
         throw  new Error('Specification cannot be changed');
-      }
+      },
+      enumerable: true
     });
 
     Object.defineProperty(SpecificEntity, 'attributes', {
@@ -242,7 +248,8 @@ var _getSpecifyFunction = function (CurrentEntity) {
       },
       set: function () {
         throw  new Error('Attributes cannot be changed');
-      }
+      },
+      enumerable: true
     });
 
     Object.defineProperty(SpecificEntity, 'methods', {
@@ -267,7 +274,8 @@ var _getSpecifyFunction = function (CurrentEntity) {
       },
       set: function () {
         throw  new Error('Methods cannot be changed');
-      }
+      },
+      enumerable: true
     });
 
     SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);

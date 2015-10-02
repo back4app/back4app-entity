@@ -177,7 +177,8 @@ function EntitySpecification() {
     },
     set: function () {
       throw new Error('Attributes cannot be changed');
-    }
+    },
+    enumerable: true
   });
 
   Object.defineProperty(this, 'methods', {
@@ -186,7 +187,8 @@ function EntitySpecification() {
     },
     set: function () {
       throw new Error('Methods cannot be changed');
-    }
+    },
+    enumerable: true
   });
 }
 

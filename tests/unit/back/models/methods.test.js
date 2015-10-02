@@ -114,6 +114,16 @@ describe('methods', function () {
         expect(methodCollection.method2()).to.equal('method2');
         expect(methodCollection.method3()).to.equal('method3');
       });
+
+      it('expect to allow to list functions', function () {
+        var methods = [];
+
+        for (var method in methodCollection) {
+          methods.push(method);
+        }
+
+        expect(methods).to.be.deep.equal(['method1', 'method2', 'method3']);
+      });
     });
   });
 });
