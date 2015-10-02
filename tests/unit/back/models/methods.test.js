@@ -55,22 +55,27 @@ describe('methods', function () {
       }).to.throw(AssertionError);
     });
 
-    describe('#add', function () {
-      it('expect to exist as an instance method', function () {
-        expect(methodCollection).to.respondTo('add');
+    describe('.add', function () {
+      it('expect to exist as a static method', function () {
+        expect(methods.MethodCollection).itself.to.respondTo('add');
       });
 
       it('expect to work with right arguments', function () {
-        methodCollection.add(function () { return 'method3'; }, 'method3');
+        methods.MethodCollection.add(
+          methodCollection,
+          function () { return 'method3'; },
+          'method3'
+        );
       });
 
       it('expect to not work with wrong arguments', function () {
         expect(function () {
-          methodCollection.add();
+          methods.MethodCollection.add(methodCollection);
         }).to.throw(AssertionError);
 
         expect(function () {
-          methodCollection.add(
+          methods.MethodCollection.add(
+            methodCollection,
             function () { return 'method4'; },
             'method4',
             null
@@ -78,11 +83,15 @@ describe('methods', function () {
         }).to.throw(AssertionError);
 
         expect(function () {
-          methodCollection.add({}, 'method4');
+          methods.MethodCollection.add(methodCollection, {}, 'method4');
         }).to.throw(AssertionError);
 
         expect(function () {
-          methodCollection.add(function () { return 'method4'; }, {});
+          methods.MethodCollection.add(
+            methodCollection,
+            function () { return 'method4'; },
+            {}
+          );
         }).to.throw(AssertionError);
 
         expect(methodCollection).not.to.respondTo('method4');
@@ -90,7 +99,8 @@ describe('methods', function () {
 
       it('expect to not work with duplicates', function () {
         expect(function () {
-          methodCollection.add(
+          methods.MethodCollection.add(
+            methodCollection,
             function () { return 'will never execute'; },
             'method3'
           );

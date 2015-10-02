@@ -39,24 +39,30 @@ function MethodCollection(methods) {
         'MethodCollection (it has to be a function)'
       );
 
-      this.add(methods[method], method);
+      MethodCollection.add(this, methods[method], method);
     }
   }
 }
 
 /**
  * Adds a new method to the collection.
- * @name module:back4app/entity/models/methods.MethodCollection#add
- * @function
+ * @param {!module:back4app/entity/models/methods.MethodCollection}
+ * methodCollection This is the MethodCollection instance to which the method
+ * will be added.
  * @param {!function} func This is the method's function to be added.
  * @param {!string} name This is the name of the method.
  */
-MethodCollection.prototype.add = function (func, name) {
+MethodCollection.add = function (methodCollection, func, name) {
   expect(arguments).to.have.length(
-    2,
+    3,
     'Invalid arguments length when adding a method in a MethodCollection'
   );
 
+  expect(methodCollection).to.be.instanceof(
+    MethodCollection,
+    'Invalid argument "methodCollection" when adding a method in a ' +
+    'MethodCollection (it has to be a MethodCollection instance)'
+  );
   expect(func).to.be.a(
     'function',
     'Invalid argument "func" when adding a method in a MethodCollection (it ' +
@@ -68,12 +74,12 @@ MethodCollection.prototype.add = function (func, name) {
     'has to be a string)'
   );
 
-  expect(this).to.not.have.ownProperty(
+  expect(methodCollection).to.not.have.ownProperty(
     name,
     'Duplicated method name in a MethodCollection'
   );
 
-  Object.defineProperty(this, name, {
+  Object.defineProperty(methodCollection, name, {
     get: function () {
       return func;
     },
