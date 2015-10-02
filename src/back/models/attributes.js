@@ -229,23 +229,11 @@ function AttributeCollection(attributes) {
 
     if (attributes instanceof Array) {
       for (var i = 0; i < attributes.length; i++) {
-        expect(attributes[i]).to.be.an(
-          'object',
-          'Invalid attribute type in the attributes array when creating an ' +
-          'AttributeCollection'
-        );
-
-        this.add(attributes[i]);
+        AttributeCollection.add(this, attributes[i]);
       }
     } else {
       for (var attribute in attributes) {
-        expect(attributes[attribute]).to.be.an(
-          'object',
-          'Invalid attribute type in the attributes object when creating an ' +
-          'AttributeCollection'
-        );
-
-        this.add(attributes[attribute], attribute);
+        AttributeCollection.add(this, attributes[attribute], attribute);
       }
     }
   }
@@ -253,8 +241,10 @@ function AttributeCollection(attributes) {
 
 /**
  * Adds a new attribute to the collection.
- * @name module:back4app/entity/models/attributes.AttributeCollection#add
+ * @name module:back4app/entity/models/attributes.AttributeCollection.add
  * @function
+ * @param {!AttributeCollection} attributeCollection It is the attribute
+ * collection to which the attribute will be added.
  * @param {!module:back4app/entity/models/attributes.Attribute} attribute This
  * is the attribute to be added. It can be passed as a
  * {@link module:back4app/entity/models/attributes.Attribute} instance.
@@ -262,8 +252,10 @@ function AttributeCollection(attributes) {
  */
 /**
  * Adds a new attribute to the collection.
- * @name module:back4app/entity/models/attributes.AttributeCollection#add
+ * @name module:back4app/entity/models/attributes.AttributeCollection.add
  * @function
+ * @param {!AttributeCollection} attributeCollection It is the attribute
+ * collection to which the attribute will be added.
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object, as specified in
  * {@link module:back4app/entity/models/attributes.Attribute}.
@@ -281,8 +273,10 @@ function AttributeCollection(attributes) {
  */
 /**
  * Adds a new attribute to the collection.
- * @name module:back4app/entity/models/attributes.AttributeCollection#add
+ * @name module:back4app/entity/models/attributes.AttributeCollection.add
  * @function
+ * @param {!AttributeCollection} attributeCollection It is the attribute
+ * collection to which the attribute will be added.
  * @param {!string} name It is the name of the attribute.
  * @param {!string} [type='Object'] It is the type of the attribute. It is
  * optional and if not passed it will assume 'Object' as the default value.
@@ -291,26 +285,34 @@ function AttributeCollection(attributes) {
  * @param {?(boolean|number|string|Object|function)} [default] It is the default
  * expression of the attribute.
  */
-AttributeCollection.prototype.add = function () {
+AttributeCollection.add = function () {
   expect(arguments).to.have.length.within(
-    1,
-    4,
+    2,
+    5,
     'Invalid arguments length when adding an attribute in an ' +
     'AttributeCollection'
+  );
+
+  var attributeCollection = arguments[0];
+
+  expect(attributeCollection).to.be.an.instanceof(
+    AttributeCollection,
+    'Invalid argument "attributeCollection" when adding an attribute in ' +
+    'an AttributeCollection (it has to be an AttributeCollection)'
   );
 
   var attribute = null;
   var name = null;
 
-  if (arguments.length === 1) {
-    attribute = arguments[0];
-  } else if (arguments.length === 2) {
-    attribute = arguments[0];
-    name = arguments[1];
+  if (arguments.length === 2) {
+    attribute = arguments[1];
+  } else if (arguments.length === 3) {
+    attribute = arguments[1];
+    name = arguments[2];
   } else {
     attribute = new (Function.prototype.bind.apply(
       Attribute,
-      [null].concat(arguments)
+      [null].concat(arguments.slice(1))
     ))();
   }
 
@@ -341,12 +343,12 @@ AttributeCollection.prototype.add = function () {
     attribute = new Attribute(attribute);
   }
 
-  expect(this).to.not.have.ownProperty(
+  expect(attributeCollection).to.not.have.ownProperty(
     attribute.name,
     'Duplicated attribute name'
   );
 
-  Object.defineProperty(this, attribute.name, {
+  Object.defineProperty(attributeCollection, attribute.name, {
     get: function () {
       return attribute;
     },

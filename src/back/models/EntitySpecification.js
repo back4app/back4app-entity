@@ -77,7 +77,7 @@ function EntitySpecification() {
 
   /**
    * Collection of specific methods of an entity.
-   * @name module:back4app/entity/models.EntitySpecification#attributes
+   * @name module:back4app/entity/models.EntitySpecification#methods
    * @type {!module:back4app/entity/models/methods.MethodCollection}
    * @readonly
    */
@@ -189,3 +189,61 @@ function EntitySpecification() {
     }
   });
 }
+
+/**
+ * Adds a new attribute to the attributes in the specification.
+ * @name module:back4app/entity/models.EntitySpecification#addAttribute
+ * @function
+ * @param {!module:back4app/entity/models/attributes.Attribute} attribute This
+ * is the attribute to be added. It can be passed as a
+ * {@link module:back4app/entity/models/attributes.Attribute} instance.
+ * @param {?string} [name] This is the name of the attribute.
+ */
+/**
+ * Adds a new attribute to the attributes in the specification
+ * @name module:back4app/entity/models.EntitySpecification#addAttribute
+ * @function
+ * @param {!Object} attribute This is the attribute to be added. It can be
+ * passed as an Object, as specified in
+ * {@link module:back4app/entity/models/attributes.Attribute}.
+ * @param {!string} [attribute.name] It is the name of the attribute. It is
+ * optional if it is passed as an argument in the function.
+ * @param {!string} [attribute.type='Object'] It is the type of the attribute.
+ * It is optional and if not passed it will assume 'Object' as the default
+ * value.
+ * @param {!string} [attribute.multiplicity='1'] It is the multiplicity of the
+ * attribute. It is optional and if not passed it will assume '1' as the default
+ * value.
+ * @param {?(boolean|number|string|Object|function)} [attribute.default] It is
+ * the default expression of the attribute.
+ * @param {?string} [name] This is the name of the attribute.
+ */
+/**
+ * Adds a new attribute to the attributes in the specification.
+ * @name module:back4app/entity/models.EntitySpecification#addAttribute
+ * @function
+ * @param {!string} name It is the name of the attribute.
+ * @param {!string} [type='Object'] It is the type of the attribute. It is
+ * optional and if not passed it will assume 'Object' as the default value.
+ * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
+ * It is optional and if not passed it will assume '1' as the default value.
+ * @param {?(boolean|number|string|Object|function)} [default] It is the default
+ * expression of the attribute.
+ */
+EntitySpecification.prototype.addAttribute = function () {
+  attributes.AttributeCollection.add.apply(
+    null,
+    [this.attribtues].concat(arguments)
+  );
+};
+
+/**
+ * Adds a new method to the methods in the specification.
+ * @name module:back4app/entity/models.EntitySpecification#addMethod
+ * @function
+ * @param {!function} func This is the method's function to be added.
+ * @param {!string} name This is the name of the method.
+ */
+EntitySpecification.prototype.addMethod = function (func, name) {
+  methods.MethodCollection.add(this.methods, func, name);
+};

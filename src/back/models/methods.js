@@ -33,12 +33,6 @@ function MethodCollection(methods) {
     );
 
     for (var method in methods) {
-      expect(methods[method]).to.be.a(
-        'function',
-        'Invalid method in methods object when creating a new ' +
-        'MethodCollection (it has to be a function)'
-      );
-
       MethodCollection.add(this, methods[method], method);
     }
   }
