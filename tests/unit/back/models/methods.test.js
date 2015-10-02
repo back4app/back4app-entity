@@ -47,6 +47,12 @@ describe('methods', function () {
       expect(function () {
         methodCollection = new methods.MethodCollection(function () {});
       }).to.throw(AssertionError);
-    })
+
+      expect(function () {
+        methodCollection = new methods.MethodCollection({
+          method1: {}
+        });
+      }).to.throw(AssertionError);
+    });
   });
 });

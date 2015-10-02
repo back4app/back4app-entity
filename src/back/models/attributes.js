@@ -123,8 +123,8 @@ function Attribute() {
     if (attribute.hasOwnProperty('multiplicity')) {
       expect(attribute.multiplicity).to.be.a(
         'string',
-        'Invalid property "multiplicity" when creating an Attribute (it has to ' +
-        'be a string'
+        'Invalid property "multiplicity" when creating an Attribute (it has ' +
+        'to be a string'
       );
 
       _multiplicity = attribute.multiplicity;

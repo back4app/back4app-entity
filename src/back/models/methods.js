@@ -27,7 +27,10 @@ function MethodCollection(methods) {
   );
 
   if (methods) {
-    expect(methods).to.be.an('object');
+    expect(methods).to.be.an(
+      'object',
+      'Invalid argument type when creating a new MethodCollection'
+    );
 
     for (var method in methods) {
       expect(methods[method]).to.be.a(
