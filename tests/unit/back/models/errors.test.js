@@ -45,6 +45,14 @@ describe('errors', function () {
       expect(function () {
         entityNotFoundError = new errors.EntityNotFoundError({}, {});
       }).to.throw(AssertionError);
+
+      expect(function () {
+        entityNotFoundError = new errors.EntityNotFoundError(
+          'MyEntity',
+          new Error(),
+          null
+        );
+      }).to.throw(AssertionError);
     });
 
     it('expect to be an Error', function () {
