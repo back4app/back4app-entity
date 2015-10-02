@@ -29,6 +29,15 @@ describe('classes', function () {
           classes.generalize(function () {}, {});
         }).to.throw(AssertionError);
       });
+
+      it(
+        'expect to throw AssertionError with more than two parameters',
+        function () {
+          expect(function () {
+            classes.generalize(function () {}, function () {}, function () {});
+          }).to.throw(AssertionError);
+        }
+      );
     });
 
     context('functional tests', function () {
