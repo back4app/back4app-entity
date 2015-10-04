@@ -4,8 +4,8 @@
 
 'use strict';
 
+var util = require('util');
 var expect = require('chai').expect;
-var classes = require('../utils/classes');
 
 /**
  * Contains Error Classes used to be thrown when the models API is not used
@@ -59,4 +59,4 @@ function EntityNotFoundError(entity, innerError) {
   }
 }
 
-classes.generalize(Error, EntityNotFoundError);
+util.inherits(EntityNotFoundError, Error);
