@@ -35,13 +35,15 @@ module.exports.MethodCollection = MethodCollection;
 function MethodCollection(methods) {
   expect(arguments).to.have.length.below(
     2,
-    'Invalid arguments length when creating a new MethodCollection'
+    'Invalid arguments length when creating a new MethodCollection (it has ' +
+    'to be passed 2 arguments)'
   );
 
   if (methods) {
     expect(methods).to.be.an(
       'object',
-      'Invalid argument type when creating a new MethodCollection'
+      'Invalid argument type when creating a new MethodCollection (it has to ' +
+      'be an object)'
     );
 
     for (var method in methods) {
@@ -70,7 +72,8 @@ MethodCollection.add = add;
 function add(methodCollection, func, name) {
   expect(arguments).to.have.length(
     3,
-    'Invalid arguments length when adding a method in a MethodCollection'
+    'Invalid arguments length when adding a method in a MethodCollection (it ' +
+    'has to be passed 3 arguments)'
   );
 
   expect(methodCollection).to.be.instanceof(
@@ -85,21 +88,21 @@ function add(methodCollection, func, name) {
     'extensible'
   );
 
-  expect(func).to.be.a(
-    'function',
-    'Invalid argument "func" when adding a method in a MethodCollection (it ' +
-    'has to be a function)'
-  );
-
   expect(name).to.be.a(
     'string',
     'Invalid argument "name" when adding a method in a MethodCollection (it ' +
     'has to be a string)'
   );
 
+  expect(func).to.be.a(
+    'function',
+    'Invalid argument "func" when adding a method called "' + name + '" in a ' +
+    'MethodCollection (it has to be a function)'
+  );
+
   expect(methodCollection).to.not.have.ownProperty(
     name,
-    'Duplicated method name in a MethodCollection'
+    'Duplicated method name "' + name + '" in a MethodCollection'
   );
 
   Object.defineProperty(methodCollection, name, {
@@ -107,7 +110,7 @@ function add(methodCollection, func, name) {
       return func;
     },
     set: function () {
-      throw new Error('Method cannot be changed');
+      throw new Error('Method of a MethodCollection cannot be changed');
     },
     enumerable: true
   });
