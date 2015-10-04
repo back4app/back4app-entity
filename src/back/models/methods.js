@@ -20,10 +20,14 @@ module.exports.MethodCollection = MethodCollection;
  * @memberof module:back4app/entity/models/methods
  * @param {?Object.<!string, !function>} [methods] The methods to be added in
  * the collection. They have to be given as a Dictionary of functions.
- * @example var methodCollection = new MethodCollection();
- * @example var methodCollection = new MethodCollection(null);
- * @example var methodCollection = new MethodCollection({});
- * @example var methodCollection = new MethodCollection({
+ * @example
+ * var methodCollection = new MethodCollection();
+ * @example
+ * var methodCollection = new MethodCollection(null);
+ * @example
+ * var methodCollection = new MethodCollection({});
+ * @example
+ * var methodCollection = new MethodCollection({
  *   method1: function () { return 'method1'; },
  *   method2: function () { return 'method2'; }
  * });
@@ -75,11 +79,11 @@ function add(methodCollection, func, name) {
     'MethodCollection (it has to be a MethodCollection instance)'
   );
 
-  expect(
-    Object.isExtensible(methodCollection),
+  expect(Object.isExtensible(methodCollection)).to.equal(
+    true,
     'Cannot add a new method in the MethodCollection because it is not ' +
     'extensible'
-  ).to.be.ok;
+  );
 
   expect(func).to.be.a(
     'function',
