@@ -60,11 +60,6 @@ module.exports = EntitySpecification;
  * {@link module:back4app/entity/models/methods.MethodCollection}.
  */
 function EntitySpecification() {
-  expect(arguments).to.have.length.below(
-    3,
-    'Invalid arguments length when creating a new EntitySpecification'
-  );
-
   /**
    * Collection of specific attributes of an entity.
    * @name module:back4app/entity/models.EntitySpecification#attributes
@@ -72,9 +67,6 @@ function EntitySpecification() {
    * @readonly
    */
   this.attributes = null;
-
-  var _attributes = null;
-
   /**
    * Collection of specific methods of an entity.
    * @name module:back4app/entity/models.EntitySpecification#methods
@@ -83,7 +75,32 @@ function EntitySpecification() {
    */
   this.methods = null;
 
+  expect(arguments).to.have.length.below(
+    3,
+    'Invalid arguments length when creating a new EntitySpecification'
+  );
+
+  var _attributes = null;
+  Object.defineProperty(this, 'attributes', {
+    get: function () {
+      return _attributes;
+    },
+    set: function () {
+      throw new Error('Attributes cannot be changed');
+    },
+    enumerable: true
+  });
+
   var _methods = null;
+  Object.defineProperty(this, 'methods', {
+    get: function () {
+      return _methods;
+    },
+    set: function () {
+      throw new Error('Methods cannot be changed');
+    },
+    enumerable: true
+  });
 
   if (arguments.length === 1) {
     var specification = arguments[0];
@@ -170,26 +187,6 @@ function EntitySpecification() {
     _attributes = new attributes.AttributeCollection();
     _methods = new methods.MethodCollection();
   }
-
-  Object.defineProperty(this, 'attributes', {
-    get: function () {
-      return _attributes;
-    },
-    set: function () {
-      throw new Error('Attributes cannot be changed');
-    },
-    enumerable: true
-  });
-
-  Object.defineProperty(this, 'methods', {
-    get: function () {
-      return _methods;
-    },
-    set: function () {
-      throw new Error('Methods cannot be changed');
-    },
-    enumerable: true
-  });
 }
 
 /**
