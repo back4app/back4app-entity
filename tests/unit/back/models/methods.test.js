@@ -20,39 +20,41 @@ describe('methods', function () {
   describe('MethodCollection', function () {
     var methodCollection;
 
-    it('expect to work without arguments', function () {
-      methodCollection = new methods.MethodCollection();
-    });
-
-    it('expect to work with null argument', function () {
-      methodCollection = new methods.MethodCollection(null);
-    });
-
-    it('expect to work with empty object', function () {
-      methodCollection = new methods.MethodCollection({});
-    });
-
-    it('expect to work with right arguments', function () {
-      methodCollection = new methods.MethodCollection({
-        method1: function () { return 'method1'; },
-        method2: function () { return 'method2'; }
+    context('interface tests', function () {
+      it('expect to work without arguments', function () {
+        methodCollection = new methods.MethodCollection();
       });
-    });
 
-    it('expect to not work with wrong arguments', function () {
-      expect(function () {
-        methodCollection = new methods.MethodCollection({}, {});
-      }).to.throw(AssertionError);
+      it('expect to work with null argument', function () {
+        methodCollection = new methods.MethodCollection(null);
+      });
 
-      expect(function () {
-        methodCollection = new methods.MethodCollection(function () {});
-      }).to.throw(AssertionError);
+      it('expect to work with empty object', function () {
+        methodCollection = new methods.MethodCollection({});
+      });
 
-      expect(function () {
+      it('expect to work with right arguments', function () {
         methodCollection = new methods.MethodCollection({
-          method1: {}
+          method1: function () { return 'method1'; },
+          method2: function () { return 'method2'; }
         });
-      }).to.throw(AssertionError);
+      });
+
+      it('expect to not work with wrong arguments', function () {
+        expect(function () {
+          methodCollection = new methods.MethodCollection({}, {});
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          methodCollection = new methods.MethodCollection(function () {});
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          methodCollection = new methods.MethodCollection({
+            method1: {}
+          });
+        }).to.throw(AssertionError);
+      });
     });
 
     describe('.add', function () {
@@ -108,7 +110,9 @@ describe('methods', function () {
 
         expect(methodCollection.method3()).to.equal('method3');
       });
+    });
 
+    context('functional tests', function () {
       it('expect to allow execute functions correctly', function () {
         expect(methodCollection.method1()).to.equal('method1');
         expect(methodCollection.method2()).to.equal('method2');

@@ -13,6 +13,7 @@ var errors = require('./errors');
  * @module back4app/entity/models
  */
 module.exports = {};
+
 module.exports.Entity = Entity;
 module.exports.EntitySpecification = EntitySpecification;
 module.exports.attributes = attributes;

@@ -11,6 +11,7 @@ var expect = require('chai').expect;
  * @module back4app/entity/models/methods
  */
 module.exports = {};
+
 module.exports.MethodCollection = MethodCollection;
 
 /**
@@ -19,6 +20,13 @@ module.exports.MethodCollection = MethodCollection;
  * @memberof module:back4app/entity/models/methods
  * @param {?Object.<!string, !function>} [methods] The methods to be added in
  * the collection. They have to be given as a Dictionary of functions.
+ * @example var methodCollection = new MethodCollection();
+ * @example var methodCollection = new MethodCollection(null);
+ * @example var methodCollection = new MethodCollection({});
+ * @example var methodCollection = new MethodCollection({
+ *   method1: function () { return 'method1'; },
+ *   method2: function () { return 'method2'; }
+ * });
  */
 function MethodCollection(methods) {
   expect(arguments).to.have.length.below(
@@ -38,15 +46,24 @@ function MethodCollection(methods) {
   }
 }
 
+MethodCollection.add = add;
+
 /**
  * Adds a new method to the collection.
+ * @name module:back4app/entity/models/methods.MethodCollection.add
  * @param {!module:back4app/entity/models/methods.MethodCollection}
  * methodCollection This is the MethodCollection instance to which the method
  * will be added.
  * @param {!function} func This is the method's function to be added.
  * @param {!string} name This is the name of the method.
+ * @example
+ * MethodCollection.add(
+ *   methodCollection,
+ *   function () { return 'method3'; },
+ *   'method3'
+ * );
  */
-MethodCollection.add = function (methodCollection, func, name) {
+function add(methodCollection, func, name) {
   expect(arguments).to.have.length(
     3,
     'Invalid arguments length when adding a method in a MethodCollection'
@@ -82,4 +99,4 @@ MethodCollection.add = function (methodCollection, func, name) {
     },
     enumerable: true
   });
-};
+}

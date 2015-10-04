@@ -10,4 +10,5 @@ var classes = require('./classes');
  * @module back4app/entity/utils
  */
 module.exports = {};
+
 module.exports.classes = classes;

@@ -12,6 +12,7 @@ var expect = require('chai').expect;
  * @module back4app/entity/utils/classes
  */
 module.exports = {};
+
 module.exports.generalize = generalize;
 
 /**
