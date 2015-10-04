@@ -110,6 +110,23 @@ describe('methods', function () {
 
         expect(methodCollection.method3()).to.equal('method3');
       });
+
+      it(
+        'expect to not work with not extensible MethodCollection',
+        function () {
+          Object.preventExtensions(methodCollection);
+
+          expect(function () {
+            methods.MethodCollection.add(
+              methodCollection,
+              function () { return 'method5'; },
+              'method5'
+            );
+          }).to.throw(AssertionError);
+
+          expect(methodCollection).not.to.respondTo('method5');
+        }
+      );
     });
 
     context('functional tests', function () {

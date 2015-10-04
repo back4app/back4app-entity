@@ -74,11 +74,19 @@ function add(methodCollection, func, name) {
     'Invalid argument "methodCollection" when adding a method in a ' +
     'MethodCollection (it has to be a MethodCollection instance)'
   );
+
+  expect(
+    Object.isExtensible(methodCollection),
+    'Cannot add a new method in the MethodCollection because it is not ' +
+    'extensible'
+  ).to.be.ok;
+
   expect(func).to.be.a(
     'function',
     'Invalid argument "func" when adding a method in a MethodCollection (it ' +
     'has to be a function)'
   );
+
   expect(name).to.be.a(
     'string',
     'Invalid argument "name" when adding a method in a MethodCollection (it ' +
