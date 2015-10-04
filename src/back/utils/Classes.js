@@ -4,6 +4,7 @@
 
 'use strict';
 
+var util = require('util');
 var expect = require('chai').expect;
 
 /**
@@ -47,8 +48,7 @@ function generalize(GeneralClass, SpecificClass) {
     'be a function)'
   );
 
-  SpecificClass.prototype = Object.create(GeneralClass.prototype);
-  SpecificClass.prototype.constructor = SpecificClass;
+  util.inherits(SpecificClass, GeneralClass);
 
   for (var property in GeneralClass) {
     SpecificClass[property] = GeneralClass[property];
