@@ -115,7 +115,7 @@ describe('methods', function () {
         expect(methodCollection.method3()).to.equal('method3');
       });
 
-      it('expect to allow to list functions', function () {
+      it('expect to allow to list methods', function () {
         var methods = [];
 
         for (var method in methodCollection) {
@@ -123,6 +123,24 @@ describe('methods', function () {
         }
 
         expect(methods).to.be.deep.equal(['method1', 'method2', 'method3']);
+      });
+
+      it('expect to not allow to delete method', function () {
+        expect(function () {
+          delete methodCollection.method1;
+        }).to.throw(Error);
+
+        expect(methodCollection).to.respondTo('method1');
+      });
+
+      it('expect to not allow to change method', function () {
+        expect(function () {
+          methodCollection.method1 = function () {
+            return 'will never execute';
+          };
+        }).to.throw(Error);
+
+        expect(methodCollection.method1()).to.equal('method1');
       });
     });
   });

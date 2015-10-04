@@ -247,8 +247,9 @@ function AttributeCollection(attributes) {
  * Adds a new attribute to the collection.
  * @name module:back4app/entity/models/attributes.AttributeCollection.add
  * @function
- * @param {!AttributeCollection} attributeCollection It is the attribute
- * collection to which the attribute will be added.
+ * @param {!module:back4app/entity/models/attributes.AttributeCollection}
+ * attributeCollection It is the attribute collection to which the attribute
+ * will be added.
  * @param {!module:back4app/entity/models/attributes.Attribute} attribute This
  * is the attribute to be added. It can be passed as a
  * {@link module:back4app/entity/models/attributes.Attribute} instance.
@@ -258,8 +259,9 @@ function AttributeCollection(attributes) {
  * Adds a new attribute to the collection.
  * @name module:back4app/entity/models/attributes.AttributeCollection.add
  * @function
- * @param {!AttributeCollection} attributeCollection It is the attribute
- * collection to which the attribute will be added.
+ * @param {!module:back4app/entity/models/attributes.AttributeCollection}
+ * attributeCollection It is the attribute collection to which the attribute
+ * will be added.
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object, as specified in
  * {@link module:back4app/entity/models/attributes.Attribute}.
@@ -279,8 +281,9 @@ function AttributeCollection(attributes) {
  * Adds a new attribute to the collection.
  * @name module:back4app/entity/models/attributes.AttributeCollection.add
  * @function
- * @param {!AttributeCollection} attributeCollection It is the attribute
- * collection to which the attribute will be added.
+ * @param {!module:back4app/entity/models/attributes.AttributeCollection}
+ * attributeCollection It is the attribute collection to which the attribute
+ * will be added.
  * @param {!string} name It is the name of the attribute.
  * @param {!string} [type='Object'] It is the type of the attribute. It is
  * optional and if not passed it will assume 'Object' as the default value.

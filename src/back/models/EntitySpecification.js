@@ -235,7 +235,7 @@ function EntitySpecification() {
 EntitySpecification.prototype.addAttribute = function () {
   attributes.AttributeCollection.add.apply(
     null,
-    [this.attribtues].concat(arguments)
+    [this.attributes].concat(arguments)
   );
 };
 
