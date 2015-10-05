@@ -295,7 +295,7 @@ function AttributeCollection(attributes) {
   );
 
   if (attributes) {
-    expect(attributes).to.be.an(
+    expect(typeof attributes).to.equal(
       'object',
       'Invalid argument type when creating an AttributeCollection (it has to ' +
       'be an object)'
