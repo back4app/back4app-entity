@@ -290,11 +290,11 @@ function AttributeCollection(attributes) {
 
     if (attributes instanceof Array) {
       for (var i = 0; i < attributes.length; i++) {
-        AttributeCollection.add(this, attributes[i]);
+        _addAttribute(this, attributes[i]);
       }
     } else {
       for (var attribute in attributes) {
-        AttributeCollection.add(this, attributes[attribute], attribute);
+        _addAttribute(this, attributes[attribute], attribute);
       }
     }
   }
@@ -302,7 +302,7 @@ function AttributeCollection(attributes) {
 
 /**
  * Adds a new attribute to the collection.
- * @name module:back4app/entity/models/attributes.AttributeCollection.add
+ * @name module:back4app/entity/models/attributes~_addAttribute
  * @function
  * @param {!module:back4app/entity/models/attributes.AttributeCollection}
  * attributeCollection It is the attribute collection to which the attribute
@@ -311,10 +311,14 @@ function AttributeCollection(attributes) {
  * is the attribute to be added. It can be passed as a
  * {@link module:back4app/entity/models/attributes.Attribute} instance.
  * @param {?string} [name] This is the name of the attribute.
+ * @private
+ * @example
+ * var attributeCollection = new AttributeCollection();
+ * _addAttribute(attributeCollection, new Attribute('attribute'), 'attribute');
  */
 /**
  * Adds a new attribute to the collection.
- * @name module:back4app/entity/models/attributes.AttributeCollection.add
+ * @name module:back4app/entity/models/attributes~_addAttribute
  * @function
  * @param {!module:back4app/entity/models/attributes.AttributeCollection}
  * attributeCollection It is the attribute collection to which the attribute
@@ -333,10 +337,14 @@ function AttributeCollection(attributes) {
  * @param {?(boolean|number|string|Object|function)} [attribute.default] It is
  * the default expression of the attribute.
  * @param {?string} [name] This is the name of the attribute.
+ * @private
+ * @example
+ * var attributeCollection = new AttributeCollection();
+ * _addAttribute(attributeCollection, {}, 'attribute');
  */
 /**
  * Adds a new attribute to the collection.
- * @name module:back4app/entity/models/attributes.AttributeCollection.add
+ * @name module:back4app/entity/models/attributes~_addAttribute
  * @function
  * @param {!module:back4app/entity/models/attributes.AttributeCollection}
  * attributeCollection It is the attribute collection to which the attribute
@@ -348,22 +356,13 @@ function AttributeCollection(attributes) {
  * It is optional and if not passed it will assume '1' as the default value.
  * @param {?(boolean|number|string|Object|function)} [default] It is the default
  * expression of the attribute.
+ * @private
+ * @example
+ * var attributeCollection = new AttributeCollection();
+ * _addAttribute(attributeCollection, 'attribute');
  */
-AttributeCollection.add = function () {
-  expect(arguments).to.have.length.within(
-    2,
-    5,
-    'Invalid arguments length when adding an attribute in an ' +
-    'AttributeCollection'
-  );
-
+function _addAttribute() {
   var attributeCollection = arguments[0];
-
-  expect(attributeCollection).to.be.an.instanceof(
-    AttributeCollection,
-    'Invalid argument "attributeCollection" when adding an attribute in ' +
-    'an AttributeCollection (it has to be an AttributeCollection)'
-  );
 
   var attribute = null;
   var name = null;
@@ -382,21 +381,17 @@ AttributeCollection.add = function () {
 
   expect(attribute).to.be.an(
     'object',
-    'Invalid argument type when adding an attribute in an AttributeCollection'
+    'Invalid argument type when adding an attribute ' + (name ? 'called "' +
+    name + '" ' : '') + 'in an AttributeCollection (it has to be an object)'
   );
 
   if (name) {
-    expect(name).to.be.a(
-      'string',
-      'Invalid argument "name" when adding an attribute in an ' +
-      'AttributeCollection (it has to be a string)'
-    );
-
     if (attribute.name) {
       expect(attribute.name).to.equal(
         name,
-        'The name given in argument and the name given in the attribute ' +
-        'object should be equal'
+        'Invalid argument "name" when adding an attribute called "' +
+        attribute.name + '" in an AttributeCollection (the name given in ' +
+        'argument and the name given in the attribute object should be equal)'
       );
     } else {
       attribute.name = name;
@@ -409,7 +404,7 @@ AttributeCollection.add = function () {
 
   expect(attributeCollection).to.not.have.ownProperty(
     attribute.name,
-    'Duplicated attribute name'
+    'Duplicated attribute name "' + attribute.name + '"'
   );
 
   Object.defineProperty(attributeCollection, attribute.name, {
@@ -417,8 +412,9 @@ AttributeCollection.add = function () {
       return attribute;
     },
     set: function () {
-      throw new Error('Attribute cannot be changed');
+      throw new Error('Attribute "' + attribute.name + '" of an ' +
+        'AttributeCollection cannot be changed');
     },
     enumerable: true
   });
-};
+}

@@ -85,7 +85,8 @@ function _addMethod(methodCollection, func, name) {
       return func;
     },
     set: function () {
-      throw new Error('Method of a MethodCollection cannot be changed');
+      throw new Error('Method "' + name + '" of a MethodCollection cannot be ' +
+        'changed');
     },
     enumerable: true
   });
