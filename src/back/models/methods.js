@@ -15,7 +15,7 @@ module.exports = {};
 module.exports.MethodCollection = MethodCollection;
 
 /**
- * Collection of Entity Methods.
+ * Collection of Entity Methods. The collection is not extensible.
  * @constructor
  * @memberof module:back4app/entity/models/methods
  * @param {?Object.<!string, !function>} [methods] The methods to be added in
@@ -47,21 +47,23 @@ function MethodCollection(methods) {
     );
 
     for (var method in methods) {
-      MethodCollection.add(this, methods[method], method);
+      _addMethod(this, methods[method], method);
     }
   }
-}
 
-MethodCollection.add = add;
+  Object.preventExtensions(this);
+}
 
 /**
  * Adds a new method to the collection.
- * @name module:back4app/entity/models/methods.MethodCollection.add
+ * @name module:back4app/entity/models/methods~_addMethod
+ * @function
  * @param {!module:back4app/entity/models/methods.MethodCollection}
  * methodCollection This is the MethodCollection instance to which the method
  * will be added.
  * @param {!function} func This is the method's function to be added.
  * @param {!string} name This is the name of the method.
+ * @private
  * @example
  * MethodCollection.add(
  *   methodCollection,
@@ -69,40 +71,11 @@ MethodCollection.add = add;
  *   'method3'
  * );
  */
-function add(methodCollection, func, name) {
-  expect(arguments).to.have.length(
-    3,
-    'Invalid arguments length when adding a method in a MethodCollection (it ' +
-    'has to be passed 3 arguments)'
-  );
-
-  expect(methodCollection).to.be.instanceof(
-    MethodCollection,
-    'Invalid argument "methodCollection" when adding a method in a ' +
-    'MethodCollection (it has to be a MethodCollection instance)'
-  );
-
-  expect(Object.isExtensible(methodCollection)).to.equal(
-    true,
-    'Cannot add a new method in the MethodCollection because it is not ' +
-    'extensible'
-  );
-
-  expect(name).to.be.a(
-    'string',
-    'Invalid argument "name" when adding a method in a MethodCollection (it ' +
-    'has to be a string)'
-  );
-
+function _addMethod(methodCollection, func, name) {
   expect(func).to.be.a(
     'function',
     'Invalid argument "func" when adding a method called "' + name + '" in a ' +
     'MethodCollection (it has to be a function)'
-  );
-
-  expect(methodCollection).to.not.have.ownProperty(
-    name,
-    'Duplicated method name "' + name + '" in a MethodCollection'
   );
 
   Object.defineProperty(methodCollection, name, {

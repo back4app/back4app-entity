@@ -135,11 +135,14 @@ Object.defineProperty(Entity, 'methods', {
 /**
  * Private function used to get the specify function specific for the current
  * Entity class.
- * @memberof module:back4app/entity/models.Entity
+ * @name module:back4app/entity/models.Entity~_getSpecifyFunction
+ * @function
  * @param {!Class} CurrentEntity The currentEntity for which the specify
  * function will be got.
  * @returns {function} The specify function.
  * @private
+ * @example
+ * Entity.specify = _getSpecifyFunction(Entity);
  */
 var _getSpecifyFunction = function (CurrentEntity) {
   return function () {
@@ -350,11 +353,14 @@ Entity.specify = _getSpecifyFunction(Entity);
 /**
  * Private function used to get the new function specific for the current Entity
  * class.
- * @memberof module:back4app/entity/models.Entity
+ * @name module:back4app/entity/models.Entity~_getNewFunction
+ * @function
  * @param {!Class} CurrentEntity The current entity class for which the new
  * function will be created.
  * @returns {function} The new function.
  * @private
+ * @example
+ * Entity.new = _getNewFunction(Entity);
  */
 var _getNewFunction = function (CurrentEntity) {
   return function (entity) {
