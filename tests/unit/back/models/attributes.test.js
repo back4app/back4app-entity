@@ -46,39 +46,41 @@ describe('attributes', function () {
         }).to.throw(AssertionError);
       });
 
-      it('expect to work with right arguments', function () {
-        attribute = new attributes.Attribute({
-          name: 'attribute'
-        });
-        attribute = new attributes.Attribute({
-          name: 'attribute',
-          type: 'String'
-        });
-        attribute = new attributes.Attribute({
-          name: 'attribute',
-          default: null
-        });
-        attribute = new attributes.Attribute({
-          name: 'attribute',
-          multiplicity: '0..1',
-        });
-        attribute = new attributes.Attribute({
-          name: 'attribute',
-          type: 'String',
-          multiplicity: '0..1'
-        });
-        attribute = new attributes.Attribute({
-          name: 'attribute',
-          multiplicity: '0..1',
-          default: null
-        });
-        attribute = new attributes.Attribute({
-          name: 'attribute',
-          type: 'String',
-          multiplicity: '0..1',
-          default: null
-        });
-      });
+      it('expect to work with right arguments passing as an object',
+        function () {
+          attribute = new attributes.Attribute({
+            name: 'attribute'
+          });
+          attribute = new attributes.Attribute({
+            name: 'attribute',
+            type: 'String'
+          });
+          attribute = new attributes.Attribute({
+            name: 'attribute',
+            default: null
+          });
+          attribute = new attributes.Attribute({
+            name: 'attribute',
+            multiplicity: '0..1'
+          });
+          attribute = new attributes.Attribute({
+            name: 'attribute',
+            type: 'String',
+            multiplicity: '0..1'
+          });
+          attribute = new attributes.Attribute({
+            name: 'attribute',
+            multiplicity: '0..1',
+            default: null
+          });
+          attribute = new attributes.Attribute({
+            name: 'attribute',
+            type: 'String',
+            multiplicity: '0..1',
+            default: null
+          });
+        }
+      );
     });
   });
 });
