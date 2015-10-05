@@ -151,7 +151,7 @@ function Attribute() {
       return _multiplicity;
     },
     set: function () {
-      throw new Error('Multiplicity of an Attribute cannot be changed.');
+      throw new Error('Multiplicity of an Attribute cannot be changed');
     },
     enumerable: true
   });
@@ -161,7 +161,7 @@ function Attribute() {
       return _default;
     },
     set: function () {
-      throw new Error('Default of an Attribute cannot be changed.');
+      throw new Error('Default of an Attribute cannot be changed');
     },
     enumerable: true
   });

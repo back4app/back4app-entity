@@ -81,7 +81,7 @@ function EntitySpecification() {
       return _attributes;
     },
     set: function () {
-      throw new Error('Attributes cannot be changed');
+      throw new Error('Attributes of an EntitySpecification cannot be changed');
     },
     enumerable: true
   });
@@ -92,14 +92,15 @@ function EntitySpecification() {
       return _methods;
     },
     set: function () {
-      throw new Error('Methods cannot be changed');
+      throw new Error('Methods of an EntitySpecification cannot be changed');
     },
     enumerable: true
   });
 
   expect(arguments).to.have.length.below(
     3,
-    'Invalid arguments length when creating a new EntitySpecification'
+    'Invalid arguments length when creating a new EntitySpecification (it ' +
+    'has to be passed less than 3 arguments)'
   );
 
   if (arguments.length === 1) {
@@ -107,13 +108,15 @@ function EntitySpecification() {
 
     expect(specification).to.be.an(
       'object',
-      'Invalid argument type when creating a new EntitySpecification'
+      'Invalid argument type when creating a new EntitySpecification (it has ' +
+      'to be an object)'
     );
+
     for (var property in specification) {
       expect(['attributes', 'methods']).to.include(
         property,
-        'Invalid property when creating a new EntitySpecification (valid ' +
-        'properties are "attributes" and "methods")'
+        'Invalid property "' + property + '" when creating a new ' +
+        'EntitySpecification (valid properties are "attributes" and "methods")'
       );
     }
 
@@ -187,6 +190,9 @@ function EntitySpecification() {
     _attributes = new attributes.AttributeCollection();
     _methods = new methods.MethodCollection();
   }
+
+  Object.preventExtensions(this);
+  Object.seal(this);
 }
 
 /**
@@ -229,12 +235,7 @@ function EntitySpecification() {
  * @param {?(boolean|number|string|Object|function)} [default] It is the default
  * expression of the attribute.
  */
-EntitySpecification.prototype.addAttribute = function () {
-  attributes.AttributeCollection.add.apply(
-    null,
-    [this.attributes].concat(arguments)
-  );
-};
+EntitySpecification.prototype.addAttribute = function () {};
 
 /**
  * Adds a new method to the methods in the specification.
@@ -243,6 +244,4 @@ EntitySpecification.prototype.addAttribute = function () {
  * @param {!function} func This is the method's function to be added.
  * @param {!string} name This is the name of the method.
  */
-EntitySpecification.prototype.addMethod = function (func, name) {
-  methods.MethodCollection.add(this.methods, func, name);
-};
+EntitySpecification.prototype.addMethod = function (func, name) {};
