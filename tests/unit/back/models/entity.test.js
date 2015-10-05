@@ -63,6 +63,35 @@ describe('Entity', function () {
     );
   });
 
+  describe('.attributes', function () {
+    it(
+      'expect to exist as a static property and contain the consolidated ' +
+      'attributes',
+      function () {
+        var consolidatedAttributes = [];
+
+        for (var consolidatedAttribute in C11.attributes) {
+          expect(consolidatedAttributes).to.not.contain(consolidatedAttribute);
+          consolidatedAttributes.push(consolidatedAttribute);
+        }
+
+        expect(consolidatedAttributes).to.deep.equal([
+          'c11A1',
+          'c1A1',
+          'c1A2',
+          'c1A3',
+          'c1A4',
+          'c1A5',
+          'c1A6',
+          'c1A7',
+          'c1A8',
+          'c1A9',
+          'c1A10'
+        ]);
+      }
+    );
+  });
+
   describe('.new', function () {
     it('expect to exist', function () {
       expect(Entity).itself.to.respondTo('new');

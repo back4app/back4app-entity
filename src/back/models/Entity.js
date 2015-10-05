@@ -81,6 +81,7 @@ Entity.specification = null;
  * @type
  * {!Object.<!string, !module:back4app/entity/models/attributes.Attribute>}
  * @readonly
+ * var consolidatedAttributes = Entity.attributes;
  */
 Entity.attributes = null;
 /**
