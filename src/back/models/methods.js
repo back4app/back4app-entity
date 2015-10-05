@@ -53,6 +53,7 @@ function MethodCollection(methods) {
   }
 
   Object.preventExtensions(this);
+  Object.seal(this);
 }
 
 /**

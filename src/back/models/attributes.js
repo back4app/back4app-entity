@@ -67,6 +67,14 @@ function Attribute() {
    * @name module:back4app/entity/models/attributes.Attribute#name
    * @type {!string}
    * @readonly
+   * @example
+   * var attribute = new attributes.Attribute(
+   *   'attribute',
+   *   'String',
+   *   '0..1',
+   *   'default'
+   * );
+   * console.log(attribute.name); // Logs "attribute"
    */
   this.name = null;
   /**
@@ -74,6 +82,14 @@ function Attribute() {
    * @name module:back4app/entity/models/attributes.Attribute#type
    * @type {!string}
    * @readonly
+   * @example
+   * var attribute = new attributes.Attribute(
+   *   'attribute',
+   *   'String',
+   *   '0..1',
+   *   'default'
+   * );
+   * console.log(attribute.type); // Logs "String"
    */
   this.type = null;
   /**
@@ -81,6 +97,14 @@ function Attribute() {
    * @name module:back4app/entity/models/attributes.Attribute#multiplicity
    * @type {!string}
    * @readonly
+   * @example
+   * var attribute = new attributes.Attribute(
+   *   'attribute',
+   *   'String',
+   *   '0..1',
+   *   'default'
+   * );
+   * console.log(attribute.multiplicity); // Logs "0..1"
    */
   this.multiplicity = null;
   /**
@@ -88,6 +112,14 @@ function Attribute() {
    * @name module:back4app/entity/models/attributes.Attribute#default
    * @type {?(boolean|number|string|Object|function)}
    * @readonly
+   * @example
+   * var attribute = new attributes.Attribute(
+   *   'attribute',
+   *   'String',
+   *   '0..1',
+   *   'default'
+   * );
+   * console.log(attribute.default); // Logs "default"
    */
   this.default = null;
 
@@ -230,6 +262,7 @@ function Attribute() {
   }
 
   Object.preventExtensions(this);
+  Object.seal(this);
 }
 
 /**

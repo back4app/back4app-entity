@@ -23,7 +23,7 @@ function Entity() {
    * @readonly
    * @example
    * var entity = new Entity();
-   * console.log(entity.Entity == Entity); // Logs true
+   * console.log(entity.Entity == Entity); // Logs "true"
    */
   this.Entity = null;
 
@@ -44,7 +44,7 @@ function Entity() {
    * @example
    * var MyEntity = Entity.specify();
    * var myEntity = new MyEntity();
-   * console.log(myEntity.General == Entity); // Logs true
+   * console.log(myEntity.General == Entity); // Logs "true"
    */
   this.General = null;
 
