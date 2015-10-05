@@ -275,17 +275,30 @@ function Attribute() {
  * [attributes] The attributes to be added in the collection. They can be given
  * as an Array or a Dictionary of
  * {@link module:back4app/entity/models/attributes.Attribute}.
+ * @example
+ * var attributeCollection = new AttributeCollection();
+ * @example
+ * var attributeCollection = new AttributeCollection(null);
+ * @example
+ * var attributeCollection = new AttributeCollection({});
+ * @example
+ * var attributeCollection = new AttributeCollection({
+ *   attribute1: new Attribute('attribute1'),
+ *   attribute2: new Attribute('attribute2')
+ * });
  */
 function AttributeCollection(attributes) {
   expect(arguments).to.have.length.below(
     2,
-    'Invalid arguments length when creating an AttributeCollection'
+    'Invalid arguments length when creating an AttributeCollection (it has ' +
+    'to be passed less than 2 arguments)'
   );
 
   if (attributes) {
     expect(attributes).to.be.an(
       'object',
-      'Invalid argument type when creating an AttributeCollection'
+      'Invalid argument type when creating an AttributeCollection (it has to ' +
+      'be an object)'
     );
 
     if (attributes instanceof Array) {
@@ -298,6 +311,9 @@ function AttributeCollection(attributes) {
       }
     }
   }
+
+  Object.preventExtensions(this);
+  Object.seal(this);
 }
 
 /**
