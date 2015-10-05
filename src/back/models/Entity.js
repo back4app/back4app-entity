@@ -81,6 +81,7 @@ Entity.specification = null;
  * @type
  * {!Object.<!string, !module:back4app/entity/models/attributes.Attribute>}
  * @readonly
+ * @example
  * var consolidatedAttributes = Entity.attributes;
  */
 Entity.attributes = null;
@@ -88,6 +89,8 @@ Entity.attributes = null;
  * This is a dictionary with a consolidation of the Entity's methods.
  * @type {!Object.<!string, !module:back4app/entity/models/methods.Method>}
  * @readonly
+ * @example
+ * var consolidatedMethods = Entity.methods;
  */
 Entity.methods = null;
 

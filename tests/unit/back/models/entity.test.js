@@ -2,7 +2,9 @@
 
 var expect = require('chai').expect;
 var Entity = require('../../../../src/back/models/Entity');
-var EntitySpecification = require('../../../../src/back/models/EntitySpecification');
+var EntitySpecification = require(
+  '../../../../src/back/models/EntitySpecification'
+);
 
 describe('Entity', function () {
   var entity;
@@ -87,6 +89,28 @@ describe('Entity', function () {
           'c1A8',
           'c1A9',
           'c1A10'
+        ]);
+      }
+    );
+  });
+
+  describe('.methods', function () {
+    it(
+      'expect to exist as a static property and contain the consolidated ' +
+      'methods',
+      function () {
+        var consolidatedMethods = [];
+
+        for (var consolidatedMethod in C11.methods) {
+          expect(consolidatedMethods).to.not.contain(consolidatedMethod);
+          consolidatedMethods.push(consolidatedMethod);
+        }
+
+        expect(consolidatedMethods).to.deep.equal([
+          'c1M1',
+          'c11M',
+          'c1A6M',
+          'c1M2'
         ]);
       }
     );
