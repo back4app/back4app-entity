@@ -83,6 +83,7 @@ function _addMethod(methodCollection, func, name) {
   Object.defineProperty(methodCollection, name, {
     value: func,
     enumerable: true,
-    writable: false
+    writable: false,
+    configurable: false
   });
 }

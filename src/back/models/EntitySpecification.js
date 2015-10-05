@@ -131,9 +131,12 @@ function EntitySpecification() {
       return _attributes;
     },
     set: function () {
-      throw new Error('Attributes of an EntitySpecification cannot be changed');
+      throw new Error(
+        'Attributes of an EntitySpecification instance cannot be changed'
+      );
     },
-    enumerable: true
+    enumerable: true,
+    configurable: false
   });
 
   var _methods = null;
@@ -142,9 +145,12 @@ function EntitySpecification() {
       return _methods;
     },
     set: function () {
-      throw new Error('Methods of an EntitySpecification cannot be changed');
+      throw new Error(
+        'Methods of an EntitySpecification instance cannot be changed'
+      );
     },
-    enumerable: true
+    enumerable: true,
+    configurable: false
   });
 
   expect(arguments).to.have.length.below(

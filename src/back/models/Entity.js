@@ -26,17 +26,6 @@ function Entity() {
    * console.log(entity.Entity == Entity); // Logs "true"
    */
   this.Entity = null;
-
-  Object.defineProperty(this, 'Entity', {
-    get: function () {
-      return Entity;
-    },
-    set: function () {
-      throw new Error('Property "Entity" cannot be changed in an Entity class');
-    },
-    configurable: true
-  });
-
   /**
    * This is a read-only property to get the general Entity Class of an
    * instance. This is just an alias to this.Entity.General.
@@ -49,13 +38,24 @@ function Entity() {
    */
   this.General = null;
 
+  Object.defineProperty(this, 'Entity', {
+    value: Entity,
+    enumerable: false,
+    writable: false,
+    configurable: true
+  });
+
   Object.defineProperty(this, 'General', {
     get: function () {
       return this.Entity.General;
     },
     set: function () {
-      throw new Error('General cannot be changed');
-    }
+      throw new Error(
+        'General property of an Entity instance cannot be changed'
+      );
+    },
+    enumerable: false,
+    configurable: true
   });
 }
 
@@ -68,36 +68,12 @@ function Entity() {
  * var generalAttributes = SpecificEntity.General.attributes;
  */
 Entity.General = null;
-
-Object.defineProperty(Entity, 'General', {
-  get: function () {
-    return null;
-  },
-  set: function () {
-    throw new Error('General cannot be changed');
-  },
-  enumerable: true
-});
-
 /**
  * This is the specification of the current Entity Class.
  * @type {!module:back4app/entity/models.EntitySpecification}
  * @readonly
  */
 Entity.specification = null;
-
-var _specification = new EntitySpecification();
-
-Object.defineProperty(Entity, 'specification', {
-  get: function () {
-    return _specification;
-  },
-  set: function () {
-    throw  new Error('Specification cannot be changed');
-  },
-  enumerable: true
-});
-
 /**
  * This is a dictionary with a consolidation of the Entity's attributes.
  * @type
@@ -105,17 +81,6 @@ Object.defineProperty(Entity, 'specification', {
  * @readonly
  */
 Entity.attributes = null;
-
-Object.defineProperty(Entity, 'attributes', {
-  get: function () {
-    return {};
-  },
-  set: function () {
-    throw  new Error('Attributes cannot be changed');
-  },
-  enumerable: true
-});
-
 /**
  * This is a dictionary with a consolidation of the Entity's methods.
  * @type {!Object.<!string, !module:back4app/entity/models/methods.Method>}
@@ -123,14 +88,35 @@ Object.defineProperty(Entity, 'attributes', {
  */
 Entity.methods = null;
 
+Entity.specify = null;
+Entity.new = null;
+
+Object.defineProperty(Entity, 'General', {
+  value: null,
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
+
+Object.defineProperty(Entity, 'specification', {
+  value: new EntitySpecification(),
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
+
+Object.defineProperty(Entity, 'attributes', {
+  value: {},
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
+
 Object.defineProperty(Entity, 'methods', {
-  get: function () {
-    return {};
-  },
-  set: function () {
-    throw  new Error('Methods cannot be changed');
-  },
-  enumerable: true
+  value: {},
+  enumerable: true,
+  writable: false,
+  configurable: false
 });
 
 /**
@@ -156,25 +142,20 @@ var _getSpecifyFunction = function (CurrentEntity) {
       CurrentEntity.call(this);
 
       Object.defineProperty(this, 'Entity', {
-        get: function () {
-          return SpecificEntity;
-        },
-        set: function () {
-          throw new Error('Entity cannot be changed');
-        }
+        value: SpecificEntity,
+        enumerable: false,
+        writable: false,
+        configurable: true
       });
     }
 
     classes.generalize(CurrentEntity, SpecificEntity);
 
     Object.defineProperty(SpecificEntity, 'General', {
-      get: function () {
-        return CurrentEntity;
-      },
-      set: function () {
-        throw new Error('General cannot be changed');
-      },
-      enumerable: true
+      value: CurrentEntity,
+      enumerable: true,
+      writable: false,
+      configurable: false
     });
 
     var _specificEntitySpecification = null;

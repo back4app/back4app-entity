@@ -225,26 +225,29 @@ function Attribute() {
   Object.defineProperty(this, 'name', {
     value: _name,
     enumerable: true,
-    writable: false
+    writable: false,
+    configurable: false
   });
 
   Object.defineProperty(this, 'type', {
     value: _type,
     enumerable: true,
-    writable: false
+    writable: false,
+    configurable: false
   });
 
   Object.defineProperty(this, 'multiplicity', {
     value: _multiplicity,
     enumerable: true,
-    writable: false
+    writable: false,
+    configurable: false
   });
 
-  var _default = null;
   Object.defineProperty(this, 'default', {
     value: _default,
     enumerable: true,
-    writable: false
+    writable: false,
+    configurable: false
   });
 
   Object.preventExtensions(this);
@@ -412,6 +415,7 @@ function _addAttribute() {
   Object.defineProperty(attributeCollection, attribute.name, {
     value: attribute,
     enumerable: true,
-    writable: false
+    writable: false,
+    configurable: false
   });
 }
