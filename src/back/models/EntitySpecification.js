@@ -75,11 +75,6 @@ function EntitySpecification() {
    */
   this.methods = null;
 
-  expect(arguments).to.have.length.below(
-    3,
-    'Invalid arguments length when creating a new EntitySpecification'
-  );
-
   var _attributes = null;
   Object.defineProperty(this, 'attributes', {
     get: function () {
@@ -101,6 +96,11 @@ function EntitySpecification() {
     },
     enumerable: true
   });
+
+  expect(arguments).to.have.length.below(
+    3,
+    'Invalid arguments length when creating a new EntitySpecification'
+  );
 
   if (arguments.length === 1) {
     var specification = arguments[0];

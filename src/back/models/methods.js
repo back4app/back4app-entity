@@ -15,7 +15,8 @@ module.exports = {};
 module.exports.MethodCollection = MethodCollection;
 
 /**
- * Collection of Entity Methods. The collection is not extensible.
+ * Collection of Entity Methods. An instance of MethodCollection is not
+ * extensible.
  * @constructor
  * @memberof module:back4app/entity/models/methods
  * @param {?Object.<!string, !function>} [methods] The methods to be added in
@@ -36,7 +37,7 @@ function MethodCollection(methods) {
   expect(arguments).to.have.length.below(
     2,
     'Invalid arguments length when creating a new MethodCollection (it has ' +
-    'to be passed 2 arguments)'
+    'to be passed less than 2 arguments)'
   );
 
   if (methods) {

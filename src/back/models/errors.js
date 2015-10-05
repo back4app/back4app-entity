@@ -35,7 +35,8 @@ module.exports.EntityNotFoundError = EntityNotFoundError;
 function EntityNotFoundError(entity, innerError) {
   expect(arguments).to.have.length.below(
     3,
-    'Invalid arguments length when creating a new EntityNotFoundError'
+    'Invalid arguments length when creating a new EntityNotFoundError (it ' +
+    'has to be passed less than 3 arguments)'
   );
 
   this.name = 'EntityNotFoundError';

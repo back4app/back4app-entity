@@ -35,7 +35,8 @@ module.exports.generalize = generalize;
 function generalize(GeneralClass, SpecificClass) {
   expect(arguments).to.have.length(
     2,
-    'Invalid argument length when generalizing classes'
+    'Invalid argument length when generalizing classes (it has to be passed ' +
+    '2 arguments)'
   );
   expect(GeneralClass).to.be.a(
     'function',

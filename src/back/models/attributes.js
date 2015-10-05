@@ -11,11 +11,13 @@ var expect = require('chai').expect;
  * @module back4app/entity/models/attributes
  */
 module.exports = {};
+
 module.exports.Attribute = Attribute;
 module.exports.AttributeCollection = AttributeCollection;
 
 /**
- * Holds an Entity Attribute information.
+ * Holds an Entity Attribute information. An instance of Attribute is not
+ * extensible.
  * @memberof module:back4app/entity/models/attributes
  * @name Attribute
  * @constructor
@@ -32,7 +34,8 @@ module.exports.AttributeCollection = AttributeCollection;
  * the default expression of the attribute.
  */
 /**
- * Holds an Entity Attribute information.
+ * Holds an Entity Attribute information. An instance of Attribute is not
+ * extensible.
  * @memberof module:back4app/entity/models/attributes
  * @name Attribute
  * @constructor
@@ -45,12 +48,6 @@ module.exports.AttributeCollection = AttributeCollection;
  * expression of the attribute.
  */
 function Attribute() {
-  expect(arguments).to.have.length.within(
-    1,
-    4,
-    'Invalid arguments length when creating an Attribute'
-  );
-
   /**
    * This is the attribute' name.
    * @name module:back4app/entity/models/attributes.Attribute#name
@@ -58,8 +55,6 @@ function Attribute() {
    * @readonly
    */
   this.name = null;
-  var _name = null;
-
   /**
    * This is the attribute type.
    * @name module:back4app/entity/models/attributes.Attribute#type
@@ -67,8 +62,6 @@ function Attribute() {
    * @readonly
    */
   this.type = null;
-  var _type = 'Object';
-
   /**
    * This is the attribute's multiplicity.
    * @name module:back4app/entity/models/attributes.Attribute#multiplicity
@@ -76,8 +69,6 @@ function Attribute() {
    * @readonly
    */
   this.multiplicity = null;
-  var _multiplicity = '1';
-
   /**
    * This is the attribute's default expression.
    * @name module:back4app/entity/models/attributes.Attribute#default
@@ -85,36 +76,93 @@ function Attribute() {
    * @readonly
    */
   this.default = null;
+
+  var _name = null;
+  Object.defineProperty(this, 'name', {
+    get: function () {
+      return _name;
+    },
+    set: function () {
+      throw new Error('Name of an Attribute cannot be changed.');
+    },
+    enumerable: true
+  });
+
+  var _type = 'Object';
+  Object.defineProperty(this, 'type', {
+    get: function () {
+      return _type;
+    },
+    set: function () {
+      throw new Error('Type of an Attribute cannot be changed.');
+    },
+    enumerable: true
+  });
+
+  var _multiplicity = '1';
+  Object.defineProperty(this, 'multiplicity', {
+    get: function () {
+      return _multiplicity;
+    },
+    set: function () {
+      throw new Error('Multiplicity of an Attribute cannot be changed.');
+    },
+    enumerable: true
+  });
+
+  Object.defineProperty(this, 'default', {
+    get: function () {
+      return _default;
+    },
+    set: function () {
+      throw new Error('Default of an Attribute cannot be changed.');
+    },
+    enumerable: true
+  });
   var _default = null;
+
+  expect(arguments).to.have.length.within(
+    1,
+    4,
+    'Invalid arguments length when creating an Attribute (it has to be ' +
+    'passed from 1 to 4 arguments)'
+  );
 
   if (arguments.length === 1 && typeof arguments[0] !== 'string') {
     var attribute = arguments[0];
 
     expect(attribute).to.be.an(
       'object',
-      'Invalid argument type when creating an Attribute'
+      'Invalid argument type when creating an Attribute (it has to be an ' +
+      'object or a string)'
     );
-
-    for (var property in attribute) {
-      expect(['name', 'type', 'multiplicity', 'default']).to.include(
-        property,
-        'Invalid property when creating an Attribute (valid properties are ' +
-        '"name", "type", "multiplicity" and "default")'
-      );
-    }
 
     expect(attribute).to.have.ownProperty(
       'name',
       'Property "name" is required when creating an Attribute'
     );
+    expect(attribute.name).to.be.a(
+      'string',
+      'Invalid property "name" when creating an Attribute (it has to be a ' +
+      'string)'
+    )
 
     _name = attribute.name;
+
+    for (var property in attribute) {
+      expect(['name', 'type', 'multiplicity', 'default']).to.include(
+        property,
+        'Invalid property "' + property + '" when creating an Attribute ' +
+        'called "' + _name + '" (valid properties are "name", ' +
+        '"type", "multiplicity" and "default")'
+      );
+    }
 
     if (attribute.hasOwnProperty('type')) {
       expect(attribute.type).to.be.a(
         'string',
-        'Invalid property "type" when creating an Attribute (it has to be a ' +
-        'string)'
+        'Invalid property "type" when creating an Attribute called "' +
+        _name + '" (it has to be a string)'
       );
 
       _type = attribute.type;
@@ -123,8 +171,8 @@ function Attribute() {
     if (attribute.hasOwnProperty('multiplicity')) {
       expect(attribute.multiplicity).to.be.a(
         'string',
-        'Invalid property "multiplicity" when creating an Attribute (it has ' +
-        'to be a string'
+        'Invalid property "multiplicity" when creating an Attribute called "' +
+        _name + '" (it has to be a string'
       );
 
       _multiplicity = attribute.multiplicity;
@@ -145,8 +193,8 @@ function Attribute() {
     if (arguments.length > 1) {
       expect(arguments[1]).to.be.a(
         'string',
-        'Invalid argument "type" when creating an Attribute (it has to be a ' +
-        'string)'
+        'Invalid argument "type" when creating an Attribute called "' + _name +
+        '" (it has to be a string)'
       );
 
       _type = arguments[1];
@@ -155,8 +203,8 @@ function Attribute() {
     if (arguments.length > 2) {
       expect(arguments[2]).to.be.a(
         'string',
-        'Invalid argument "multiplicity when creating an Attribute (it has ' +
-        'to be a string'
+        'Invalid argument "multiplicity when creating an Attribute called "' +
+        _name + '" (it has to be a string)'
       );
 
       _multiplicity = arguments[2];
@@ -167,45 +215,7 @@ function Attribute() {
     }
   }
 
-  Object.defineProperty(this, 'name', {
-    get: function () {
-      return _name;
-    },
-    set: function () {
-      throw new Error('Name cannot be changed.');
-    },
-    enumerable: true
-  });
-
-  Object.defineProperty(this, 'type', {
-    get: function () {
-      return _type;
-    },
-    set: function () {
-      throw new Error('Name cannot be changed.');
-    },
-    enumerable: true
-  });
-
-  Object.defineProperty(this, 'multiplicity', {
-    get: function () {
-      return _multiplicity;
-    },
-    set: function () {
-      throw new Error('Name cannot be changed.');
-    },
-    enumerable: true
-  });
-
-  Object.defineProperty(this, 'default', {
-    get: function () {
-      return _default;
-    },
-    set: function () {
-      throw new Error('Name cannot be changed.');
-    },
-    enumerable: true
-  });
+  Object.preventExtensions(this);
 }
 
 /**
