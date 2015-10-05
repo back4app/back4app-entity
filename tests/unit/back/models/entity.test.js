@@ -1,10 +1,14 @@
 'use strict';
 
-var expect = require('chai').expect;
+var chai = require('chai');
+var expect = chai.expect;
+var AssertionError = chai.AssertionError;
 var Entity = require('../../../../src/back/models/Entity');
 var EntitySpecification = require(
   '../../../../src/back/models/EntitySpecification'
 );
+var attributes = require('../../../../src/back/models/attributes');
+var methods = require('../../../../src/back/models/methods');
 
 describe('Entity', function () {
   var entity;
@@ -17,13 +21,62 @@ describe('Entity', function () {
   var c11;
   var c2;
 
-  it('expect to instantiate new Entity without error', function () {
-    entity = new Entity();
+  context('interface tests', function () {
+    it('expect to instantiate new Entity without error', function () {
+      entity = new Entity();
+    });
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        new Entity(null)
+      }).to.throw(AssertionError);
+    });
   });
 
   describe('.specify()', function () {
     it('expect to exist as a static method', function () {
       expect(Entity).itself.to.respondTo('specify');
+    });
+
+    it('expect to work with right arguments', function () {
+      Entity.specify();
+
+      Entity.specify(null);
+
+      Entity.specify({});
+
+      Entity.specify({
+        attributes: [],
+        methods: {}
+      });
+
+      Entity.specify({
+        attributes: new attributes.AttributeCollection(),
+        methods: new methods.MethodCollection()
+      });
+
+      Entity.specify(new EntitySpecification());
+
+      Entity.specify(null, null);
+
+      Entity.specify({}, {});
+
+      Entity.specify([], {});
+
+      Entity.specify(
+        new attributes.AttributeCollection(),
+        new methods.MethodCollection()
+      );
+
+      Entity.specify(
+        null,
+        new methods.MethodCollection()
+      );
+
+      Entity.specify(
+        new attributes.AttributeCollection(),
+        null
+      );
     });
 
     it('expect to run without error', function () {
@@ -34,6 +87,12 @@ describe('Entity', function () {
       c1 = new C1();
       c11 = new C11();
       c2 = new C2();
+    });
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        Entity.specify({}, {}, {});
+      }).to.throw(AssertionError);
     });
   });
 
@@ -137,6 +196,12 @@ describe('Entity', function () {
         expect(C2.new()()).to.be.an.instanceof(C2);
       }
     );
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        Entity.new('C1', null);
+      }).to.throw(AssertionError);
+    });
   });
 
   describe('#Entity', function () {

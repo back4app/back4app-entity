@@ -38,6 +38,11 @@ function Entity() {
    */
   this.General = null;
 
+  expect(arguments).to.have.length(
+    0,
+    'Invalid arguments length when creating an Entity (it has not to be ' +
+    'passed any argument)');
+
   Object.defineProperty(this, 'Entity', {
     value: Entity,
     enumerable: false,
@@ -141,7 +146,8 @@ var _getSpecifyFunction = function (CurrentEntity) {
   return function () {
     expect(arguments).to.have.length.below(
       3,
-      'Invalid arguments length when specifying an Entity'
+      'Invalid arguments length when specifying an Entity (it has to be ' +
+      'passed less than 3 arguments)'
     );
 
     function SpecificEntity() {
@@ -166,7 +172,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
 
     var _specificEntitySpecification = null;
 
-    if (arguments.length === 1) {
+    if (arguments.length === 1 && arguments[0]) {
       var specification = arguments[0];
 
       expect(specification).to.be.an(
@@ -184,7 +190,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
       var methods = arguments[1];
 
       if (attributes) {
-        expect(attributes).to.be.an(
+        expect(typeof attributes).to.equal(
           'object',
           'Invalid property "attributes" when specifying an Entity (it has ' +
           'to be an object)'

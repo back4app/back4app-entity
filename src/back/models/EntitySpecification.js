@@ -179,7 +179,7 @@ function EntitySpecification() {
       }
 
       if (specification.attributes) {
-        expect(specification.attributes).to.be.an(
+        expect(typeof specification.attributes).to.equal(
           'object',
           'Invalid property "attributes" when creating a new ' +
           'EntitySpecification (it has to be an object)'
@@ -217,7 +217,7 @@ function EntitySpecification() {
     var methodsArgument = arguments[1];
 
     if (attributesArgument) {
-      expect(attributesArgument).to.be.an(
+      expect(typeof attributesArgument).to.equal(
         'object',
         'Invalid argument "attributes" when creating a new ' +
         'EntitySpecification (it has to be an object)'
