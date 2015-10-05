@@ -145,7 +145,7 @@ function Attribute() {
       'string',
       'Invalid property "name" when creating an Attribute (it has to be a ' +
       'string)'
-    )
+    );
 
     _name = attribute.name;
 

@@ -73,6 +73,18 @@ describe('methods', function () {
         expect(methods).to.be.deep.equal(['method1', 'method2']);
       });
 
+      it('expect to be not extensible', function () {
+        expect(Object.isExtensible(methodCollection)).to.equal(false);
+
+        expect(function () {
+          methodCollection.method3 = function () {
+            return 'will never execute';
+          };
+        }).to.throw(TypeError);
+
+        expect(methodCollection).to.not.respondTo('method3');
+      });
+
       it('expect to not allow to delete method', function () {
         expect(function () {
           delete methodCollection.method1;
