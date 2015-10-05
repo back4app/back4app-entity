@@ -109,7 +109,7 @@ describe('attributes', function () {
             'attribute',
             'String',
             '0..1',
-            null
+            'defaultValue'
           );
         }
       );
@@ -192,7 +192,7 @@ describe('attributes', function () {
           .that.equals('0..1');
 
         expect(attribute).to.have.property('default')
-          .that.equals(null);
+          .that.equals('defaultValue');
       });
 
       it('expect to be not extensible', function () {
@@ -232,7 +232,7 @@ describe('attributes', function () {
         }).to.throw(Error);
 
         expect(attribute).to.have.property('default')
-          .that.equals(null);
+          .that.equals('defaultValue');
       });
 
       it('expect to not allow to change property', function () {
@@ -262,7 +262,16 @@ describe('attributes', function () {
         }).to.throw(Error);
 
         expect(attribute).to.have.property('default')
-          .that.equals(null);
+          .that.equals('defaultValue');
+      });
+
+      it('expect to have the right default values', function () {
+        attribute = new attributes.Attribute('attributeName');
+
+        expect(attribute.name).to.equal('attributeName');
+        expect(attribute.type).to.equal('Object');
+        expect(attribute.multiplicity).to.equal('1');
+        expect(attribute.default).to.equal(null);
       });
     });
   });
