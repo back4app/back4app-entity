@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect;
 var Entity = require('../../../../src/back/models/Entity');
+var EntitySpecification = require('../../../../src/back/models/EntitySpecification');
 
 describe('Entity', function () {
   var entity;
@@ -46,6 +47,18 @@ describe('Entity', function () {
           .that.equals(C1);
         expect(C2).to.have.property('General')
           .that.equals(Entity);
+      }
+    );
+  });
+
+  describe('.specification', function () {
+    it(
+      'expect to exist as a static property and contain the right class',
+      function () {
+        var entitySpecification = new EntitySpecification();
+        var MyEntity = Entity.specify(entitySpecification);
+
+        expect(MyEntity.specification).to.equal(entitySpecification);
       }
     );
   });

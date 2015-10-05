@@ -72,6 +72,8 @@ Entity.General = null;
  * This is the specification of the current Entity Class.
  * @type {!module:back4app/entity/models.EntitySpecification}
  * @readonly
+ * @example
+ * var entitySpecification = Entity.specification;
  */
 Entity.specification = null;
 /**
