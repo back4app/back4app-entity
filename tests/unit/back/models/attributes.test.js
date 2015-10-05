@@ -81,6 +81,29 @@ describe('attributes', function () {
           });
         }
       );
+
+      it('expect to work with right arguments passing as arguments',
+        function () {
+          attribute = new attributes.Attribute(
+            'attribute'
+          );
+          attribute = new attributes.Attribute(
+            'attribute',
+            'String'
+          );
+          attribute = new attributes.Attribute(
+            'attribute',
+            'String',
+            '0..1'
+          );
+          attribute = new attributes.Attribute(
+            'attribute',
+            'String',
+            '0..1',
+            null
+          );
+        }
+      );
     });
   });
 });

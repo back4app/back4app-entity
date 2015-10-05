@@ -53,6 +53,13 @@ module.exports.AttributeCollection = AttributeCollection;
  * It is optional and if not passed it will assume '1' as the default value.
  * @param {?(boolean|number|string|Object|function)} [default] It is the default
  * expression of the attribute.
+ * @example
+ * var attribute = new attributes.Attribute(
+ *   'attribute',
+ *   'String',
+ *   '0..1',
+ *   null
+ * );
  */
 function Attribute() {
   /**
