@@ -207,11 +207,32 @@ describe('attributes', function () {
 
       it('expect to not allow to delete property', function () {
         expect(function () {
-          delete attribute.default;
+          delete attribute.name;
         }).to.throw(Error);
 
         expect(attribute).to.have.property('name')
           .that.equals('attribute');
+
+        expect(function () {
+          delete attribute.type;
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('type')
+          .that.equals('String');
+
+        expect(function () {
+          delete attribute.multiplicity;
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('multiplicity')
+          .that.equals('0..1');
+
+        expect(function () {
+          delete attribute.default;
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('default')
+          .that.equals(null);
       });
 
       it('expect to not allow to change property', function () {
@@ -221,6 +242,27 @@ describe('attributes', function () {
 
         expect(attribute).to.have.property('name')
           .that.equals('attribute');
+
+        expect(function () {
+          attribute.type = 'will not change';
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('type')
+          .that.equals('String');
+
+        expect(function () {
+          attribute.multiplicity = 'will not change';
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('multiplicity')
+          .that.equals('0..1');
+
+        expect(function () {
+          attribute.default = 'will not change';
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('default')
+          .that.equals(null);
       });
     });
   });
