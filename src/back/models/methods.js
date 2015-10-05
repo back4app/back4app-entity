@@ -81,13 +81,8 @@ function _addMethod(methodCollection, func, name) {
   );
 
   Object.defineProperty(methodCollection, name, {
-    get: function () {
-      return func;
-    },
-    set: function () {
-      throw new Error('Method "' + name + '" of a MethodCollection cannot be ' +
-        'changed');
-    },
-    enumerable: true
+    value: func,
+    enumerable: true,
+    writable: false
   });
 }

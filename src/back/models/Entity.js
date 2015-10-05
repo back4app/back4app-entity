@@ -32,8 +32,9 @@ function Entity() {
       return Entity;
     },
     set: function () {
-      throw new Error('Entity cannot be changed');
-    }
+      throw new Error('Property "Entity" cannot be changed in an Entity class');
+    },
+    configurable: true
   });
 
   /**

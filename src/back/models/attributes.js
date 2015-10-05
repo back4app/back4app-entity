@@ -124,47 +124,8 @@ function Attribute() {
   this.default = null;
 
   var _name = null;
-  Object.defineProperty(this, 'name', {
-    get: function () {
-      return _name;
-    },
-    set: function () {
-      throw new Error('Name of an Attribute cannot be changed.');
-    },
-    enumerable: true
-  });
-
   var _type = 'Object';
-  Object.defineProperty(this, 'type', {
-    get: function () {
-      return _type;
-    },
-    set: function () {
-      throw new Error('Type of an Attribute cannot be changed.');
-    },
-    enumerable: true
-  });
-
   var _multiplicity = '1';
-  Object.defineProperty(this, 'multiplicity', {
-    get: function () {
-      return _multiplicity;
-    },
-    set: function () {
-      throw new Error('Multiplicity of an Attribute cannot be changed');
-    },
-    enumerable: true
-  });
-
-  Object.defineProperty(this, 'default', {
-    get: function () {
-      return _default;
-    },
-    set: function () {
-      throw new Error('Default of an Attribute cannot be changed');
-    },
-    enumerable: true
-  });
   var _default = null;
 
   expect(arguments).to.have.length.within(
@@ -260,6 +221,31 @@ function Attribute() {
       _default = arguments[3];
     }
   }
+
+  Object.defineProperty(this, 'name', {
+    value: _name,
+    enumerable: true,
+    writable: false
+  });
+
+  Object.defineProperty(this, 'type', {
+    value: _type,
+    enumerable: true,
+    writable: false
+  });
+
+  Object.defineProperty(this, 'multiplicity', {
+    value: _multiplicity,
+    enumerable: true,
+    writable: false
+  });
+
+  var _default = null;
+  Object.defineProperty(this, 'default', {
+    value: _default,
+    enumerable: true,
+    writable: false
+  });
 
   Object.preventExtensions(this);
   Object.seal(this);
@@ -424,13 +410,8 @@ function _addAttribute() {
   );
 
   Object.defineProperty(attributeCollection, attribute.name, {
-    get: function () {
-      return attribute;
-    },
-    set: function () {
-      throw new Error('Attribute "' + attribute.name + '" of an ' +
-        'AttributeCollection cannot be changed');
-    },
-    enumerable: true
+    value: attribute,
+    enumerable: true,
+    writable: false
   });
 }
