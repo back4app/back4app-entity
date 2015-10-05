@@ -32,6 +32,13 @@ module.exports.AttributeCollection = AttributeCollection;
  * value.
  * @param {?(boolean|number|string|Object|function)} [attribute.default] It is
  * the default expression of the attribute.
+ * @example
+ * var attribute = new attributes.Attribute({
+ *   name: 'attribute',
+ *   type: 'String',
+ *   multiplicity: '0..1',
+ *   default: null
+ * });
  */
 /**
  * Holds an Entity Attribute information. An instance of Attribute is not
