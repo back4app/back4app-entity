@@ -122,18 +122,46 @@ describe('Entity', function () {
           .that.equals(Entity);
       }
     );
+
+    it('expect to not be changed or deleted', function () {
+      expect(function () {
+        delete Entity.General;
+      }).to.throw(Error);
+
+      expect(function () {
+        Entity.General = Entity;
+      }).to.throw(Error);
+
+      expect(Entity).to.have.property('General')
+        .that.equals(null);
+    });
   });
 
   describe('.specification', function () {
+    var entitySpecification = null;
+    var MyEntity = null;
+
     it(
       'expect to exist as a static property and contain the right class',
       function () {
-        var entitySpecification = new EntitySpecification();
-        var MyEntity = Entity.specify(entitySpecification);
+        entitySpecification = new EntitySpecification();
+        MyEntity = Entity.specify(entitySpecification);
 
         expect(MyEntity.specification).to.equal(entitySpecification);
       }
     );
+
+    it('expect to not be changed or deleted', function () {
+      expect(function () {
+        delete MyEntity.specification;
+      }).to.throw(Error);
+
+      expect(function () {
+        MyEntity.specification = new EntitySpecification();
+      }).to.throw(Error);
+
+      expect(MyEntity.specification).to.equal(entitySpecification);
+    });
   });
 
   describe('.attributes', function () {
@@ -163,6 +191,18 @@ describe('Entity', function () {
         ]);
       }
     );
+
+    it('expect to not be changed or deleted', function () {
+      expect(function () {
+        delete C1.attributes;
+      }).to.throw(Error);
+
+      expect(function () {
+        C1.attributes = new attributesAttributeCollection();
+      }).to.throw(Error);
+
+      expect(C1.attributes.c1A1.name).to.equal('c1A1');
+    });
   });
 
   describe('.methods', function () {
@@ -185,6 +225,18 @@ describe('Entity', function () {
         ]);
       }
     );
+
+    it('expect to not be changed or deleted', function () {
+      expect(function () {
+        delete C1.methods;
+      }).to.throw(Error);
+
+      expect(function () {
+        C1.methods = new methods.MethodCollection();
+      }).to.throw(Error);
+
+      expect(C1.methods.c1M1('a1', 'a2')).to.equal('a1a2');
+    });
   });
 
   describe('.new', function () {
@@ -230,6 +282,15 @@ describe('Entity', function () {
           .that.equals(C2);
       }
     );
+
+    it('expect to not be changed', function () {
+      expect(function () {
+        entity.Entity = null;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('Entity')
+        .that.equals(Entity);
+    });
   });
 
   describe('#General', function () {
@@ -246,5 +307,14 @@ describe('Entity', function () {
           .that.equals(Entity);
       }
     );
+
+    it('expect to not be changed', function () {
+      expect(function () {
+        entity.General = Entity;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('General')
+        .that.equals(null);
+    });
   });
 });

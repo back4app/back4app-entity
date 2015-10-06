@@ -384,6 +384,12 @@ var _getNewFunction = function (CurrentEntity) {
     }
 
     return function () {
+      expect(arguments).to.have.length(
+        0,
+        'Invalid arguments length when creating a new Entity (it has ' +
+        'not to be passed any argument)'
+      );
+
       return new EntityClass();
     };
   };
