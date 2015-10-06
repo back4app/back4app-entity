@@ -291,6 +291,23 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * @param {?module:back4app/entity/models.EntitySpecification} [specification]
  * The new Entity specification.
  * @returns {Class} The new Entity Class.
+ * @example
+ * var MyEntity = Entity.specify();
+ * @example
+ * var MyEntity = Entity.specify(null);
+ * @example
+ * var MyEntity = Entity.specify(new EntitySpecification());
+ * @example
+ * var MyEntity = Entity.specify(new EntitySpecification(
+ *   new AttributeCollection([
+ *     new Attribute('attribute1', 'String', '0..1', 'default'),
+ *     new Attribute('attribute2', 'String', '0..1', 'default')
+ *   ]),
+ *   new MethodCollection({
+ *     method1: function () { return 'method1'; },
+ *     method2: function () { return 'method2'; }
+ *   })
+ * ));
  */
 /**
  * Creates a new Entity Class by specifying a general one.
@@ -316,6 +333,28 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * object, as specified in
  * {@link module:back4app/entity/models/methods.MethodCollection}.
  * @returns {Class} The new Entity Class.
+ * @example
+ * var MyEntity = Entity.specify(null, null);
+ * @example
+ * var MyEntity = Entity.specify({}, {});
+ * @example
+ * var MyEntity = Entity.specify([], {});
+ * @example
+ * var MyEntity = Entity.specify(
+ *   new AttributeCollection(),
+ *   new MethodCollection()
+ * );
+ * @example
+ * var MyEntity = Entity.specify(
+ *   new AttributeCollection([
+ *     new Attribute('attribute1', 'String', '0..1', 'default'),
+ *     new Attribute('attribute2', 'String', '0..1', 'default')
+ *   ]),
+ *   new MethodCollection({
+ *     method1: function () { return 'method1'; },
+ *     method2: function () { return 'method2'; }
+ *   })
+ * );
  */
 /**
  * Creates a new Entity Class by specifying a general one.
@@ -342,6 +381,32 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * object, as specified in
  * {@link module:back4app/entity/models/methods.MethodCollection}.
  * @returns {Class} The new Entity Class.
+ * @example
+ * var MyEntity = Entity.specify({});
+ * @example
+ * var MyEntity = Entity.specify({
+ *   attributes: {},
+ *   methods: {}
+ * });
+ * @example
+ * var MyEntity = Entity.specify({
+ *   attributes: {
+ *     attribute1: {
+ *       type: 'String',
+ *       multiplicity: '0..1',
+ *       default: 'default'
+ *     },
+ *     attribute2: {
+ *       type: 'String',
+ *       multiplicity: '0..1',
+ *       default: 'default'
+ *     }
+ *   },
+ *   methods: {
+ *     method1: function () { return 'method1'; },
+ *     method2: function () { return 'method2'; }
+ *   }
+ * });
  */
 Entity.specify = _getSpecifyFunction(Entity);
 
