@@ -263,6 +263,8 @@ function EntitySpecification() {
    * is the attribute to be added. It can be passed as a
    * {@link module:back4app/entity/models/attributes.Attribute} instance.
    * @param {?string} [name] This is the name of the attribute.
+   * @example
+   * entitySpecification.addAttribute(new Attribute('attribute'), 'attribute');
    */
   /**
    * Adds a new attribute to the attributes in the specification
@@ -282,6 +284,13 @@ function EntitySpecification() {
    * @param {?(boolean|number|string|Object|function)} [attribute.default] It is
    * the default expression of the attribute.
    * @param {?string} [name] This is the name of the attribute.
+   * @example
+   * entitySpecification.addAttribute({
+   *   name: 'attribute',
+   *   type: 'string',
+   *   multiplicity: '0..1',
+   *   default: 'default'
+   * }, 'attribute');
    */
   /**
    * Adds a new attribute to the attributes in the specification.
@@ -295,8 +304,25 @@ function EntitySpecification() {
    * default value.
    * @param {?(boolean|number|string|Object|function)} [default] It is the
    * default expression of the attribute.
+   * @example
+   * entitySpecification.addAttribute(
+   *   'attribute',
+   *   'string',
+   *   '0..1',
+   *   'default'
+   * );
    */
-  function addAttribute() {}
+  function addAttribute() {
+    _attributes = attributes.AttributeCollection.concat(
+      _attributes,
+      arguments.length === 1 && arguments[0] instanceof attributes.Attribute
+        ? arguments[0]
+        : new (Function.prototype.bind.apply(
+            attributes.Attribute,
+            [null].concat(Array.prototype.slice.call(arguments))
+          ))()
+    );
+  }
 
   /**
    * Adds a new method to the methods in the specification.
@@ -304,8 +330,19 @@ function EntitySpecification() {
    * @function
    * @param {!function} func This is the method's function to be added.
    * @param {!string} name This is the name of the method.
+   * @example
+   * entitySpecification.addMethod(
+   *   function () { return 'newMethod'; },
+   *   'newMethod'
+   * );
    */
-  function addMethod(func, name) {}
+  function addMethod(func, name) {
+    _methods = methods.MethodCollection.concat(
+      _methods,
+      func,
+      name
+    );
+  }
 
   Object.preventExtensions(this);
   Object.seal(this);

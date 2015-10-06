@@ -382,7 +382,7 @@ function _addAttribute() {
   } else {
     attribute = new (Function.prototype.bind.apply(
       Attribute,
-      [null].concat(arguments.slice(1))
+      [null].concat(Array.prototype.slice.call(arguments, 1))
     ))();
   }
 

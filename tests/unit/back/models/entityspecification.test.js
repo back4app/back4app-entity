@@ -221,4 +221,61 @@ describe('EntitySpecification', function () {
         .to.equal('method2');
     });
   });
+
+  describe('#addAttribute', function () {
+    it(
+      'expect to work with right arguments and have specified behavior',
+      function () {
+        entitySpecification.addAttribute(
+          new attributes.Attribute('attribute3')
+        );
+
+        entitySpecification.addAttribute(
+          'attribute4'
+        );
+
+        entitySpecification.addAttribute({
+          name: 'attribute5'
+        });
+
+        expect(Object.keys(entitySpecification.attributes))
+          .to.deep.equal([
+            'attribute1',
+            'attribute2',
+            'attribute3',
+            'attribute4',
+            'attribute5']
+        );
+
+        expect(entitySpecification.attributes.attribute1.name)
+          .to.equal('attribute1');
+        expect(entitySpecification.attributes.attribute2.name)
+          .to.equal('attribute2');
+        expect(entitySpecification.attributes.attribute3.name)
+          .to.equal('attribute3');
+      }
+    );
+  });
+
+  describe('#addMethod', function () {
+    it(
+      'expect to work with right arguments and have specified behavior',
+      function () {
+        entitySpecification.addMethod(
+          function () { return 'method3'; },
+          'method3'
+        );
+
+        expect(Object.keys(entitySpecification.methods))
+          .to.deep.equal(['method1', 'method2', 'method3']);
+
+        expect(entitySpecification.methods.method1())
+          .to.equal('method1');
+        expect(entitySpecification.methods.method2())
+          .to.equal('method2');
+        expect(entitySpecification.methods.method3())
+          .to.equal('method3');
+      }
+    );
+  });
 });
