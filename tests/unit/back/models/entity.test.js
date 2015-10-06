@@ -198,7 +198,7 @@ describe('Entity', function () {
       }).to.throw(Error);
 
       expect(function () {
-        C1.attributes = new attributesAttributeCollection();
+        C1.attributes = new attributes.AttributeCollection();
       }).to.throw(Error);
 
       expect(C1.attributes.c1A1.name).to.equal('c1A1');
@@ -315,6 +315,18 @@ describe('Entity', function () {
 
       expect(entity).to.have.property('General')
         .that.equals(null);
+    });
+  });
+
+  describe('functional tests', function () {
+    it('expect correct inheritances', function () {
+      expect(c1).be.instanceof(Entity);
+      expect(c1).be.instanceof(C1);
+      expect(c11).be.instanceof(Entity);
+      expect(c11).be.instanceof(C1);
+      expect(c11).be.instanceof(C11);
+      expect(c2).be.instanceof(Entity);
+      expect(c2).be.instanceof(C2);
     });
   });
 });
