@@ -308,7 +308,7 @@ function EntitySpecification() {
   /**
    * Loads the attributes and methods of the Entity that is associated with the
    * current specification.
-   * @name module:back4app/entity/models/EntitySpecification~_loadEntityMembers
+   * @name module:back4app/entity/models.EntitySpecification~_loadEntityMembers
    * @function
    * @private
    * @example
@@ -330,7 +330,7 @@ function EntitySpecification() {
    * Loads an attribute of the Entity that is associated with the current
    * specification.
    * @name
-   * module:back4app/entity/models/EntitySpecification~_loadEntityAttribute
+   * module:back4app/entity/models.EntitySpecification~_loadEntityAttribute
    * @function
    * @param {!module:back4app/entity/models/attributes.Attribute} attribute The
    * attribute to be loaded.
@@ -344,7 +344,7 @@ function EntitySpecification() {
    * Loads a method of the Entity that is associated with the current
    * specification.
    * @name
-   * module:back4app/entity/models/EntitySpecification~_loadEntityMethod
+   * module:back4app/entity/models.EntitySpecification~_loadEntityMethod
    * @function
    * @param {!function} func The method's function to be loaded.
    * @param {!string} name The method's name to be loaded.
