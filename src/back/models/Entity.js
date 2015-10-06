@@ -5,6 +5,8 @@ var expect = require('chai').expect;
 var settings = require('../settings');
 var classes = require('../utils/classes');
 var EntitySpecification = require('./EntitySpecification');
+var AttributeCollection = require('./attributes').AttributeCollection;
+var MethodCollection = require('./methods').MethodCollection;
 var errors = require('./errors');
 
 module.exports = Entity;
@@ -214,25 +216,22 @@ var _getSpecifyFunction = function (CurrentEntity) {
     }
 
     Object.defineProperty(SpecificEntity, 'specification', {
-      get: function () {
-        return _specificEntitySpecification;
-      },
-      set: function () {
-        throw  new Error('Specification cannot be changed');
-      },
-      enumerable: true
+      value: _specificEntitySpecification,
+      enumerable: true,
+      writable: false,
+      configurable: false
     });
 
     Object.defineProperty(SpecificEntity, 'attributes', {
       get: function () {
-        var attributes = {};
+        var attributesObject = {};
 
         var visitedEntities = [];
         var CurrentEntity = SpecificEntity;
         while (CurrentEntity && visitedEntities.indexOf(CurrentEntity) === -1) {
           for (var attribute in CurrentEntity.specification.attributes) {
-            if (!attributes.hasOwnProperty(attribute)) {
-              attributes[attribute] =
+            if (!attributesObject.hasOwnProperty(attribute)) {
+              attributesObject[attribute] =
                 CurrentEntity.specification.attributes[attribute];
             }
           }
@@ -241,24 +240,25 @@ var _getSpecifyFunction = function (CurrentEntity) {
           CurrentEntity = CurrentEntity.General;
         }
 
-        return attributes;
+        return new AttributeCollection(attributesObject);
       },
       set: function () {
-        throw  new Error('Attributes cannot be changed');
+        throw new Error('Attributes of an Entity cannot be changed');
       },
-      enumerable: true
+      enumerable: true,
+      configurable: false
     });
 
     Object.defineProperty(SpecificEntity, 'methods', {
       get: function () {
-        var methods = {};
+        var methodsObject = {};
 
         var visitedEntities = [];
         var CurrentEntity = SpecificEntity;
         while (CurrentEntity && visitedEntities.indexOf(CurrentEntity) === -1) {
           for (var method in CurrentEntity.specification.methods) {
-            if (!methods.hasOwnProperty(method)) {
-              methods[method] =
+            if (!methodsObject.hasOwnProperty(method)) {
+              methodsObject[method] =
                 CurrentEntity.specification.methods[method];
             }
           }
@@ -267,12 +267,13 @@ var _getSpecifyFunction = function (CurrentEntity) {
           CurrentEntity = CurrentEntity.General;
         }
 
-        return methods;
+        return new MethodCollection(methodsObject);
       },
       set: function () {
-        throw  new Error('Methods cannot be changed');
+        throw new Error('Methods of an Entity cannot be changed');
       },
-      enumerable: true
+      enumerable: true,
+      configurable: false
     });
 
     SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
