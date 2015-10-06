@@ -6,7 +6,6 @@
 
 var expect = require('chai').expect;
 var classes = require('../utils/classes');
-var Entity = require('./Entity');
 var attributes = require('./attributes');
 var methods = require('./methods');
 
@@ -149,11 +148,11 @@ function EntitySpecification() {
     set: function (SetEntity) {
       if (!_Entity) {
 
-        //expect(classes.isGeneral(Entity, SetEntity)).to.equal(
-        //  true,
-        //  'The property "Entity" of an EntitySpecification instance has to ' +
-        //  'be an Entity class'
-        //);
+        expect(classes.isGeneral(require('./Entity'), SetEntity)).to.equal(
+          true,
+          'The property "Entity" of an EntitySpecification instance has to ' +
+          'be an Entity class'
+        );
 
         if (SetEntity.specification) {
           expect(SetEntity.specification).to.equal(
