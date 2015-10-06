@@ -133,6 +133,11 @@ function concat(methodCollection, func, name) {
     '(it has to be a string)'
   );
 
+  expect(methodCollection).to.not.have.ownProperty(
+    name,
+    'Duplicated method name "' + name + '"'
+  );
+
   var currentMethods = {};
 
   for (var currentMethod in methodCollection) {
