@@ -28,7 +28,7 @@ describe('Entity', function () {
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
-        new Entity(null)
+        entity = new Entity(null);
       }).to.throw(AssertionError);
     });
   });
@@ -92,6 +92,18 @@ describe('Entity', function () {
     it('expect to not work with wrong arguments', function () {
       expect(function () {
         Entity.specify({}, {}, {});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.specify(function () {});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.specify(function () {}, {});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.specify({}, function () {});
       }).to.throw(AssertionError);
     });
   });

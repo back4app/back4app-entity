@@ -360,7 +360,8 @@ var _getNewFunction = function (CurrentEntity) {
   return function (entity) {
     expect(arguments).to.have.length.below(
       2,
-      'Invalid arguments length when creating a new Entity function'
+      'Invalid arguments length when creating a new Entity function (it has ' +
+      'to be passed less than 2 arguments)'
     );
 
     var EntityClass = CurrentEntity;
