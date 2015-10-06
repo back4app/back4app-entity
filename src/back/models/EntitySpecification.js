@@ -149,11 +149,11 @@ function EntitySpecification() {
     set: function (SetEntity) {
       if (!_Entity) {
 
-        expect(classes.isGeneral(Entity, SetEntity)).to.equal(
-          true,
-          'The property "Entity" of an EntitySpecification instance has to ' +
-          'be an Entity class'
-        );
+        //expect(classes.isGeneral(Entity, SetEntity)).to.equal(
+        //  true,
+        //  'The property "Entity" of an EntitySpecification instance has to ' +
+        //  'be an Entity class'
+        //);
 
         if (SetEntity.specification) {
           expect(SetEntity.specification).to.equal(
