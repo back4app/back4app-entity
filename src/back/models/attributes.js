@@ -423,8 +423,8 @@ function _addAttribute() {
 }
 
 /**
- * Concatenates the an AttributeCollection instance with an Attribute instance
- * and returns a new AttributeCollection.
+ * Concatenates an AttributeCollection instance with an Attribute instance and
+ * returns a new AttributeCollection.
  * @name module:back4app/entity/models/attributes.AttributeCollection.concat
  * @function
  * @param {!module:back4app/entity/models/attributes.AttributeCollection}

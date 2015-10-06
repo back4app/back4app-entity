@@ -56,6 +56,8 @@ function MethodCollection(methods) {
   Object.seal(this);
 }
 
+MethodCollection.concat = concat;
+
 /**
  * Adds a new method to the collection.
  * @name module:back4app/entity/models/methods~_addMethod
@@ -86,4 +88,58 @@ function _addMethod(methodCollection, func, name) {
     writable: false,
     configurable: false
   });
+}
+
+/**
+ * Concatenates an MethodCollection instance with a new method and returns a new
+ * MethodCollection.
+ * @name module:back4app/entity/models/methods.MethodCollection.concat
+ * @function
+ * @param {!module:back4app/entity/models/methods.MethodCollection}
+ * methodCollection The MethodCollection to be concatenated.
+ * @param {!function} func The method's function to be concatenated.
+ * @param {!string} name The method's name to be concatenated.
+ * @returns {module:back4app/entity/models/methods.MethodCollection} The
+ * new concatenated MethodCollection.
+ * @example
+ * var concatenatedMethodCollection = MethodCollection.concat(
+ *   methodCollection,
+ *   function () { return 'newMethod'; },
+ *   'newMethod'
+ * );
+ */
+function concat(methodCollection, func, name) {
+  expect(arguments).to.have.length(
+    3,
+    'Invalid arguments length when concatenating a MethodCollection (it has ' +
+    'to be passed 3 arguments)'
+  );
+
+  expect(methodCollection).to.be.instanceof(
+    MethodCollection,
+    'Invalid argument "methodCollection" when concatenating a ' +
+    'MethodCollection (it has to be a MethodCollection)'
+  );
+
+  expect(func).to.be.a(
+    'function',
+    'Invalid argument "func" when concatenating a MethodCollection ' +
+    '(it has to be a function)'
+  );
+
+  expect(name).to.be.a(
+    'string',
+    'Invalid argument "name" when concatenating a MethodCollection ' +
+    '(it has to be a string)'
+  );
+
+  var currentMethods = {};
+
+  for (var currentMethod in methodCollection) {
+    currentMethods[currentMethod] = methodCollection[currentMethod];
+  }
+
+  currentMethods[name] = func;
+
+  return new MethodCollection(currentMethods);
 }

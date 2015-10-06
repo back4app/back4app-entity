@@ -401,6 +401,7 @@ describe('attributes', function () {
 
     describe('.concat', function () {
       var attributeCollection;
+      var concatenatedAttributeCollection;
 
       it(
         'expect to work with right arguments and have specified behavior',
@@ -410,7 +411,7 @@ describe('attributes', function () {
             new attributes.Attribute('attribute2')
           ]);
 
-          var concatenatedAttributeCollection =
+          concatenatedAttributeCollection =
             attributes
             .AttributeCollection
             .concat(
@@ -432,6 +433,60 @@ describe('attributes', function () {
             .to.equal('attribute3');
         }
       );
+
+      it('expect to not work with wrong arguments', function () {
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+                new attributes.Attribute('attribute3')
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+                attributeCollection,
+                new attributes.Attribute('attribute3'),
+                null
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+              {},
+              new attributes.Attribute('attribute3')
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+              attributeCollection,
+              {}
+            );
+        }).to.throw(AssertionError);
+      });
+
+      it('expect to not work with duplicated', function () {
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+                concatenatedAttributeCollection,
+                new attributes.Attribute('attribute3')
+            );
+        }).to.throw(AssertionError);
+      });
     });
   });
 });
