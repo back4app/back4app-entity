@@ -5,6 +5,8 @@
 'use strict';
 
 var expect = require('chai').expect;
+var classes = require('../utils/classes');
+var Entity = require('./Entity');
 var attributes = require('./attributes');
 var methods = require('./methods');
 
@@ -83,6 +85,17 @@ module.exports = EntitySpecification;
  */
 function EntitySpecification() {
   /**
+   * Entity whose the current EntitySpecification instance belongs. Once this
+   * property is assigned, it can not be assigned anymore.
+   * @name module:back4app/entity/models/EntitySpecification#Entity
+   * @type {!module:back4app/entity/models/Entity}
+   * @example
+   * var myEntitySpecification = new EntitySpecification();
+   * var MyEntity = Entity.specify(myEntitySpecification);
+   * console.log(myEntitySpecification.Entity == MyEntity) // Logs "true"
+   */
+  this.Entity = null;
+  /**
    * Collection of specific attributes of an entity.
    * @name module:back4app/entity/models.EntitySpecification#attributes
    * @type {!module:back4app/entity/models/attributes.AttributeCollection}
@@ -127,6 +140,42 @@ function EntitySpecification() {
 
   this.addAttribute = addAttribute;
   this.addMethod = addMethod;
+
+  var _Entity = null;
+  Object.defineProperty(this, 'Entity', {
+    get: function () {
+      return _Entity;
+    },
+    set: function (SetEntity) {
+      if (!_Entity) {
+
+        expect(classes.isGeneral(Entity, SetEntity)).to.equal(
+          true,
+          'The property "Entity" of an EntitySpecification instance has to ' +
+          'be an Entity class'
+        );
+
+        if (SetEntity.specification) {
+          expect(SetEntity.specification).to.equal(
+            this,
+            'The property "Specification" of the Entity class should be ' +
+            'equal to the current SpecificationEntity instance.'
+          );
+        }
+
+        _Entity = SetEntity;
+
+        _loadEntityMembers();
+      } else {
+        throw new Error(
+          'Once that the property "Entity" of an EntitySpecification ' +
+          'instance is assigned, it can not be assigned anymore'
+        );
+      }
+    },
+    enumerable: true,
+    configurable: false
+  });
 
   var _attributes = null;
   Object.defineProperty(this, 'attributes', {
@@ -255,6 +304,57 @@ function EntitySpecification() {
     _methods = new methods.MethodCollection();
   }
 
+  _loadEntityMembers();
+
+  /**
+   * Loads the attributes and methods of the Entity that is associated with the
+   * current specification.
+   * @name module:back4app/entity/models/EntitySpecification~_loadEntityMembers
+   * @function
+   * @private
+   * @example
+   * _loadEntityMembers();
+   */
+  function _loadEntityMembers() {
+    if (_Entity) {
+      for (var attribute in _attributes) {
+        _loadEntityAttribute(_attributes[attribute]);
+      }
+
+      for (var method in _methods) {
+        _loadEntityMethod(_methods[method], method);
+      }
+    }
+  }
+
+  /**
+   * Loads an attribute of the Entity that is associated with the current
+   * specification.
+   * @name
+   * module:back4app/entity/models/EntitySpecification~_loadEntityAttribute
+   * @function
+   * @param {!module:back4app/entity/models/attributes.Attribute} attribute The
+   * attribute to be loaded.
+   * @private
+   * @example
+   * _loadEntityAttribute(someAttribute);
+   */
+  function _loadEntityAttribute(attribute) {}
+
+  /**
+   * Loads a method of the Entity that is associated with the current
+   * specification.
+   * @name
+   * module:back4app/entity/models/EntitySpecification~_loadEntityMethod
+   * @function
+   * @param {!function} func The method's function to be loaded.
+   * @param {!string} name The method's name to be loaded.
+   * @private
+   * @example
+   * _loadEntityMethod(someMethodFunction, someMethodName);
+   */
+  function _loadEntityMethod(func, name) {}
+
   /**
    * Adds a new attribute to the attributes in the specification.
    * @name module:back4app/entity/models.EntitySpecification#addAttribute
@@ -313,15 +413,24 @@ function EntitySpecification() {
    * );
    */
   function addAttribute() {
-    _attributes = attributes.AttributeCollection.concat(
+    var attribute =
+      arguments.length === 1 && arguments[0] instanceof attributes.Attribute ?
+        arguments[0] :
+        new (Function.prototype.bind.apply(
+          attributes.Attribute,
+          [null].concat(Array.prototype.slice.call(arguments))
+        ))();
+
+    var newAttributes = attributes.AttributeCollection.concat(
       _attributes,
-      arguments.length === 1 && arguments[0] instanceof attributes.Attribute
-        ? arguments[0]
-        : new (Function.prototype.bind.apply(
-            attributes.Attribute,
-            [null].concat(Array.prototype.slice.call(arguments))
-          ))()
+      attribute
     );
+
+    if (_Entity) {
+      _loadEntityAttribute(attribute);
+    }
+
+    _attributes = newAttributes;
   }
 
   /**
@@ -337,11 +446,17 @@ function EntitySpecification() {
    * );
    */
   function addMethod(func, name) {
-    _methods = methods.MethodCollection.concat(
+    var newMethods = methods.MethodCollection.concat(
       _methods,
       func,
       name
     );
+
+    if (_Entity) {
+      _loadEntityMethod(func, name);
+    }
+
+    _methods = newMethods;
   }
 
   Object.preventExtensions(this);

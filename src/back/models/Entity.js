@@ -111,12 +111,16 @@ Object.defineProperty(Entity, 'General', {
   configurable: false
 });
 
+var _entitySpecification = new EntitySpecification();
+
 Object.defineProperty(Entity, 'specification', {
-  value: new EntitySpecification(),
+  value: _entitySpecification,
   enumerable: true,
   writable: false,
   configurable: false
 });
+
+_entitySpecification.Entity = Entity;
 
 Object.defineProperty(Entity, 'attributes', {
   value: {},
@@ -221,6 +225,16 @@ var _getSpecifyFunction = function (CurrentEntity) {
       writable: false,
       configurable: false
     });
+
+    if (_specificEntitySpecification.Entity) {
+      expect(_specificEntitySpecification.Entity).to.equal(
+        SpecificEntity,
+        'The property "Entity" of the EntitySpecification instance should be ' +
+        'equal to the Entity that is being specified.'
+      );
+    } else {
+      _specificEntitySpecification.Entity = SpecificEntity;
+    }
 
     Object.defineProperty(SpecificEntity, 'attributes', {
       get: function () {
