@@ -305,6 +305,8 @@ function AttributeCollection(attributes) {
   Object.seal(this);
 }
 
+AttributeCollection.concat = concat;
+
 /**
  * Adds a new attribute to the collection.
  * @name module:back4app/entity/models/attributes~_addAttribute
@@ -418,4 +420,51 @@ function _addAttribute() {
     writable: false,
     configurable: false
   });
+}
+
+/**
+ * Concatenates the an AttributeCollection instance with an Attribute instance
+ * and returns a new AttributeCollection.
+ * @name module:back4app/entity/models/attributes.AttributeCollection.concat
+ * @function
+ * @param {!module:back4app/entity/models/attributes.AttributeCollection}
+ * attributeCollection The AttributeCollection to be concatenated.
+ * @param {!module:back4app/entity/models/attributes.Attribute} attribute
+ * The Attribute to be concatenated.
+ * @returns {module:back4app/entity/models/attributes.AttributeCollection} The
+ * new concatenated AttributeCollection.
+ * @example
+ * var concatenatedAttributeCollection = AttributeCollection.concat(
+ *   attributeCollection,
+ *   attribute
+ * );
+ */
+function concat(attributeCollection, attribute) {
+  expect(arguments).to.have.length(
+    2,
+    'Invalid arguments length when concatenating an AttributeCollection (it ' +
+    'has to be passed 2 arguments)'
+  );
+
+  expect(attributeCollection).to.be.instanceof(
+    AttributeCollection,
+    'Invalid argument "attributeCollection" when concatenating an ' +
+    'AttributeCollection (it has to be an AttributeCollection)'
+  );
+
+  expect(attribute).to.be.instanceof(
+    Attribute,
+    'Invalid argument "attribute" when concatenating an AttributeCollection ' +
+    '(it has to be an Attribute)'
+  );
+
+  var currentAttributes = [];
+
+  for (var currentAttribute in attributeCollection) {
+    currentAttributes.push(attributeCollection[currentAttribute]);
+  }
+
+  currentAttributes.push(attribute);
+
+  return new AttributeCollection(currentAttributes);
 }

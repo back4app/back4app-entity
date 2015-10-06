@@ -328,5 +328,7 @@ describe('Entity', function () {
       expect(c2).be.instanceof(Entity);
       expect(c2).be.instanceof(C2);
     });
+
+
   });
 });

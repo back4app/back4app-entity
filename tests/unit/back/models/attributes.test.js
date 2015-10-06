@@ -398,5 +398,40 @@ describe('attributes', function () {
         expect(attributeCollection.attribute1.name).to.equal('attribute1');
       });
     });
+
+    describe('.concat', function () {
+      var attributeCollection;
+
+      it(
+        'expect to work with right arguments and have specified behavior',
+        function () {
+          attributeCollection = new attributes.AttributeCollection([
+            new attributes.Attribute('attribute1'),
+            new attributes.Attribute('attribute2')
+          ]);
+
+          var concatenatedAttributeCollection =
+            attributes
+            .AttributeCollection
+            .concat(
+              attributeCollection,
+              new attributes.Attribute('attribute3')
+            );
+
+          expect(concatenatedAttributeCollection)
+            .to.not.deep.equal(attributeCollection);
+
+          expect(Object.keys(concatenatedAttributeCollection))
+            .to.deep.equal(['attribute1', 'attribute2', 'attribute3']);
+
+          expect(concatenatedAttributeCollection.attribute1.name)
+            .to.equal('attribute1');
+          expect(concatenatedAttributeCollection.attribute2.name)
+            .to.equal('attribute2');
+          expect(concatenatedAttributeCollection.attribute3.name)
+            .to.equal('attribute3');
+        }
+      );
+    });
   });
 });
