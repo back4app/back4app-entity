@@ -176,7 +176,7 @@ function EntitySpecification() {
     configurable: false
   });
 
-  var _attributes = null;
+  var _attributes = new attributes.AttributeCollection();
   Object.defineProperty(this, 'attributes', {
     get: function () {
       return _attributes;
@@ -190,7 +190,7 @@ function EntitySpecification() {
     configurable: false
   });
 
-  var _methods = null;
+  var _methods = new methods.MethodCollection();
   Object.defineProperty(this, 'methods', {
     get: function () {
       return _methods;
@@ -298,9 +298,6 @@ function EntitySpecification() {
         );
       }
     }
-  } else {
-    _attributes = new attributes.AttributeCollection();
-    _methods = new methods.MethodCollection();
   }
 
   _loadEntityMembers();
