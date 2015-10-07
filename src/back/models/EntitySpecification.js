@@ -358,6 +358,23 @@ function EntitySpecification() {
         'and it cannot be overriden'
       );
     }
+
+    var entitySpecializations = _Entity.specializations;
+    for (var i = 0; i < entitySpecializations.length; i++) {
+      expect(entitySpecializations[i].specification.attributes)
+        .to.not.have.ownProperty(
+        attribute.name,
+        'failed to load entity attribute "' + attribute.name + '" because ' +
+        'there is an attribute with same name in a child of current Entity'
+      );
+
+      expect(entitySpecializations[i].specification.methods)
+        .to.not.have.ownProperty(
+        attribute.name,
+        'failed to load entity attribute "' + attribute.name + '" because ' +
+        'there is a method with same name in a child of current Entity'
+      );
+    }
   }
 
   /**
@@ -386,6 +403,16 @@ function EntitySpecification() {
         'failed to load entity method "' + name + '" because there is an ' +
         'attribute with same name in a parent of current Entity and it ' +
         'cannot be overriden'
+      );
+    }
+
+    var entitySpecializations = _Entity.specializations;
+    for (var i = 0; i < entitySpecializations.length; i++) {
+      expect(entitySpecializations[i].specification.attributes)
+        .to.not.have.ownProperty(
+        name,
+        'failed to load entity method "' + name + '" because there is an ' +
+        'attribute with same name in a child of current Entity'
       );
     }
   }

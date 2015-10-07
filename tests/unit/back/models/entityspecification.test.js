@@ -377,8 +377,22 @@ describe('EntitySpecification', function () {
     it(
       'expect to not allow attribute with same name of an ancestral attribute',
       function () {
-        MyEntity2 = MyEntity.specify();
-        MyEntity3 = MyEntity2.specify();
+        MyEntity2 = MyEntity.specify(
+          {
+            attribute21: {}
+          },
+          {
+            method21: function () {}
+          }
+        );
+        MyEntity3 = MyEntity2.specify(
+          {
+            attribute31: {}
+          },
+          {
+            method31: function () {}
+          }
+        );
 
         expect(function () {
           MyEntity2.specification.addAttribute('attribute1');
@@ -394,6 +408,23 @@ describe('EntitySpecification', function () {
               attribute1: {}
             }
           });
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to not allow attribute with same name of a descendant attribute',
+      function () {
+        expect(function () {
+          MyEntity.specification.addAttribute('attribute21');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity.specification.addAttribute('attribute31');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity2.specification.addAttribute('attribute31');
         }).to.throw(AssertionError);
       }
     );
@@ -415,6 +446,23 @@ describe('EntitySpecification', function () {
               method1: {}
             }
           });
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to not allow attribute with same name of a descendant method',
+      function () {
+        expect(function () {
+          MyEntity.specification.addAttribute('method21');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity.specification.addAttribute('method31');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity2.specification.addAttribute('method31');
         }).to.throw(AssertionError);
       }
     );
@@ -448,5 +496,58 @@ describe('EntitySpecification', function () {
         }).to.throw(AssertionError);
       }
     );
+
+    it(
+      'expect to not allow method with same name of a descendant attribute',
+      function () {
+        expect(function () {
+          MyEntity.specification.addMethod('attribute21');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity.specification.addMethod('attribute31');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity2.specification.addMethod('attribute31');
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to allow method with same name of ancestral or descendant method',
+      function () {
+        MyEntity.specification.addMethod(
+          function () { return 'method21'; },
+          'method21'
+        );
+
+        MyEntity.specification.addMethod(
+          function () { return 'method31'; },
+          'method31'
+        );
+
+        MyEntity2.specification.addMethod(
+          function () { return 'method3'; },
+          'method3'
+        );
+
+        MyEntity2.specification.addMethod(
+          function () { return 'method31'; },
+          'method31'
+        );
+
+        MyEntity3.specification.addMethod(
+          function () { return 'method3'; },
+          'method3'
+        );
+
+        MyEntity3.specification.addMethod(
+          function () { return 'method21'; },
+          'method21'
+        );
+      }
+    );
+
   });
 });
