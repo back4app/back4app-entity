@@ -105,7 +105,7 @@ function isGeneral(GeneralClass, SpecificClass) {
     }
 
     visitedClasses.push(CurrentClass);
-    CurrentClass = CurrentClass.General;
+    CurrentClass = CurrentClass.super_;
   }
 
   return false;

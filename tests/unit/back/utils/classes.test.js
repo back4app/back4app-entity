@@ -174,4 +174,71 @@ describe('classes', function () {
       );
     });
   });
+
+  describe('~isGeneral', function () {
+    context('interface tests', function () {
+      it('expect to exist as an inner method', function () {
+        expect(classes).to.respondTo('isGeneral');
+      });
+
+      it('expect to work with functions', function () {
+        classes.isGeneral(function () {}, function () {});
+      });
+
+      it('expect to throw AssertionError with objects', function () {
+        expect(function () {
+          classes.isGeneral({}, {});
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          classes.isGeneral(function () {}, {});
+        }).to.throw(AssertionError);
+      });
+
+      it(
+        'expect to throw AssertionError with more than two parameters',
+        function () {
+          expect(function () {
+            classes.isGeneral(function () {}, function () {}, function () {});
+          }).to.throw(AssertionError);
+        }
+      );
+    });
+
+    context('functional tests', function () {
+      function GeneralClass() {}
+
+      function SpecificClass() {
+        GeneralClass.call(this);
+      }
+
+      classes.generalize(GeneralClass, SpecificClass);
+
+      it(
+        'expect to return true when first class generalizes the second one',
+        function () {
+          expect(classes.isGeneral(GeneralClass, SpecificClass)).to.equal(true);
+        }
+      );
+
+      it(
+        'expect to return false when first class does not generalize the ' +
+        'second one',
+        function () {
+          expect(classes.isGeneral(SpecificClass, GeneralClass))
+            .to.equal(false);
+        }
+      );
+
+      it(
+        'expect to return true when first class is equal to the second one',
+        function () {
+          expect(classes.isGeneral(GeneralClass, GeneralClass)).to.equal(true);
+
+          expect(classes.isGeneral(SpecificClass, SpecificClass))
+            .to.equal(true);
+        }
+      );
+    });
+  });
 });
