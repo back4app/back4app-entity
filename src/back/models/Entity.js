@@ -177,10 +177,11 @@ Object.defineProperty(Entity, 'methods', {
 var _directSpecializations = [];
 Object.defineProperty(Entity, 'directSpecializations', {
   get: function () {
-    var specializations = Array.prototype.slice(_directSpecializations);
+    var specializations = [].concat(_directSpecializations);
 
     Object.preventExtensions(specializations);
     Object.seal(specializations);
+    Object.freeze(specializations);
 
     return specializations;
   },
@@ -201,6 +202,7 @@ Object.defineProperty(Entity, 'specializations', {
 
     Object.preventExtensions(specializations);
     Object.seal(specializations);
+    Object.freeze(specializations);
 
     return specializations;
   },
@@ -396,14 +398,13 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     });
 
     var _specificEntityDirectSpecializations = [];
-    Object.defineProperty(Entity, 'directSpecializations', {
+    Object.defineProperty(SpecificEntity, 'directSpecializations', {
       get: function () {
-        var specializations = Array.prototype.slice(
-          _specificEntityDirectSpecializations
-        );
+        var specializations = [].concat(_specificEntityDirectSpecializations);
 
         Object.preventExtensions(specializations);
         Object.seal(specializations);
+        Object.freeze(specializations);
 
         return specializations;
       },
@@ -416,7 +417,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       configurable: false
     });
 
-    Object.defineProperty(Entity, 'specializations', {
+    Object.defineProperty(SpecificEntity, 'specializations', {
       get: function () {
         var specializations = [];
 
@@ -427,6 +428,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
         Object.preventExtensions(specializations);
         Object.seal(specializations);
+        Object.freeze(specializations);
 
         return specializations;
       },

@@ -239,25 +239,101 @@ describe('Entity', function () {
     });
   });
 
+  describe('.directSpecializations', function () {
+    it('expect to exist and returns the right values', function () {
+      expect(Entity).to.have.ownProperty('directSpecializations');
+      expect(Entity.directSpecializations).to.have.length.above(2);
+      expect(Entity.directSpecializations).to.include(C1);
+      expect(Entity.directSpecializations).to.include(C2);
+
+      expect(C1).to.have.ownProperty('directSpecializations');
+      expect(C1.directSpecializations).to.deep.equal([
+        C11
+      ]);
+
+      expect(C11).to.have.ownProperty('directSpecializations');
+      expect(C11.directSpecializations).to.deep.equal([]);
+
+      expect(C2).to.have.ownProperty('directSpecializations');
+      expect(C2.directSpecializations).to.deep.equal([]);
+    });
+
+    it('expect to not be changeable', function () {
+      expect(function () {
+        C1.directSpecializations = [];
+      }).to.throw(Error);
+
+      expect(function () {
+        delete C1.directSpecializations;
+      }).to.throw(Error);
+
+      expect(function () {
+        C1.directSpecializations.a = C1;
+      }).to.throw(Error);
+
+      expect(function () {
+        C1.directSpecializations.push(C1);
+      }).to.throw(Error);
+
+      expect(function () {
+        C1.directSpecializations[0] = C1;
+      }).to.throw(Error);
+
+      expect(function () {
+        delete C1.directSpecializations[0];
+      }).to.throw(Error);
+    });
+  });
+
   describe('.specializations', function () {
-    it(
-      'expect to exist as a static property and contain the specified Entity ' +
-      'classes',
-      function () {
-        expect(Entity)
-      }
-    );
+    it('expect to exist and returns the right values', function () {
+      var C111 = C11.specify();
 
-    it('expect to not be changed or deleted', function () {
+      expect(Entity).to.have.ownProperty('specializations');
+      expect(Entity.specializations).to.have.length.above(3);
+      expect(Entity.specializations).to.include(C1);
+      expect(Entity.specializations).to.include(C11);
+      expect(Entity.specializations).to.include(C2);
+
+      expect(C1).to.have.ownProperty('specializations');
+      expect(C1.specializations).to.deep.equal([
+        C11,
+        C111
+      ]);
+
+      expect(C11).to.have.ownProperty('specializations');
+      expect(C11.specializations).to.deep.equal([
+        C111
+      ]);
+
+      expect(C2).to.have.ownProperty('specializations');
+      expect(C2.specializations).to.deep.equal([]);
+    });
+
+    it('expect to not be changeable', function () {
       expect(function () {
-        delete C1.methods;
+        C1.specializations = [];
       }).to.throw(Error);
 
       expect(function () {
-        C1.methods = new methods.MethodCollection();
+        delete C1.specializations;
       }).to.throw(Error);
 
-      expect(C1.methods.c1M1('a1', 'a2')).to.equal('a1a2');
+      expect(function () {
+        C1.specializations.a = C1;
+      }).to.throw(Error);
+
+      expect(function () {
+        C1.specializations.push(C1);
+      }).to.throw(Error);
+
+      expect(function () {
+        C1.specializations[0] = C1;
+      }).to.throw(Error);
+
+      expect(function () {
+        delete C1.specializations[0];
+      }).to.throw(Error);
     });
   });
 
