@@ -239,6 +239,28 @@ describe('Entity', function () {
     });
   });
 
+  describe('.specializations', function () {
+    it(
+      'expect to exist as a static property and contain the specified Entity ' +
+      'classes',
+      function () {
+        expect(Entity)
+      }
+    );
+
+    it('expect to not be changed or deleted', function () {
+      expect(function () {
+        delete C1.methods;
+      }).to.throw(Error);
+
+      expect(function () {
+        C1.methods = new methods.MethodCollection();
+      }).to.throw(Error);
+
+      expect(C1.methods.c1M1('a1', 'a2')).to.equal('a1a2');
+    });
+  });
+
   describe('.new', function () {
     it('expect to exist', function () {
       expect(Entity).itself.to.respondTo('new');

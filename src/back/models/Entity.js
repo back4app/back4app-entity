@@ -100,6 +100,44 @@ Entity.attributes = null;
  * var consolidatedMethods = Entity.methods;
  */
 Entity.methods = null;
+/**
+ * This is an Array with all Entity classes that were directly specified from
+ * the current one.
+ * @type {Class[]}
+ * @readonly
+ * @example
+ * var MyEntity = Entity.specify();
+ * var MyEntitySpecialization = MyEntity.specify();
+ * console.log(
+ *   MyEntity.directSpecializations.length
+ * ); // Logs "1"
+ * console.log(
+ *   MyEntity.directSpecializations[0] == MyEntitySpecialization
+ * ); // Logs "true"
+ */
+Entity.directSpecializations = null;
+/**
+ * This is an Array with all Entity classes that the current one is general.
+ * @type {Class[]}
+ * @readonly
+ * @example
+ * var MyEntity = Entity.specify();
+ * var MyEntitySpecialization = MyEntity.specify();
+ * var MyEntitySpecialization2 = MyEntitySpecialization.specify();
+ * console.log(
+ *   MyEntity.specializations.length
+ * ); // Logs "2"
+ * console.log(
+ *   MyEntity.specializations.indexOf(MyEntitySpecialization) > -1
+ * ); // Logs "true"
+ * console.log(
+ *   MyEntity.specializations.indexOf(MyEntitySpecialization2) > -1
+ * ); // Logs "true"
+ * console.log(
+ *   MyEntity.specializations.indexOf(MyEntity) > -1
+ * ); // Logs "false"
+ */
+Entity.specializations = null;
 
 Entity.specify = null;
 Entity.new = null;
@@ -136,6 +174,67 @@ Object.defineProperty(Entity, 'methods', {
   configurable: false
 });
 
+var _directSpecializations = [];
+Object.defineProperty(Entity, 'directSpecializations', {
+  get: function () {
+    var specializations = Array.prototype.slice(_directSpecializations);
+
+    Object.preventExtensions(specializations);
+    Object.seal(specializations);
+
+    return specializations;
+  },
+  set: function () {
+    throw new Error(
+      'Specializations of an Entity cannot be changed'
+    );
+  },
+  enumerable: true,
+  configurable: false
+});
+
+Object.defineProperty(Entity, 'specializations', {
+  get: function () {
+    var specializations = [];
+
+    _visitSpecializations(_directSpecializations, specializations);
+
+    Object.preventExtensions(specializations);
+    Object.seal(specializations);
+
+    return specializations;
+  },
+  set: function () {
+    throw new Error(
+      'Specializations of an Entity cannot be changed'
+    );
+  },
+  enumerable: true,
+  configurable: false
+});
+
+/**
+ * Visits all specializations of a list of entities.
+ * @name module:back4app/entity/models.Entity~__visitSpecializations
+ * @function
+ * @param entities The entities whose specializations shall be visited.
+ * @param visitedEntities The list of visited entities.
+ * @private
+ * @example
+ * var specializations = [];
+ * _visitSpecializations(MyEntity.directSpecializations, specializations);
+ * console.log(specializations); // Logs all specializations of MyEntity
+ */
+function _visitSpecializations(entities, visitedEntities) {
+  for (var i = 0; i < entities.length; i++) {
+    if (visitedEntities.indexOf(entities[i]) === -1) {
+      visitedEntities.push(entities[i]);
+
+      _visitSpecializations(entities[i].directSpecializations, visitedEntities);
+    }
+  }
+}
+
 /**
  * Private function used to get the specify function specific for the current
  * Entity class.
@@ -143,12 +242,14 @@ Object.defineProperty(Entity, 'methods', {
  * @function
  * @param {!Class} CurrentEntity The currentEntity for which the specify
  * function will be got.
+ * @param {!Class[]} directSpecializations The private variable with the
+ * direct specializations of the CurrentEntity class.
  * @returns {function} The specify function.
  * @private
  * @example
- * Entity.specify = _getSpecifyFunction(Entity);
+ * Entity.specify = _getSpecifyFunction(Entity, []);
  */
-var _getSpecifyFunction = function (CurrentEntity) {
+var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
   return function () {
     expect(arguments).to.have.length.below(
       3,
@@ -168,6 +269,10 @@ var _getSpecifyFunction = function (CurrentEntity) {
     }
 
     classes.generalize(CurrentEntity, SpecificEntity);
+
+    if (directSpecializations.indexOf(SpecificEntity) === -1) {
+      directSpecializations.push(SpecificEntity);
+    }
 
     Object.defineProperty(SpecificEntity, 'General', {
       value: CurrentEntity,
@@ -290,7 +395,54 @@ var _getSpecifyFunction = function (CurrentEntity) {
       configurable: false
     });
 
-    SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
+    var _specificEntityDirectSpecializations = [];
+    Object.defineProperty(Entity, 'directSpecializations', {
+      get: function () {
+        var specializations = Array.prototype.slice(
+          _specificEntityDirectSpecializations
+        );
+
+        Object.preventExtensions(specializations);
+        Object.seal(specializations);
+
+        return specializations;
+      },
+      set: function () {
+        throw new Error(
+          'Specializations of an Entity cannot be changed'
+        );
+      },
+      enumerable: true,
+      configurable: false
+    });
+
+    Object.defineProperty(Entity, 'specializations', {
+      get: function () {
+        var specializations = [];
+
+        _visitSpecializations(
+          _specificEntityDirectSpecializations,
+          specializations
+        );
+
+        Object.preventExtensions(specializations);
+        Object.seal(specializations);
+
+        return specializations;
+      },
+      set: function () {
+        throw new Error(
+          'Specializations of an Entity cannot be changed'
+        );
+      },
+      enumerable: true,
+      configurable: false
+    });
+
+    SpecificEntity.specify = _getSpecifyFunction(
+      SpecificEntity,
+      _specificEntityDirectSpecializations
+    );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
 
     return SpecificEntity;
@@ -422,7 +574,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
  *   }
  * });
  */
-Entity.specify = _getSpecifyFunction(Entity);
+Entity.specify = _getSpecifyFunction(Entity, _directSpecializations);
 
 /**
  * Private function used to get the new function specific for the current Entity
