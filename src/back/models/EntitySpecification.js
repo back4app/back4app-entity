@@ -415,6 +415,8 @@ function EntitySpecification() {
         'attribute with same name in a child of current Entity'
       );
     }
+
+    _Entity.prototype[name] = func;
   }
 
   /**

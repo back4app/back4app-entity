@@ -382,7 +382,7 @@ describe('EntitySpecification', function () {
             attribute21: {}
           },
           {
-            method21: function () {}
+            method21: function () { return 'method21'; }
           }
         );
         MyEntity3 = MyEntity2.specify(
@@ -390,7 +390,7 @@ describe('EntitySpecification', function () {
             attribute31: {}
           },
           {
-            method31: function () {}
+            method31: function () { return 'method31'; }
           }
         );
 
@@ -549,5 +549,18 @@ describe('EntitySpecification', function () {
       }
     );
 
+    it('expect to load methods in the Entity prototype', function () {
+      expect(MyEntity.prototype).to.respondTo('method1');
+      expect(MyEntity.prototype.method1.call(null)).to.equal('method1')
+
+      expect(MyEntity.prototype).to.respondTo('method3');
+      expect(MyEntity.prototype.method3.call(null)).to.equal('method3')
+
+      expect(MyEntity2.prototype).to.respondTo('method21');
+      expect(MyEntity2.prototype.method21.call(null)).to.equal('method21')
+
+      expect(MyEntity3.prototype).to.respondTo('method31');
+      expect(MyEntity3.prototype.method31.call(null)).to.equal('method31')
+    });
   });
 });
