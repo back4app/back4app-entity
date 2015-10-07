@@ -4,6 +4,7 @@
       "src/**/*.js",
       "!src/front/lib/**",
       "tests/**/*.js",
+      "dist/back4app-entity.js",
       "!node_modules/",
       "!coverage/"
     ],

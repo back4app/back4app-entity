@@ -1,3 +1,5 @@
+'use strict';
+
 /* Configure module packages and vendor libraries */
 
 requirejs.config({
@@ -16,7 +18,11 @@ requirejs.config({
 /* Configure baseUrl, if possible */
 
 (function () {
-  var isBrowser = !!(typeof window !== 'undefined' && typeof navigator !== 'undefined' && window.document);
+  var isBrowser = !!(
+    typeof window !== 'undefined' &&
+    typeof navigator !== 'undefined' &&
+    window.document
+  );
 
   function configBaseUrl() {
     if (isBrowser) {

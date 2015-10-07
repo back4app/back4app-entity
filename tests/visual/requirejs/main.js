@@ -1,3 +1,5 @@
+'use strict';
+
 requirejs(['back4app-entity'], function (entity) {
   var Entity = entity.models.Entity;
 
@@ -16,7 +18,7 @@ requirejs(['back4app-entity'], function (entity) {
       }
     },
     methods: {
-      getInfo: function() {
+      getInfo: function () {
         return 'I am ' + this.name + ', created at ' + this.createdAt;
       }
     }
