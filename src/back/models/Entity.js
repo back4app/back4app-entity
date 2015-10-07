@@ -5,6 +5,8 @@ var expect = require('chai').expect;
 var settings = require('../settings');
 var classes = require('../utils/classes');
 var EntitySpecification = require('./EntitySpecification');
+var AttributeCollection = require('./attributes').AttributeCollection;
+var MethodCollection = require('./methods').MethodCollection;
 var errors = require('./errors');
 
 module.exports = Entity;
@@ -26,16 +28,6 @@ function Entity() {
    * console.log(entity.Entity == Entity); // Logs "true"
    */
   this.Entity = null;
-
-  Object.defineProperty(this, 'Entity', {
-    get: function () {
-      return Entity;
-    },
-    set: function () {
-      throw new Error('Entity cannot be changed');
-    }
-  });
-
   /**
    * This is a read-only property to get the general Entity Class of an
    * instance. This is just an alias to this.Entity.General.
@@ -48,13 +40,29 @@ function Entity() {
    */
   this.General = null;
 
+  expect(arguments).to.have.length(
+    0,
+    'Invalid arguments length when creating an Entity (it has not to be ' +
+    'passed any argument)');
+
+  Object.defineProperty(this, 'Entity', {
+    value: Entity,
+    enumerable: false,
+    writable: false,
+    configurable: true
+  });
+
   Object.defineProperty(this, 'General', {
     get: function () {
       return this.Entity.General;
     },
     set: function () {
-      throw new Error('General cannot be changed');
-    }
+      throw new Error(
+        'General property of an Entity instance cannot be changed'
+      );
+    },
+    enumerable: false,
+    configurable: true
   });
 }
 
@@ -67,69 +75,65 @@ function Entity() {
  * var generalAttributes = SpecificEntity.General.attributes;
  */
 Entity.General = null;
-
-Object.defineProperty(Entity, 'General', {
-  get: function () {
-    return null;
-  },
-  set: function () {
-    throw new Error('General cannot be changed');
-  },
-  enumerable: true
-});
-
 /**
  * This is the specification of the current Entity Class.
  * @type {!module:back4app/entity/models.EntitySpecification}
  * @readonly
+ * @example
+ * var entitySpecification = Entity.specification;
  */
 Entity.specification = null;
-
-var _specification = new EntitySpecification();
-
-Object.defineProperty(Entity, 'specification', {
-  get: function () {
-    return _specification;
-  },
-  set: function () {
-    throw  new Error('Specification cannot be changed');
-  },
-  enumerable: true
-});
-
 /**
  * This is a dictionary with a consolidation of the Entity's attributes.
  * @type
  * {!Object.<!string, !module:back4app/entity/models/attributes.Attribute>}
  * @readonly
+ * @example
+ * var consolidatedAttributes = Entity.attributes;
  */
 Entity.attributes = null;
-
-Object.defineProperty(Entity, 'attributes', {
-  get: function () {
-    return {};
-  },
-  set: function () {
-    throw  new Error('Attributes cannot be changed');
-  },
-  enumerable: true
-});
-
 /**
  * This is a dictionary with a consolidation of the Entity's methods.
  * @type {!Object.<!string, !module:back4app/entity/models/methods.Method>}
  * @readonly
+ * @example
+ * var consolidatedMethods = Entity.methods;
  */
 Entity.methods = null;
 
+Entity.specify = null;
+Entity.new = null;
+
+Object.defineProperty(Entity, 'General', {
+  value: null,
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
+
+var _entitySpecification = new EntitySpecification();
+
+Object.defineProperty(Entity, 'specification', {
+  value: _entitySpecification,
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
+
+_entitySpecification.Entity = Entity;
+
+Object.defineProperty(Entity, 'attributes', {
+  value: {},
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
+
 Object.defineProperty(Entity, 'methods', {
-  get: function () {
-    return {};
-  },
-  set: function () {
-    throw  new Error('Methods cannot be changed');
-  },
-  enumerable: true
+  value: {},
+  enumerable: true,
+  writable: false,
+  configurable: false
 });
 
 /**
@@ -148,37 +152,33 @@ var _getSpecifyFunction = function (CurrentEntity) {
   return function () {
     expect(arguments).to.have.length.below(
       3,
-      'Invalid arguments length when specifying an Entity'
+      'Invalid arguments length when specifying an Entity (it has to be ' +
+      'passed less than 3 arguments)'
     );
 
     function SpecificEntity() {
       CurrentEntity.call(this);
 
       Object.defineProperty(this, 'Entity', {
-        get: function () {
-          return SpecificEntity;
-        },
-        set: function () {
-          throw new Error('Entity cannot be changed');
-        }
+        value: SpecificEntity,
+        enumerable: false,
+        writable: false,
+        configurable: true
       });
     }
 
     classes.generalize(CurrentEntity, SpecificEntity);
 
     Object.defineProperty(SpecificEntity, 'General', {
-      get: function () {
-        return CurrentEntity;
-      },
-      set: function () {
-        throw new Error('General cannot be changed');
-      },
-      enumerable: true
+      value: CurrentEntity,
+      enumerable: true,
+      writable: false,
+      configurable: false
     });
 
     var _specificEntitySpecification = null;
 
-    if (arguments.length === 1) {
+    if (arguments.length === 1 && arguments[0]) {
       var specification = arguments[0];
 
       expect(specification).to.be.an(
@@ -196,7 +196,7 @@ var _getSpecifyFunction = function (CurrentEntity) {
       var methods = arguments[1];
 
       if (attributes) {
-        expect(attributes).to.be.an(
+        expect(typeof attributes).to.equal(
           'object',
           'Invalid property "attributes" when specifying an Entity (it has ' +
           'to be an object)'
@@ -220,25 +220,32 @@ var _getSpecifyFunction = function (CurrentEntity) {
     }
 
     Object.defineProperty(SpecificEntity, 'specification', {
-      get: function () {
-        return _specificEntitySpecification;
-      },
-      set: function () {
-        throw  new Error('Specification cannot be changed');
-      },
-      enumerable: true
+      value: _specificEntitySpecification,
+      enumerable: true,
+      writable: false,
+      configurable: false
     });
+
+    if (_specificEntitySpecification.Entity) {
+      expect(_specificEntitySpecification.Entity).to.equal(
+        SpecificEntity,
+        'The property "Entity" of the EntitySpecification instance should be ' +
+        'equal to the Entity that is being specified.'
+      );
+    } else {
+      _specificEntitySpecification.Entity = SpecificEntity;
+    }
 
     Object.defineProperty(SpecificEntity, 'attributes', {
       get: function () {
-        var attributes = {};
+        var attributesObject = {};
 
         var visitedEntities = [];
         var CurrentEntity = SpecificEntity;
         while (CurrentEntity && visitedEntities.indexOf(CurrentEntity) === -1) {
           for (var attribute in CurrentEntity.specification.attributes) {
-            if (!attributes.hasOwnProperty(attribute)) {
-              attributes[attribute] =
+            if (!attributesObject.hasOwnProperty(attribute)) {
+              attributesObject[attribute] =
                 CurrentEntity.specification.attributes[attribute];
             }
           }
@@ -247,24 +254,25 @@ var _getSpecifyFunction = function (CurrentEntity) {
           CurrentEntity = CurrentEntity.General;
         }
 
-        return attributes;
+        return new AttributeCollection(attributesObject);
       },
       set: function () {
-        throw  new Error('Attributes cannot be changed');
+        throw new Error('Attributes of an Entity cannot be changed');
       },
-      enumerable: true
+      enumerable: true,
+      configurable: false
     });
 
     Object.defineProperty(SpecificEntity, 'methods', {
       get: function () {
-        var methods = {};
+        var methodsObject = {};
 
         var visitedEntities = [];
         var CurrentEntity = SpecificEntity;
         while (CurrentEntity && visitedEntities.indexOf(CurrentEntity) === -1) {
           for (var method in CurrentEntity.specification.methods) {
-            if (!methods.hasOwnProperty(method)) {
-              methods[method] =
+            if (!methodsObject.hasOwnProperty(method)) {
+              methodsObject[method] =
                 CurrentEntity.specification.methods[method];
             }
           }
@@ -273,12 +281,13 @@ var _getSpecifyFunction = function (CurrentEntity) {
           CurrentEntity = CurrentEntity.General;
         }
 
-        return methods;
+        return new MethodCollection(methodsObject);
       },
       set: function () {
-        throw  new Error('Methods cannot be changed');
+        throw new Error('Methods of an Entity cannot be changed');
       },
-      enumerable: true
+      enumerable: true,
+      configurable: false
     });
 
     SpecificEntity.specify = _getSpecifyFunction(SpecificEntity);
@@ -296,6 +305,23 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * @param {?module:back4app/entity/models.EntitySpecification} [specification]
  * The new Entity specification.
  * @returns {Class} The new Entity Class.
+ * @example
+ * var MyEntity = Entity.specify();
+ * @example
+ * var MyEntity = Entity.specify(null);
+ * @example
+ * var MyEntity = Entity.specify(new EntitySpecification());
+ * @example
+ * var MyEntity = Entity.specify(new EntitySpecification(
+ *   new AttributeCollection([
+ *     new Attribute('attribute1', 'String', '0..1', 'default'),
+ *     new Attribute('attribute2', 'String', '0..1', 'default')
+ *   ]),
+ *   new MethodCollection({
+ *     method1: function () { return 'method1'; },
+ *     method2: function () { return 'method2'; }
+ *   })
+ * ));
  */
 /**
  * Creates a new Entity Class by specifying a general one.
@@ -321,6 +347,28 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * object, as specified in
  * {@link module:back4app/entity/models/methods.MethodCollection}.
  * @returns {Class} The new Entity Class.
+ * @example
+ * var MyEntity = Entity.specify(null, null);
+ * @example
+ * var MyEntity = Entity.specify({}, {});
+ * @example
+ * var MyEntity = Entity.specify([], {});
+ * @example
+ * var MyEntity = Entity.specify(
+ *   new AttributeCollection(),
+ *   new MethodCollection()
+ * );
+ * @example
+ * var MyEntity = Entity.specify(
+ *   new AttributeCollection([
+ *     new Attribute('attribute1', 'String', '0..1', 'default'),
+ *     new Attribute('attribute2', 'String', '0..1', 'default')
+ *   ]),
+ *   new MethodCollection({
+ *     method1: function () { return 'method1'; },
+ *     method2: function () { return 'method2'; }
+ *   })
+ * );
  */
 /**
  * Creates a new Entity Class by specifying a general one.
@@ -347,6 +395,32 @@ var _getSpecifyFunction = function (CurrentEntity) {
  * object, as specified in
  * {@link module:back4app/entity/models/methods.MethodCollection}.
  * @returns {Class} The new Entity Class.
+ * @example
+ * var MyEntity = Entity.specify({});
+ * @example
+ * var MyEntity = Entity.specify({
+ *   attributes: {},
+ *   methods: {}
+ * });
+ * @example
+ * var MyEntity = Entity.specify({
+ *   attributes: {
+ *     attribute1: {
+ *       type: 'String',
+ *       multiplicity: '0..1',
+ *       default: 'default'
+ *     },
+ *     attribute2: {
+ *       type: 'String',
+ *       multiplicity: '0..1',
+ *       default: 'default'
+ *     }
+ *   },
+ *   methods: {
+ *     method1: function () { return 'method1'; },
+ *     method2: function () { return 'method2'; }
+ *   }
+ * });
  */
 Entity.specify = _getSpecifyFunction(Entity);
 
@@ -366,7 +440,8 @@ var _getNewFunction = function (CurrentEntity) {
   return function (entity) {
     expect(arguments).to.have.length.below(
       2,
-      'Invalid arguments length when creating a new Entity function'
+      'Invalid arguments length when creating a new Entity function (it has ' +
+      'to be passed less than 2 arguments)'
     );
 
     var EntityClass = CurrentEntity;
@@ -388,6 +463,12 @@ var _getNewFunction = function (CurrentEntity) {
     }
 
     return function () {
+      expect(arguments).to.have.length(
+        0,
+        'Invalid arguments length when creating a new Entity (it has ' +
+        'not to be passed any argument)'
+      );
+
       return new EntityClass();
     };
   };

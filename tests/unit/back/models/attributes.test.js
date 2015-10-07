@@ -109,7 +109,7 @@ describe('attributes', function () {
             'attribute',
             'String',
             '0..1',
-            null
+            'defaultValue'
           );
         }
       );
@@ -192,7 +192,7 @@ describe('attributes', function () {
           .that.equals('0..1');
 
         expect(attribute).to.have.property('default')
-          .that.equals(null);
+          .that.equals('defaultValue');
       });
 
       it('expect to be not extensible', function () {
@@ -207,11 +207,32 @@ describe('attributes', function () {
 
       it('expect to not allow to delete property', function () {
         expect(function () {
-          delete attribute.default;
+          delete attribute.name;
         }).to.throw(Error);
 
         expect(attribute).to.have.property('name')
           .that.equals('attribute');
+
+        expect(function () {
+          delete attribute.type;
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('type')
+          .that.equals('String');
+
+        expect(function () {
+          delete attribute.multiplicity;
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('multiplicity')
+          .that.equals('0..1');
+
+        expect(function () {
+          delete attribute.default;
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('default')
+          .that.equals('defaultValue');
       });
 
       it('expect to not allow to change property', function () {
@@ -221,6 +242,36 @@ describe('attributes', function () {
 
         expect(attribute).to.have.property('name')
           .that.equals('attribute');
+
+        expect(function () {
+          attribute.type = 'will not change';
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('type')
+          .that.equals('String');
+
+        expect(function () {
+          attribute.multiplicity = 'will not change';
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('multiplicity')
+          .that.equals('0..1');
+
+        expect(function () {
+          attribute.default = 'will not change';
+        }).to.throw(Error);
+
+        expect(attribute).to.have.property('default')
+          .that.equals('defaultValue');
+      });
+
+      it('expect to have the right default values', function () {
+        attribute = new attributes.Attribute('attributeName');
+
+        expect(attribute.name).to.equal('attributeName');
+        expect(attribute.type).to.equal('Object');
+        expect(attribute.multiplicity).to.equal('1');
+        expect(attribute.default).to.equal(null);
       });
     });
   });
@@ -345,6 +396,96 @@ describe('attributes', function () {
         }).to.throw(Error);
 
         expect(attributeCollection.attribute1.name).to.equal('attribute1');
+      });
+    });
+
+    describe('.concat', function () {
+      var attributeCollection;
+      var concatenatedAttributeCollection;
+
+      it(
+        'expect to work with right arguments and have specified behavior',
+        function () {
+          attributeCollection = new attributes.AttributeCollection([
+            new attributes.Attribute('attribute1'),
+            new attributes.Attribute('attribute2')
+          ]);
+
+          concatenatedAttributeCollection =
+            attributes
+            .AttributeCollection
+            .concat(
+              attributeCollection,
+              new attributes.Attribute('attribute3')
+            );
+
+          expect(concatenatedAttributeCollection)
+            .to.not.deep.equal(attributeCollection);
+
+          expect(Object.keys(concatenatedAttributeCollection))
+            .to.deep.equal(['attribute1', 'attribute2', 'attribute3']);
+
+          expect(concatenatedAttributeCollection.attribute1.name)
+            .to.equal('attribute1');
+          expect(concatenatedAttributeCollection.attribute2.name)
+            .to.equal('attribute2');
+          expect(concatenatedAttributeCollection.attribute3.name)
+            .to.equal('attribute3');
+        }
+      );
+
+      it('expect to not work with wrong arguments', function () {
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+                new attributes.Attribute('attribute3')
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+                attributeCollection,
+                new attributes.Attribute('attribute3'),
+                null
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+              {},
+              new attributes.Attribute('attribute3')
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+              attributeCollection,
+              {}
+            );
+        }).to.throw(AssertionError);
+      });
+
+      it('expect to not work with duplicated', function () {
+        expect(function () {
+          concatenatedAttributeCollection =
+            attributes
+              .AttributeCollection
+              .concat(
+                concatenatedAttributeCollection,
+                new attributes.Attribute('attribute3')
+            );
+        }).to.throw(AssertionError);
       });
     });
   });

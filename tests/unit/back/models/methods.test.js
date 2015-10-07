@@ -103,5 +103,98 @@ describe('methods', function () {
         expect(methodCollection.method1()).to.equal('method1');
       });
     });
+
+    describe('.concat', function () {
+      var methodCollection;
+      var concatenatedMethodCollection;
+
+      it(
+        'expect to work with right arguments and have specified behavior',
+        function () {
+          methodCollection = new methods.MethodCollection({
+            method1: function () { return 'method1'; },
+            method2: function () { return 'method2'; }
+          });
+
+          concatenatedMethodCollection =
+            methods.MethodCollection.concat(
+              methodCollection,
+              function () { return 'method3'; },
+              'method3'
+            );
+
+          expect(concatenatedMethodCollection)
+            .to.not.deep.equal(methodCollection);
+
+          expect(Object.keys(concatenatedMethodCollection))
+            .to.deep.equal(['method1', 'method2', 'method3']);
+
+          expect(concatenatedMethodCollection.method1())
+            .to.equal('method1');
+          expect(concatenatedMethodCollection.method2())
+            .to.equal('method2');
+          expect(concatenatedMethodCollection.method3())
+            .to.equal('method3');
+        }
+      );
+
+      it('expect to not work with wrong arguments', function () {
+        expect(function () {
+          concatenatedMethodCollection =
+            methods.MethodCollection.concat(
+              methodCollection,
+              function () { return 'method3'; }
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedMethodCollection =
+            methods.MethodCollection.concat(
+              methodCollection,
+              function () { return 'method3'; },
+              'method3',
+              null
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedMethodCollection =
+            methods.MethodCollection.concat(
+              {},
+              function () { return 'method3'; },
+              'method3'
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedMethodCollection =
+            methods.MethodCollection.concat(
+              methodCollection,
+              {},
+              'method3'
+            );
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          concatenatedMethodCollection =
+            methods.MethodCollection.concat(
+              methodCollection,
+              function () { return 'method3'; },
+              null
+            );
+        }).to.throw(AssertionError);
+      });
+
+      it('expect to not work with duplicated', function () {
+        expect(function () {
+          concatenatedMethodCollection =
+            methods.MethodCollection.concat(
+              concatenatedMethodCollection,
+              function () { return 'method3'; },
+              'method3'
+            );
+        }).to.throw(AssertionError);
+      });
+    });
   });
 });

@@ -76,4 +76,3 @@ function c1M1(c1M1P1, c1M1P2) {
 function c1M2(c1M2P1, c1M2P2) {
   return c1M2P1 + c1M2P2;
 }
-
