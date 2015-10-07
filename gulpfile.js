@@ -5,7 +5,8 @@ var gulp = require('gulp');
 var gulpConfig = require('./gulp.config.json');
 var paths = gulpConfig.paths;
 var jshint = require('gulp-jshint');
-var jsxcs = require('gulp-jscs');
+var jscs = require('gulp-jscs');
+var stylish = require('gulp-jscs-stylish');
 var plumber = require('gulp-plumber');
 var mocha = require('gulp-mocha');
 var exec = require('child_process').exec;
@@ -14,15 +15,15 @@ var exec = require('child_process').exec;
  * Task to run link checks
  */
 gulp.task('lint', function () {
-  var checkFiles = gulp.src(paths.lintCheckFiles);
+  var noop = function () {};
 
-  checkFiles
-    .pipe(plumber())
+  return gulp.src(paths.lintCheckFiles)
     .pipe(jshint())
-    .pipe(jshint.reporter('default'));
-
-  return checkFiles
-    .pipe(jsxcs());
+    .pipe(jscs())
+    .on('error', noop)
+    .pipe(stylish.combineWithHintResults())
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'));
 });
 
 /**
