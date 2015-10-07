@@ -7,6 +7,8 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var classes = require('../../../../src/back/utils/classes');
+var Entity = require('../../../../src/back/models/Entity');
 var EntitySpecification = require(
   '../../../../src/back/models/EntitySpecification'
 );
@@ -220,6 +222,71 @@ describe('EntitySpecification', function () {
       expect(entitySpecification.methods.method2())
         .to.equal('method2');
     });
+  });
+
+  describe('#Entity', function () {
+    it('expect to exist and be set', function () {
+      var MyEntity = function () {};
+
+      classes.generalize(Entity, MyEntity);
+
+      var myEntitySpecification = new EntitySpecification();
+
+      MyEntity.specification = myEntitySpecification;
+
+      myEntitySpecification.Entity = MyEntity;
+
+      expect(myEntitySpecification.Entity).to.equal(MyEntity);
+
+      expect(MyEntity.specification).to.equal(myEntitySpecification);
+    });
+
+    it(
+      'expect to now work with classes that are not an Entity specification',
+      function () {
+        var MyEntity = function () {};
+
+        //classes.generalize(Entity, MyEntity);
+
+        var myEntitySpecification = new EntitySpecification();
+
+        MyEntity.specification = myEntitySpecification;
+
+        expect(function () {
+          myEntitySpecification.Entity = MyEntity;
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to now work with classes that has a differente specification',
+      function () {
+        var MyEntity = function () {};
+
+        classes.generalize(Entity, MyEntity);
+
+        var myEntitySpecification = new EntitySpecification();
+
+        //MyEntity.specification = myEntitySpecification;
+
+        expect(function () {
+          myEntitySpecification.Entity = MyEntity;
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to contain the right value after Entity initialization',
+      function () {
+        var myEntitySpecification = new EntitySpecification();
+
+        var MyEntity = Entity.specify(myEntitySpecification);
+
+        expect(myEntitySpecification.Entity).to.equal(MyEntity);
+
+        expect(MyEntity.specification).to.equal(myEntitySpecification);
+      }
+    );
   });
 
   describe('#addAttribute', function () {
