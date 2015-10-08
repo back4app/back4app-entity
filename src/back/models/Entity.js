@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 var settings = require('../settings');
 var classes = require('../utils/classes');
 var EntitySpecification = require('./EntitySpecification');
-var AttributeCollection = require('./attributes').AttributeCollection;
+var AttributeCollection = require('./attributes/AttributeCollection');
 var MethodCollection = require('./methods').MethodCollection;
 var errors = require('./errors');
 
