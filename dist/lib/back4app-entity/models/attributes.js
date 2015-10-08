@@ -124,47 +124,8 @@ function Attribute() {
   this.default = null;
 
   var _name = null;
-  Object.defineProperty(this, 'name', {
-    get: function () {
-      return _name;
-    },
-    set: function () {
-      throw new Error('Name of an Attribute cannot be changed.');
-    },
-    enumerable: true
-  });
-
   var _type = 'Object';
-  Object.defineProperty(this, 'type', {
-    get: function () {
-      return _type;
-    },
-    set: function () {
-      throw new Error('Type of an Attribute cannot be changed.');
-    },
-    enumerable: true
-  });
-
   var _multiplicity = '1';
-  Object.defineProperty(this, 'multiplicity', {
-    get: function () {
-      return _multiplicity;
-    },
-    set: function () {
-      throw new Error('Multiplicity of an Attribute cannot be changed.');
-    },
-    enumerable: true
-  });
-
-  Object.defineProperty(this, 'default', {
-    get: function () {
-      return _default;
-    },
-    set: function () {
-      throw new Error('Default of an Attribute cannot be changed.');
-    },
-    enumerable: true
-  });
   var _default = null;
 
   expect(arguments).to.have.length.within(
@@ -261,6 +222,34 @@ function Attribute() {
     }
   }
 
+  Object.defineProperty(this, 'name', {
+    value: _name,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(this, 'type', {
+    value: _type,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(this, 'multiplicity', {
+    value: _multiplicity,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(this, 'default', {
+    value: _default,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
+
   Object.preventExtensions(this);
   Object.seal(this);
 }
@@ -315,6 +304,8 @@ function AttributeCollection(attributes) {
   Object.preventExtensions(this);
   Object.seal(this);
 }
+
+AttributeCollection.concat = concat;
 
 /**
  * Adds a new attribute to the collection.
@@ -391,7 +382,7 @@ function _addAttribute() {
   } else {
     attribute = new (Function.prototype.bind.apply(
       Attribute,
-      [null].concat(arguments.slice(1))
+      [null].concat(Array.prototype.slice.call(arguments, 1))
     ))();
   }
 
@@ -424,15 +415,58 @@ function _addAttribute() {
   );
 
   Object.defineProperty(attributeCollection, attribute.name, {
-    get: function () {
-      return attribute;
-    },
-    set: function () {
-      throw new Error('Attribute "' + attribute.name + '" of an ' +
-        'AttributeCollection cannot be changed');
-    },
-    enumerable: true
+    value: attribute,
+    enumerable: true,
+    writable: false,
+    configurable: false
   });
+}
+
+/**
+ * Concatenates an AttributeCollection instance with an Attribute instance and
+ * returns a new AttributeCollection.
+ * @name module:back4app/entity/models/attributes.AttributeCollection.concat
+ * @function
+ * @param {!module:back4app/entity/models/attributes.AttributeCollection}
+ * attributeCollection The AttributeCollection to be concatenated.
+ * @param {!module:back4app/entity/models/attributes.Attribute} attribute
+ * The Attribute to be concatenated.
+ * @returns {module:back4app/entity/models/attributes.AttributeCollection} The
+ * new concatenated AttributeCollection.
+ * @example
+ * var concatenatedAttributeCollection = AttributeCollection.concat(
+ *   attributeCollection,
+ *   attribute
+ * );
+ */
+function concat(attributeCollection, attribute) {
+  expect(arguments).to.have.length(
+    2,
+    'Invalid arguments length when concatenating an AttributeCollection (it ' +
+    'has to be passed 2 arguments)'
+  );
+
+  expect(attributeCollection).to.be.instanceof(
+    AttributeCollection,
+    'Invalid argument "attributeCollection" when concatenating an ' +
+    'AttributeCollection (it has to be an AttributeCollection)'
+  );
+
+  expect(attribute).to.be.instanceof(
+    Attribute,
+    'Invalid argument "attribute" when concatenating an AttributeCollection ' +
+    '(it has to be an Attribute)'
+  );
+
+  var currentAttributes = [];
+
+  for (var currentAttribute in attributeCollection) {
+    currentAttributes.push(attributeCollection[currentAttribute]);
+  }
+
+  currentAttributes.push(attribute);
+
+  return new AttributeCollection(currentAttributes);
 }
 
 });
