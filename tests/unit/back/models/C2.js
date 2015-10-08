@@ -10,7 +10,11 @@ var ObjectAttribute = require('../../../../')
 
 module.exports = Entity.specify(
   [
-    new ObjectAttribute('c2A1')
+    new ObjectAttribute(
+      'c2A1',
+      '1',
+      null
+    )
   ],
   null
 );
