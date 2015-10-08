@@ -7,7 +7,6 @@ var paths = gulpConfig.paths;
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
 var stylish = require('gulp-jscs-stylish');
-var plumber = require('gulp-plumber');
 var mocha = require('gulp-mocha');
 var exec = require('child_process').exec;
 
