@@ -176,7 +176,7 @@ function EntitySpecification() {
     configurable: false
   });
 
-  var _attributes = null;
+  var _attributes = new attributes.AttributeCollection();
   Object.defineProperty(this, 'attributes', {
     get: function () {
       return _attributes;
@@ -190,7 +190,7 @@ function EntitySpecification() {
     configurable: false
   });
 
-  var _methods = null;
+  var _methods = new methods.MethodCollection();
   Object.defineProperty(this, 'methods', {
     get: function () {
       return _methods;
@@ -298,9 +298,6 @@ function EntitySpecification() {
         );
       }
     }
-  } else {
-    _attributes = new attributes.AttributeCollection();
-    _methods = new methods.MethodCollection();
   }
 
   _loadEntityMembers();
@@ -338,7 +335,30 @@ function EntitySpecification() {
    * @example
    * _loadEntityAttribute(someAttribute);
    */
-  function _loadEntityAttribute(attribute) {}
+  function _loadEntityAttribute(attribute) {
+    expect(_methods).to.not.have.ownProperty(
+      attribute.name,
+      'failed to load entity attribute "' + attribute.name + '" because ' +
+      'there is a method with same name in the current Entity and it cannot ' +
+      'be overloaded'
+    );
+
+    if (_Entity.General) {
+      expect(_Entity.General.attributes).to.not.have.ownProperty(
+        attribute.name,
+        'failed to load entity attribute "' + attribute.name + '" because ' +
+        'there is an attribute with same name in a parent of current Entity ' +
+        'and it cannot be overriden'
+      );
+
+      expect(_Entity.General.methods).to.not.respondTo(
+        attribute.name,
+        'failed to load entity attribute "' + attribute.name + '" because ' +
+        'there is a method with same name in a parent of current Entity ' +
+        'and it cannot be overriden'
+      );
+    }
+  }
 
   /**
    * Loads a method of the Entity that is associated with the current
@@ -352,7 +372,23 @@ function EntitySpecification() {
    * @example
    * _loadEntityMethod(someMethodFunction, someMethodName);
    */
-  function _loadEntityMethod(func, name) {}
+  function _loadEntityMethod(func, name) {
+    expect(_attributes).to.not.have.ownProperty(
+      name,
+      'failed to load entity method "' + name + '" because there is an ' +
+      'attribute with same name in the current Entity and it cannot be ' +
+      'overloaded'
+    );
+
+    if (_Entity.General) {
+      expect(_Entity.General.attributes).to.not.have.ownProperty(
+        name,
+        'failed to load entity method "' + name + '" because there is an ' +
+        'attribute with same name in a parent of current Entity and it ' +
+        'cannot be overriden'
+      );
+    }
+  }
 
   /**
    * Adds a new attribute to the attributes in the specification.

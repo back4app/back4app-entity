@@ -7,6 +7,8 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var classes = require('../../../../src/back/utils/classes');
+var Entity = require('../../../../src/back/models/Entity');
 var EntitySpecification = require(
   '../../../../src/back/models/EntitySpecification'
 );
@@ -222,6 +224,69 @@ describe('EntitySpecification', function () {
     });
   });
 
+  describe('#Entity', function () {
+    it('expect to exist and be set', function () {
+      var MyEntity = function () {};
+
+      classes.generalize(Entity, MyEntity);
+
+      MyEntity.specification = entitySpecification;
+
+      entitySpecification.Entity = MyEntity;
+
+      expect(entitySpecification.Entity).to.equal(MyEntity);
+
+      expect(MyEntity.specification).to.equal(entitySpecification);
+    });
+
+    it(
+      'expect to now work with classes that are not an Entity specification',
+      function () {
+        var MyEntity = function () {};
+
+        //classes.generalize(Entity, MyEntity);
+
+        var myEntitySpecification = new EntitySpecification();
+
+        MyEntity.specification = myEntitySpecification;
+
+        expect(function () {
+          myEntitySpecification.Entity = MyEntity;
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to now work with classes that has a differente specification',
+      function () {
+        var MyEntity = function () {};
+
+        classes.generalize(Entity, MyEntity);
+
+        var myEntitySpecification = new EntitySpecification();
+
+        //MyEntity.specification = myEntitySpecification;
+
+        expect(function () {
+          myEntitySpecification.Entity = MyEntity;
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to contain the right value after Entity initialization',
+      function () {
+        var myEntitySpecification = new EntitySpecification();
+
+        var MyEntity = Entity.specify(myEntitySpecification);
+
+        expect(myEntitySpecification.Entity).to.equal(MyEntity);
+
+        expect(MyEntity.specification).to.equal(myEntitySpecification);
+      }
+    );
+  });
+
   describe('#addAttribute', function () {
     it(
       'expect to work with right arguments and have specified behavior',
@@ -275,6 +340,112 @@ describe('EntitySpecification', function () {
           .to.equal('method2');
         expect(entitySpecification.methods.method3())
           .to.equal('method3');
+      }
+    );
+  });
+
+  context('loading members tests', function () {
+    var MyEntity;
+    var MyEntity2;
+    var MyEntity3;
+
+    it(
+      'expect to not allow attribute with same name of an existing method',
+      function () {
+        MyEntity = Entity.specify(
+          entitySpecification.attributes,
+          entitySpecification.methods
+        );
+
+        expect(function () {
+          MyEntity.specification.addAttribute('method3');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          Entity.specify({
+            attributes: {
+              attribute1: {}
+            },
+            methods: {
+              attribute1: function () {}
+            }
+          });
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to not allow attribute with same name of an ancestral attribute',
+      function () {
+        MyEntity2 = MyEntity.specify();
+        MyEntity3 = MyEntity2.specify();
+
+        expect(function () {
+          MyEntity2.specification.addAttribute('attribute1');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity3.specification.addAttribute('attribute1');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity3.specify({
+            attributes: {
+              attribute1: {}
+            }
+          });
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to not allow attribute with same name of an ancestral method',
+      function () {
+        expect(function () {
+          MyEntity2.specification.addAttribute('method1');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity3.specification.addAttribute('method1');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity3.specify({
+            attributes: {
+              method1: {}
+            }
+          });
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to not allow method with same name of an existing attribute',
+      function () {
+        expect(function () {
+          MyEntity.specification.addMethod(function () {}, 'attribute1');
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to not allow method with same name of an ancestral attribute',
+      function () {
+        expect(function () {
+          MyEntity2.specification.addMethod(function () {}, 'attribute1');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity3.specification.addMethod(function () {}, 'attribute1');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity3.specify({
+            methods: {
+              attribute1: function () {}
+            }
+          });
+        }).to.throw(AssertionError);
       }
     );
   });
