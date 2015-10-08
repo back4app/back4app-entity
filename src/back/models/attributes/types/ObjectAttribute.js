@@ -62,6 +62,12 @@ function ObjectAttribute() {
   if (argumentsArray.length === 1 && typeof argumentsArray[0] !== 'string') {
     var objectAttribute = argumentsArray[0];
 
+    expect(objectAttribute).to.be.an(
+      'object',
+      'Invalid argument type when creating an Attribute (it has to be an ' +
+      'object or a string)'
+    );
+
     expect(objectAttribute).to.not.have.ownProperty(
       'type',
       'Property "type" cannot be set in an ObjectAttribute. Its value will ' +
