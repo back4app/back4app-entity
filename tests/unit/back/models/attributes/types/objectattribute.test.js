@@ -7,6 +7,10 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var classes = require('../../../../../../src/back/utils/classes');
+var Attribute = require(
+  '../../../../../../src/back/models/attributes/Attribute'
+);
 var ObjectAttribute = require(
   '../../../../../../src/back/models/attributes/types/ObjectAttribute'
 );
@@ -136,6 +140,10 @@ describe('ObjectAttribute', function () {
   });
 
   context('functional tests', function () {
+    it('expect to be a specialization of Attribute', function () {
+      classes.isGeneral(Attribute, ObjectAttribute);
+    });
+
     it('expect to have all properties storing the right values', function () {
       expect(objectAttribute).to.have.property('name')
         .that.equals('attribute');
