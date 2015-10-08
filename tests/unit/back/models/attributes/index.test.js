@@ -2,10 +2,6 @@
 // Created by davimacedo on 08/10/15.
 //
 
-//
-// Created by davimacedo on 22/09/15.
-//
-
 'use strict';
 
 var expect = require('chai').expect;
