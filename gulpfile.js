@@ -8,6 +8,9 @@ var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
 var stylish = require('gulp-jscs-stylish');
 var mocha = require('gulp-mocha');
+var shell = require('gulp-shell');
+var rename = require('gulp-rename');
+var del = require('del');
 var exec = require('child_process').exec;
 
 /**
@@ -90,3 +93,54 @@ function guideDocs() {
     }
   );
 }
+
+/**
+ * Task to clean dist folder
+ */
+gulp.task('clean:dist', function () {
+  return del(['dist/lib/**/*']);
+});
+
+/**
+ * Task to generate dist build
+ */
+gulp.task('dist', ['clean:dist'], function () {
+  // core source code
+  gulp.src('')
+    .pipe(shell([
+      '<%= rjs %> -convert <%= src %> <%= dest %>'
+    ], {
+      templateData: {
+        rjs: paths.tools.rjs,
+        src: paths.core.src,
+        dest: paths.core.dest
+      }
+    }));
+
+  // vendor libs
+  gulp.src(paths.vendor.libs.chai)
+    .pipe(gulp.dest(paths.vendor.dest));
+
+  gulp.src(paths.vendor.libs.util)
+    .pipe(rename('util.js'))
+    .pipe(gulp.dest(paths.vendor.dest));
+
+  gulp.src('')
+    .pipe(shell([
+      '<%= rjs %> -convert <%= src %> <%= dest %>'
+    ], {
+      templateData: {
+        rjs: paths.tools.rjs,
+        src: paths.vendor.libs.path,
+        dest: paths.build.tmpDir
+      }
+    }))
+    .on('end', function () {
+      gulp.src(path.join(paths.build.tmpDir, 'index.js'))
+        .pipe(rename('path.js'))
+        .pipe(gulp.dest(paths.vendor.dest))
+        .on('end', function () {
+          del([paths.build.tmpDir]);
+        });
+    });
+});
