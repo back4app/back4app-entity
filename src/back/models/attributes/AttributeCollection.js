@@ -76,7 +76,11 @@ AttributeCollection.concat = concat;
  * @private
  * @example
  * var attributeCollection = new AttributeCollection();
- * _addAttribute(attributeCollection, new StringAttribute('attribute'), 'attribute');
+ * _addAttribute(
+ *   attributeCollection,
+ *   new StringAttribute('attribute'),
+ *   'attribute'
+ * );
  */
 /**
  * Adds a new attribute to the collection.
@@ -163,6 +167,13 @@ function _addAttribute() {
   if (!(attribute instanceof Attribute)) {
     attribute = new Attribute(attribute);
   }
+
+  expect(attribute.constructor).to.not.equal(
+    Attribute,
+    'Invalid attribute "' + attribute.name + '". Attribute is an abstract ' +
+    'class and cannot be directly instantiated and added in an ' +
+    'AttributeCollection'
+  );
 
   expect(attributeCollection).to.not.have.ownProperty(
     attribute.name,
