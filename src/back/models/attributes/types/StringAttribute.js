@@ -1,5 +1,5 @@
 //
-// Created by davimacedo on 08/10/15.
+// Created by davimacedo on 09/10/15.
 //
 
 'use strict';
@@ -9,12 +9,12 @@ var classes = require('../../../utils/classes');
 var objects = require('../../../utils/objects');
 var Attribute = require('../Attribute');
 
-module.exports = ObjectAttribute;
+module.exports = StringAttribute;
 
 /**
- * Implementation of an Entity Attribute to store Object data.
+ * Implementation of an Entity Attribute to store string data.
  * @memberof module:back4app/entity/models/attributes/types
- * @name ObjectAttribute
+ * @name StringAttribute
  * @constructor
  * @extends module:back4app/entity/models/attributes.Attribute
  * @param {!Object} attribute This is the attribute to be added. It can be
@@ -23,66 +23,66 @@ module.exports = ObjectAttribute;
  * @param {!string} [attribute.multiplicity='1'] It is the multiplicity of the
  * attribute. It is optional and if not passed it will assume '1' as the default
  * value.
- * @param {?Object} [attribute.default] It is
+ * @param {?string} [attribute.default] It is
  * the default expression of the attribute.
  * @example
- * var objectAttribute = new ObjectAttribute({
- *   name: 'objectAttribute',
+ * var stringAttribute = new StringAttribute({
+ *   name: 'stringAttribute',
  *   multiplicity: '0..1',
  *   default: null
  * });
  */
 /**
- * Implementation of an Entity Attribute to store Object data.
+ * Implementation of an Entity Attribute to store string data.
  * @memberof module:back4app/entity/models/attributes/types
- * @name ObjectAttribute
+ * @name StringAttribute
  * @constructor
  * @extends module:back4app/entity/models/attributes.Attribute
  * @param {!string} name It is the name of the attribute.
  * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
  * It is optional and if not passed it will assume '1' as the default value.
- * @param {?Object} [default] It is the default
+ * @param {?string} [default] It is the default
  * expression of the attribute.
  * @example
- * var objectAttribute = new ObjectAttribute(
- *   'objectAttribute',
+ * var stringAttribute = new StringAttribute(
+ *   'stringAttribute',
  *   '0..1',
  *   null
  * );
  */
-function ObjectAttribute() {
+function StringAttribute() {
   var argumentsArray = Array.prototype.slice.call(arguments);
 
   expect(argumentsArray).to.have.length.within(
     1,
     3,
-    'Invalid arguments length when creating an ObjectAttribute (it has to be ' +
+    'Invalid arguments length when creating an StringAttribute (it has to be ' +
     'passed from 1 to 3 arguments)'
   );
 
   if (argumentsArray.length === 1 && typeof argumentsArray[0] !== 'string') {
-    var objectAttribute = argumentsArray[0];
+    var stringAttribute = argumentsArray[0];
 
-    expect(objectAttribute).to.be.an(
+    expect(stringAttribute).to.be.an(
       'object',
       'Invalid argument type when creating an Attribute (it has to be an ' +
       'object or a string)'
     );
 
-    expect(objectAttribute).to.not.have.ownProperty(
+    expect(stringAttribute).to.not.have.ownProperty(
       'type',
-      'Property "type" cannot be set in an ObjectAttribute. Its value will ' +
-      'be automatically set to Object'
+      'Property "type" cannot be set in an StringAttribute. Its value will ' +
+      'be automatically set to String'
     );
 
-    objectAttribute = objects.copy(objectAttribute);
+    stringAttribute = objects.copy(stringAttribute);
 
-    objectAttribute.type = 'Object';
+    stringAttribute.type = 'String';
   } else {
-    argumentsArray.splice(1, 0, 'Object');
+    argumentsArray.splice(1, 0, 'String');
   }
 
   Attribute.apply(this, argumentsArray);
 }
 
-classes.generalize(Attribute, ObjectAttribute);
+classes.generalize(Attribute, StringAttribute);

@@ -20,11 +20,7 @@ module.exports = Entity.specify(
       name: 'c2A2',
       multiplicity: '0..1',
       default: function () { return { default: 'thisIsMyDefault' }; }
-    }),
-    new Attribute(
-      'myAttribute',
-      'String'
-    )
+    })
   ],
   null
 );

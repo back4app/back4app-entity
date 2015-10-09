@@ -10,12 +10,12 @@ module.exports = Entity.specify({
       default: false
     },
     c1A2: {
-      type: 'Datetime',
+      type: 'Date',
       multiplicity: '0..1',
       default: Date.now
     },
     c1A3: {
-      type: 'Integer',
+      type: 'Number',
       multiplicity: '1..*',
       default: function () { return [0]; }
     },
@@ -25,7 +25,7 @@ module.exports = Entity.specify({
       default: null
     },
     c1A5: {
-      type: 'Real',
+      type: 'Number',
       multiplicity: '1',
       default: 0.0
     },

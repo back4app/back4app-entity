@@ -5,7 +5,10 @@
 'use strict';
 
 var expect = require('chai').expect;
+var objects = require('../../utils/objects')
 var Attribute = require('./Attribute');
+var attributeTypes = require('./types');
+var ObjectAttribute = attributeTypes.ObjectAttribute;
 
 module.exports = AttributeCollection;
 
@@ -64,7 +67,8 @@ AttributeCollection.concat = concat;
 
 /**
  * Adds a new attribute to the collection.
- * @name module:back4app/entity/models/attributes~_addAttribute
+ * @name
+ * module:back4app/entity/models/attributes.AttributeCollection~_addAttribute
  * @function
  * @param {!module:back4app/entity/models/attributes.AttributeCollection}
  * attributeCollection It is the attribute collection to which the attribute
@@ -84,7 +88,8 @@ AttributeCollection.concat = concat;
  */
 /**
  * Adds a new attribute to the collection.
- * @name module:back4app/entity/models/attributes~_addAttribute
+ * @name
+ * module:back4app/entity/models/attributes.AttributeCollection~_addAttribute
  * @function
  * @param {!module:back4app/entity/models/attributes.AttributeCollection}
  * attributeCollection It is the attribute collection to which the attribute
@@ -110,7 +115,8 @@ AttributeCollection.concat = concat;
  */
 /**
  * Adds a new attribute to the collection.
- * @name module:back4app/entity/models/attributes~_addAttribute
+ * @name
+ * module:back4app/entity/models/attributes.AttributeCollection~_addAttribute
  * @function
  * @param {!module:back4app/entity/models/attributes.AttributeCollection}
  * attributeCollection It is the attribute collection to which the attribute
@@ -165,7 +171,16 @@ function _addAttribute() {
   }
 
   if (!(attribute instanceof Attribute)) {
-    attribute = new Attribute(attribute);
+    if (attribute.type) {
+      var TypedAttribute = attributeTypes.get(attribute.type);
+
+      attribute = objects.copy(attribute);
+      delete attribute.type;
+
+      attribute = new TypedAttribute(attribute);
+    } else {
+      attribute = new ObjectAttribute(attribute);
+    }
   }
 
   expect(attribute.constructor).to.not.equal(

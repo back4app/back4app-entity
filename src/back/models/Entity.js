@@ -635,6 +635,7 @@ var _getNewFunction = function (CurrentEntity) {
  * created. If the parameter is not given, the function will create instances of
  * the current Entity Class.
  * @returns {function}
+ * @throws {module:back4app/entity/models/errors.EntityNotFoundError}
  * @example
  * var c1NewFunction = Entity.new('C1');
  * var c1 = c1NewFunction();
