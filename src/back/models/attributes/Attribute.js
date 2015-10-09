@@ -10,10 +10,12 @@ module.exports = Attribute;
 
 /**
  * Holds an Entity Attribute information. An instance of Attribute is not
- * extensible.
+ * extensible. The Attribute is an abstract class and cannot be directly
+ * initialized.
  * @memberof module:back4app/entity/models/attributes
  * @name Attribute
  * @constructor
+ * @abstract
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object.
  * @param {!string} attribute.name It is the name of the attribute.
@@ -26,7 +28,7 @@ module.exports = Attribute;
  * @param {?(boolean|number|string|Object|function)} [attribute.default] It is
  * the default expression of the attribute.
  * @example
- * var attribute = new attributes.Attribute({
+ * Attribute.call(this, {
  *   name: 'attribute',
  *   type: 'String',
  *   multiplicity: '0..1',
@@ -35,7 +37,8 @@ module.exports = Attribute;
  */
 /**
  * Holds an Entity Attribute information. An instance of Attribute is not
- * extensible.
+ * extensible. The Attribute is an abstract class and cannot be directly
+ * initialized.
  * @memberof module:back4app/entity/models/attributes
  * @name Attribute
  * @constructor
@@ -47,7 +50,8 @@ module.exports = Attribute;
  * @param {?(boolean|number|string|Object|function)} [default] It is the default
  * expression of the attribute.
  * @example
- * var attribute = new attributes.Attribute(
+ * Attribute.call(
+ *   this,
  *   'attribute',
  *   'String',
  *   '0..1',
@@ -61,13 +65,14 @@ function Attribute() {
    * @type {!string}
    * @readonly
    * @example
-   * var attribute = new attributes.Attribute(
+   * Attribute.call(
+   *   this,
    *   'attribute',
    *   'String',
    *   '0..1',
    *   'default'
    * );
-   * console.log(attribute.name); // Logs "attribute"
+   * console.log(this.name); // Logs "attribute"
    */
   this.name = null;
   /**
@@ -76,13 +81,14 @@ function Attribute() {
    * @type {!string}
    * @readonly
    * @example
-   * var attribute = new attributes.Attribute(
+   * Attribute.call(
+   *   this,
    *   'attribute',
    *   'String',
    *   '0..1',
    *   'default'
    * );
-   * console.log(attribute.type); // Logs "String"
+   * console.log(this.type); // Logs "String"
    */
   this.type = null;
   /**
@@ -91,13 +97,14 @@ function Attribute() {
    * @type {!string}
    * @readonly
    * @example
-   * var attribute = new attributes.Attribute(
+   * Attribute.call(
+   *   this,
    *   'attribute',
    *   'String',
    *   '0..1',
    *   'default'
    * );
-   * console.log(attribute.multiplicity); // Logs "0..1"
+   * console.log(this.multiplicity); // Logs "0..1"
    */
   this.multiplicity = null;
   /**
@@ -106,15 +113,29 @@ function Attribute() {
    * @type {?(boolean|number|string|Object|function)}
    * @readonly
    * @example
-   * var attribute = new attributes.Attribute(
+   * Attribute.call(
+   *   this,
    *   'attribute',
    *   'String',
    *   '0..1',
    *   'default'
    * );
-   * console.log(attribute.default); // Logs "default"
+   * console.log(this.default); // Logs "default"
    */
   this.default = null;
+
+  if (this) {
+    expect(this.constructor).to.not.equal(
+      Attribute,
+      'The Attribute is an abstract class and cannot be directly initialized'
+    );
+
+    expect(this).to.be.instanceof(
+      Attribute,
+      'The Attribute\'s constructor can be only invoked from specialized' +
+      'classes'
+    );
+  }
 
   var _name = null;
   var _type = 'Object';

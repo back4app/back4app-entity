@@ -468,8 +468,8 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @example
  * var MyEntity = Entity.specify(new EntitySpecification(
  *   new AttributeCollection([
- *     new Attribute('attribute1', 'String', '0..1', 'default'),
- *     new Attribute('attribute2', 'String', '0..1', 'default')
+ *     new StringAttribute('attribute1', '0..1', 'default'),
+ *     new StringAttribute('attribute2', '0..1', 'default')
  *   ]),
  *   new MethodCollection({
  *     method1: function () { return 'method1'; },
@@ -515,8 +515,8 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @example
  * var MyEntity = Entity.specify(
  *   new AttributeCollection([
- *     new Attribute('attribute1', 'String', '0..1', 'default'),
- *     new Attribute('attribute2', 'String', '0..1', 'default')
+ *     new StringAttribute('attribute1', '0..1', 'default'),
+ *     new StringAttribute('attribute2', '0..1', 'default')
  *   ]),
  *   new MethodCollection({
  *     method1: function () { return 'method1'; },

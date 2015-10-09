@@ -27,8 +27,8 @@ module.exports = AttributeCollection;
  * var attributeCollection = new AttributeCollection({});
  * @example
  * var attributeCollection = new AttributeCollection({
- *   attribute1: new Attribute('attribute1'),
- *   attribute2: new Attribute('attribute2')
+ *   attribute1: new StringAttribute('attribute1'),
+ *   attribute2: new StringAttribute('attribute2')
  * });
  */
 function AttributeCollection(attributes) {
@@ -76,7 +76,7 @@ AttributeCollection.concat = concat;
  * @private
  * @example
  * var attributeCollection = new AttributeCollection();
- * _addAttribute(attributeCollection, new Attribute('attribute'), 'attribute');
+ * _addAttribute(attributeCollection, new StringAttribute('attribute'), 'attribute');
  */
 /**
  * Adds a new attribute to the collection.

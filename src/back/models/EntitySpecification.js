@@ -36,9 +36,9 @@ module.exports = EntitySpecification;
  * {@link module:back4app/entity/models/methods.MethodCollection}.
  * @example
  * var entitySpecification = new EntitySpecification(
- *   new attributes.AttributeCollection({
- *     attribute1: new attributes.Attribute('attribute1'),
- *     attribute2: new attributes.Attribute('attribute2')
+ *   new AttributeCollection({
+ *     attribute1: new StringAttribute('attribute1'),
+ *     attribute2: new StringAttribute('attribute2')
  *   }),
  *   new methods.MethodCollection({
  *     method1: function () { return 'method1'; },
@@ -72,11 +72,11 @@ module.exports = EntitySpecification;
  * {@link module:back4app/entity/models/methods.MethodCollection}.
  * @example
  * var entitySpecification = new EntitySpecification({
- *   attributes: new attributes.AttributeCollection({
- *     attribute1: new attributes.Attribute('attribute1'),
- *     attribute2: new attributes.Attribute('attribute2')
+ *   attributes: new AttributeCollection({
+ *     attribute1: new StringAttribute('attribute1'),
+ *     attribute2: new StringAttribute('attribute2')
  *   }),
- *   methods: new methods.MethodCollection({
+ *   methods: new MethodCollection({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
  *   })
@@ -101,11 +101,11 @@ function EntitySpecification() {
    * @readonly
    * @example
    * var entitySpecification = new EntitySpecification({
-   *   attributes: new attributes.AttributeCollection({
-   *     attribute1: new attributes.Attribute('attribute1'),
-   *     attribute2: new attributes.Attribute('attribute2')
+   *   attributes: new AttributeCollection({
+   *     attribute1: new StringAttribute('attribute1'),
+   *     attribute2: new StringAttribute('attribute2')
    *   }),
-   *   methods: new methods.MethodCollection({
+   *   methods: new MethodCollection({
    *     method1: function () { return 'method1'; },
    *     method2: function () { return 'method2'; }
    *   })
@@ -122,11 +122,11 @@ function EntitySpecification() {
    * @readonly
    * @example
    * var entitySpecification = new EntitySpecification({
-   *   attributes: new attributes.AttributeCollection({
-   *     attribute1: new attributes.Attribute('attribute1'),
-   *     attribute2: new attributes.Attribute('attribute2')
+   *   attributes: new AttributeCollection({
+   *     attribute1: new StringAttribute('attribute1'),
+   *     attribute2: new StringAttribute('attribute2')
    *   }),
-   *   methods: new methods.MethodCollection({
+   *   methods: new MethodCollection({
    *     method1: function () { return 'method1'; },
    *     method2: function () { return 'method2'; }
    *   })
@@ -428,7 +428,10 @@ function EntitySpecification() {
    * {@link module:back4app/entity/models/attributes.Attribute} instance.
    * @param {?string} [name] This is the name of the attribute.
    * @example
-   * entitySpecification.addAttribute(new Attribute('attribute'), 'attribute');
+   * entitySpecification.addAttribute(
+   *   new StringAttribute('attribute'),
+   *   'attribute'
+   * );
    */
   /**
    * Adds a new attribute to the attributes in the specification
