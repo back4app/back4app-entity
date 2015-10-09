@@ -141,7 +141,10 @@ describe('ObjectAttribute', function () {
 
   context('functional tests', function () {
     it('expect to be a specialization of Attribute', function () {
-      classes.isGeneral(Attribute, ObjectAttribute);
+      expect(classes.isGeneral(Attribute, ObjectAttribute)).to.equal(true);
+
+      expect(new ObjectAttribute('myObjectAttribute'))
+        .to.be.an.instanceof(Attribute);
     });
 
     it('expect to have all properties storing the right values', function () {
