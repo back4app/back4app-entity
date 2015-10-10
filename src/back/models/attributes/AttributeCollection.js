@@ -5,7 +5,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var objects = require('../../utils/objects')
+var objects = require('../../utils/objects');
 var Attribute = require('./Attribute');
 var attributeTypes = require('./types');
 var ObjectAttribute = attributeTypes.ObjectAttribute;

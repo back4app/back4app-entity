@@ -66,7 +66,7 @@ describe('objects', function () {
     context('functional tests', function () {
       var o = {
         o1: 'o1'
-      }
+      };
 
       var copy = objects.copy(o);
 

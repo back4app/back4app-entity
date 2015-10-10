@@ -4,7 +4,6 @@
 
 'use strict';
 
-var util = require('util');
 var expect = require('chai').expect;
 
 /**
@@ -35,11 +34,11 @@ function copy(o) {
     'Invalid argument "o" when copying an object (it has to be an object)'
   );
 
-  var copy = {};
+  var oCopy = {};
 
   for (var property in o) {
-    copy[property] = o[property];
+    oCopy[property] = o[property];
   }
 
-  return copy;
+  return oCopy;
 }

@@ -17,8 +17,20 @@ var Attribute = require(
 var attributesTypesIndex = require(
   '../../../../../../src/back/models/attributes/types'
 );
+var BooleanAttribute = require(
+  '../../../../../../src/back/models/attributes/types/BooleanAttribute'
+);
+var DateAttribute = require(
+  '../../../../../../src/back/models/attributes/types/DateAttribute'
+);
+var NumberAttribute = require(
+  '../../../../../../src/back/models/attributes/types/NumberAttribute'
+);
 var ObjectAttribute = require(
   '../../../../../../src/back/models/attributes/types/ObjectAttribute'
+);
+var StringAttribute = require(
+  '../../../../../../src/back/models/attributes/types/StringAttribute'
 );
 
 describe('attributesTypesIndex', function () {

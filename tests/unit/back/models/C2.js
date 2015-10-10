@@ -5,7 +5,6 @@
 'use strict';
 
 var Entity = require('../../../../').models.Entity;
-var Attribute = require('../../../../').models.attributes.Attribute;
 var ObjectAttribute = require('../../../../')
   .models.attributes.types.ObjectAttribute;
 
