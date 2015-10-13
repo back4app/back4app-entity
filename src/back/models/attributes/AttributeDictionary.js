@@ -7,41 +7,41 @@
 var expect = require('chai').expect;
 var Attribute = require('./Attribute');
 
-module.exports = AttributeCollection;
+module.exports = AttributeDictionary;
 
 /**
- * Collection of Entity Attributes.
+ * Dictionary of Entity Attributes.
  * @constructor
  * @memberof module:back4app/entity/models/attributes
  * @param {?(module:back4app/entity/models/attributes.Attribute[]|
  * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
- * [attributes] The attributes to be added in the collection. They can be given
+ * [attributes] The attributes to be added in the dictionary. They can be given
  * as an Array or a Dictionary of
  * {@link module:back4app/entity/models/attributes.Attribute}.
  * @example
- * var attributeCollection = new AttributeCollection();
+ * var attributeDictionary = new AttributeDictionary();
  * @example
- * var attributeCollection = new AttributeCollection(null);
+ * var attributeDictionary = new AttributeDictionary(null);
  * @example
- * var attributeCollection = new AttributeCollection({});
+ * var attributeDictionary = new AttributeDictionary({});
  * @example
- * var attributeCollection = new AttributeCollection({
+ * var attributeDictionary = new AttributeDictionary({
  *   attribute1: new StringAttribute('attribute1'),
  *   attribute2: new StringAttribute('attribute2')
  * });
  */
-function AttributeCollection(attributes) {
+function AttributeDictionary(attributes) {
   expect(arguments).to.have.length.below(
     2,
-    'Invalid arguments length when creating an AttributeCollection (it has ' +
+    'Invalid arguments length when creating an AttributeDictionary (it has ' +
     'to be passed less than 2 arguments)'
   );
 
   if (attributes) {
     expect(typeof attributes).to.equal(
       'object',
-      'Invalid argument type when creating an AttributeCollection (it has to ' +
+      'Invalid argument type when creating an AttributeDictionary (it has to ' +
       'be an object)'
     );
 
@@ -60,15 +60,15 @@ function AttributeCollection(attributes) {
   Object.seal(this);
 }
 
-AttributeCollection.concat = concat;
+AttributeDictionary.concat = concat;
 
 /**
- * Adds a new attribute to the collection.
+ * Adds a new attribute to the dictionary.
  * @name
- * module:back4app/entity/models/attributes.AttributeCollection~_addAttribute
+ * module:back4app/entity/models/attributes.AttributeDictionary~_addAttribute
  * @function
- * @param {!module:back4app/entity/models/attributes.AttributeCollection}
- * attributeCollection It is the attribute collection to which the attribute
+ * @param {!module:back4app/entity/models/attributes.AttributeDictionary}
+ * attributeDictionary It is the attribute dictionary to which the attribute
  * will be added.
  * @param {!module:back4app/entity/models/attributes.Attribute} attribute This
  * is the attribute to be added. It can be passed as a
@@ -76,20 +76,20 @@ AttributeCollection.concat = concat;
  * @param {?string} [name] This is the name of the attribute.
  * @private
  * @example
- * var attributeCollection = new AttributeCollection();
+ * var attributeDictionary = new AttributeDictionary();
  * _addAttribute(
- *   attributeCollection,
+ *   attributeDictionary,
  *   new StringAttribute('attribute'),
  *   'attribute'
  * );
  */
 /**
- * Adds a new attribute to the collection.
+ * Adds a new attribute to the dictionary.
  * @name
- * module:back4app/entity/models/attributes.AttributeCollection~_addAttribute
+ * module:back4app/entity/models/attributes.AttributeDictionary~_addAttribute
  * @function
- * @param {!module:back4app/entity/models/attributes.AttributeCollection}
- * attributeCollection It is the attribute collection to which the attribute
+ * @param {!module:back4app/entity/models/attributes.AttributeDictionary}
+ * attributeDictionary It is the attribute dictionary to which the attribute
  * will be added.
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object, as specified in
@@ -107,11 +107,11 @@ AttributeCollection.concat = concat;
  * @param {?string} [name] This is the name of the attribute.
  * @private
  * @example
- * var attributeCollection = new AttributeCollection();
- * _addAttribute(attributeCollection, {}, 'attribute');
+ * var attributeDictionary = new AttributeDictionary();
+ * _addAttribute(attributeDictionary, {}, 'attribute');
  */
 function _addAttribute() {
-  var attributeCollection = arguments[0];
+  var attributeDictionary = arguments[0];
 
   var attribute = null;
   var name = null;
@@ -126,7 +126,7 @@ function _addAttribute() {
   expect(attribute).to.be.an(
     'object',
     'Invalid argument type when adding an attribute ' + (name ? 'called "' +
-    name + '" ' : '') + 'in an AttributeCollection (it has to be an object)'
+    name + '" ' : '') + 'in an AttributeDictionary (it has to be an object)'
   );
 
   if (name) {
@@ -134,7 +134,7 @@ function _addAttribute() {
       expect(attribute.name).to.equal(
         name,
         'Invalid argument "name" when adding an attribute called "' +
-        attribute.name + '" in an AttributeCollection (the name given in ' +
+        attribute.name + '" in an AttributeDictionary (the name given in ' +
         'argument and the name given in the attribute object should be equal)'
       );
     } else {
@@ -150,15 +150,15 @@ function _addAttribute() {
     Attribute,
     'Invalid attribute "' + attribute.name + '". Attribute is an abstract ' +
     'class and cannot be directly instantiated and added in an ' +
-    'AttributeCollection'
+    'AttributeDictionary'
   );
 
-  expect(attributeCollection).to.not.have.ownProperty(
+  expect(attributeDictionary).to.not.have.ownProperty(
     attribute.name,
     'Duplicated attribute name "' + attribute.name + '"'
   );
 
-  Object.defineProperty(attributeCollection, attribute.name, {
+  Object.defineProperty(attributeDictionary, attribute.name, {
     value: attribute,
     enumerable: true,
     writable: false,
@@ -167,48 +167,48 @@ function _addAttribute() {
 }
 
 /**
- * Concatenates an AttributeCollection instance with an Attribute instance and
- * returns a new AttributeCollection.
- * @name module:back4app/entity/models/attributes.AttributeCollection.concat
+ * Concatenates an AttributeDictionary instance with an Attribute instance and
+ * returns a new AttributeDictionary.
+ * @name module:back4app/entity/models/attributes.AttributeDictionary.concat
  * @function
- * @param {!module:back4app/entity/models/attributes.AttributeCollection}
- * attributeCollection The AttributeCollection to be concatenated.
+ * @param {!module:back4app/entity/models/attributes.AttributeDictionary}
+ * attributeDictionary The AttributeDictionary to be concatenated.
  * @param {!module:back4app/entity/models/attributes.Attribute} attribute
  * The Attribute to be concatenated.
- * @returns {module:back4app/entity/models/attributes.AttributeCollection} The
- * new concatenated AttributeCollection.
+ * @returns {module:back4app/entity/models/attributes.AttributeDictionary} The
+ * new concatenated AttributeDictionary.
  * @example
- * var concatenatedAttributeCollection = AttributeCollection.concat(
- *   attributeCollection,
+ * var concatenatedAttributeDictionary = AttributeDictionary.concat(
+ *   attributeDictionary,
  *   attribute
  * );
  */
-function concat(attributeCollection, attribute) {
+function concat(attributeDictionary, attribute) {
   expect(arguments).to.have.length(
     2,
-    'Invalid arguments length when concatenating an AttributeCollection (it ' +
+    'Invalid arguments length when concatenating an AttributeDictionary (it ' +
     'has to be passed 2 arguments)'
   );
 
-  expect(attributeCollection).to.be.instanceof(
-    AttributeCollection,
-    'Invalid argument "attributeCollection" when concatenating an ' +
-    'AttributeCollection (it has to be an AttributeCollection)'
+  expect(attributeDictionary).to.be.instanceof(
+    AttributeDictionary,
+    'Invalid argument "attributeDictionary" when concatenating an ' +
+    'AttributeDictionary (it has to be an AttributeDictionary)'
   );
 
   expect(attribute).to.be.instanceof(
     Attribute,
-    'Invalid argument "attribute" when concatenating an AttributeCollection ' +
+    'Invalid argument "attribute" when concatenating an AttributeDictionary ' +
     '(it has to be an Attribute)'
   );
 
   var currentAttributes = [];
 
-  for (var currentAttribute in attributeCollection) {
-    currentAttributes.push(attributeCollection[currentAttribute]);
+  for (var currentAttribute in attributeDictionary) {
+    currentAttributes.push(attributeDictionary[currentAttribute]);
   }
 
   currentAttributes.push(attribute);
 
-  return new AttributeCollection(currentAttributes);
+  return new AttributeDictionary(currentAttributes);
 }

@@ -4,8 +4,8 @@ var expect = require('chai').expect;
 var classes = require('../utils/classes');
 var objects = require('../utils/objects');
 var EntitySpecification = require('./EntitySpecification');
-var AttributeCollection = require('./attributes/AttributeCollection');
-var MethodCollection = require('./methods').MethodCollection;
+var AttributeDictionary = require('./attributes/AttributeDictionary');
+var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
 
 module.exports = Entity;
@@ -385,7 +385,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
           CurrentEntity = CurrentEntity.General;
         }
 
-        return new AttributeCollection(attributesObject);
+        return new AttributeDictionary(attributesObject);
       },
       set: function () {
         throw new Error('Attributes of an Entity cannot be changed');
@@ -412,7 +412,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
           CurrentEntity = CurrentEntity.General;
         }
 
-        return new MethodCollection(methodsObject);
+        return new MethodDictionary(methodsObject);
       },
       set: function () {
         throw new Error('Methods of an Entity cannot be changed');
@@ -490,11 +490,11 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @example
  * var MyEntity = Entity.specify(new EntitySpecification(
  *   'MyEntity',
- *   new AttributeCollection([
+ *   new AttributeDictionary([
  *     new StringAttribute('attribute1', '0..1', 'default'),
  *     new StringAttribute('attribute2', '0..1', 'default')
  *   ]),
- *   new MethodCollection({
+ *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
  *   })
@@ -507,22 +507,22 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @function
  * @param {!string} name The new entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeCollection|
+ * {?(module:back4app/entity/models/attributes.AttributeDictionary|
  * module:back4app/entity/models/attributes.Attribute[]|
  * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * [attributes] The new entity specification attributes. It can be given as an
  * instance of
- * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeCollection}.
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodCollection|
+ * {?(module:back4app/entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
  * [methods] The new entity specification methods. It can be given as an
- * instance of {@link module:back4app/entity/models/methods.MethodCollection}
+ * instance of {@link module:back4app/entity/models/methods.MethodDictionary}
  * or an object, as specified in
- * {@link module:back4app/entity/models/methods.MethodCollection}.
+ * {@link module:back4app/entity/models/methods.MethodDictionary}.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify('MyEntity');
@@ -535,17 +535,17 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @example
  * var MyEntity = Entity.specify(
  *   'MyEntity',
- *   new AttributeCollection(),
- *   new MethodCollection()
+ *   new AttributeDictionary(),
+ *   new MethodDictionary()
  * );
  * @example
  * var MyEntity = Entity.specify(
  *   'MyEntity',
- *   new AttributeCollection([
+ *   new AttributeDictionary([
  *     new StringAttribute('attribute1', '0..1', 'default'),
  *     new StringAttribute('attribute2', '0..1', 'default')
  *   ]),
- *   new MethodCollection({
+ *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
  *   })
@@ -559,23 +559,23 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @param {!Object} specification The new Entity specification.
  * @param {!string} name The new Entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeCollection|
+ * {?(module:back4app/entity/models/attributes.AttributeDictionary|
  * module:back4app/entity/models/attributes.Attribute[]|
  * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * [specification.attributes] The new entity specification attributes. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeCollection}.
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodCollection|
+ * {?(module:back4app/entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
  * [specification.methods] The new entity specification methods. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/methods.MethodCollection} or an
+ * {@link module:back4app/entity/models/methods.MethodDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/methods.MethodCollection}.
+ * {@link module:back4app/entity/models/methods.MethodDictionary}.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify({ name: 'MyEntity' });

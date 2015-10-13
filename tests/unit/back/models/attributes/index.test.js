@@ -7,8 +7,8 @@
 var expect = require('chai').expect;
 var attributesIndex = require('../../../../../src/back/models/attributes');
 var Attribute = require('../../../../../src/back/models/attributes/Attribute');
-var AttributeCollection = require(
-  '../../../../../src/back/models/attributes/AttributeCollection'
+var AttributeDictionary = require(
+  '../../../../../src/back/models/attributes/AttributeDictionary'
 );
 var types = require('../../../../../src/back/models/attributes/types');
 
@@ -19,10 +19,10 @@ describe('attributesIndex', function () {
   });
 
   it(
-    'expect to export AttributeCollection in the AttributeCollection property',
+    'expect to export AttributeDictionary in the AttributeDictionary property',
     function () {
-      expect(attributesIndex).to.have.property('AttributeCollection')
-        .that.equals(AttributeCollection);
+      expect(attributesIndex).to.have.property('AttributeDictionary')
+        .that.equals(AttributeDictionary);
     }
   );
 

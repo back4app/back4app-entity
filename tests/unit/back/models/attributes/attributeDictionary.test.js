@@ -9,39 +9,39 @@ var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var attributes = require('../../../../../src/back/models/attributes');
 
-describe('AttributeCollection', function () {
-  var attributeCollection;
+describe('AttributeDictionary', function () {
+  var attributeDictionary;
 
   context('interface tests', function () {
     it('expect to work without arguments', function () {
-      attributeCollection = new attributes.AttributeCollection();
+      attributeDictionary = new attributes.AttributeDictionary();
     });
 
     it('expect to work with null argument', function () {
-      attributeCollection = new attributes.AttributeCollection(null);
+      attributeDictionary = new attributes.AttributeDictionary(null);
     });
 
     it('expect to work with empty object', function () {
-      attributeCollection = new attributes.AttributeCollection({});
+      attributeDictionary = new attributes.AttributeDictionary({});
     });
 
     it('expect to work with right arguments', function () {
-      attributeCollection = new attributes.AttributeCollection({
+      attributeDictionary = new attributes.AttributeDictionary({
         attribute1: new attributes.Attribute.resolve('attribute1'),
         attribute2: new attributes.Attribute.resolve('attribute2')
       });
 
-      attributeCollection = new attributes.AttributeCollection({
+      attributeDictionary = new attributes.AttributeDictionary({
         attribute1: {},
         attribute2: {}
       });
 
-      attributeCollection = new attributes.AttributeCollection([
+      attributeDictionary = new attributes.AttributeDictionary([
         new attributes.Attribute.resolve('attribute1'),
         new attributes.Attribute.resolve('attribute2')
       ]);
 
-      attributeCollection = new attributes.AttributeCollection([
+      attributeDictionary = new attributes.AttributeDictionary([
         { name: 'attribute1' },
         { name: 'attribute2' }
       ]);
@@ -49,23 +49,23 @@ describe('AttributeCollection', function () {
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
-        attributeCollection = new attributes.AttributeCollection({}, {});
+        attributeDictionary = new attributes.AttributeDictionary({}, {});
       }).to.throw(AssertionError);
 
       expect(function () {
-        attributeCollection = new attributes.AttributeCollection(
+        attributeDictionary = new attributes.AttributeDictionary(
           function () {}
         );
       }).to.throw(AssertionError);
 
       expect(function () {
-        attributeCollection = new attributes.AttributeCollection({
+        attributeDictionary = new attributes.AttributeDictionary({
           attribute1: null
         });
       }).to.throw(AssertionError);
 
       expect(function () {
-        attributeCollection = new attributes.AttributeCollection({
+        attributeDictionary = new attributes.AttributeDictionary({
           attribute1: {
             name: 'differentName'
           }
@@ -73,13 +73,13 @@ describe('AttributeCollection', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        attributeCollection = new attributes.AttributeCollection([
+        attributeDictionary = new attributes.AttributeDictionary([
           null
         ]);
       }).to.throw(AssertionError);
 
       expect(function () {
-        attributeCollection = new attributes.AttributeCollection([
+        attributeDictionary = new attributes.AttributeDictionary([
           { name: 'sameName' },
           { name: 'sameName' }
         ]);
@@ -89,14 +89,14 @@ describe('AttributeCollection', function () {
 
   context('functional tests', function () {
     it('expect to allow get attributes correctly', function () {
-      expect(attributeCollection.attribute1.name).to.equal('attribute1');
-      expect(attributeCollection.attribute2.name).to.equal('attribute2');
+      expect(attributeDictionary.attribute1.name).to.equal('attribute1');
+      expect(attributeDictionary.attribute2.name).to.equal('attribute2');
     });
 
     it('expect to allow to list attributes', function () {
       var attributes = [];
 
-      for (var attribute in attributeCollection) {
+      for (var attribute in attributeDictionary) {
         attributes.push(attribute);
       }
 
@@ -104,94 +104,94 @@ describe('AttributeCollection', function () {
     });
 
     it('expect to be not extensible', function () {
-      expect(Object.isExtensible(attributeCollection)).to.equal(false);
+      expect(Object.isExtensible(attributeDictionary)).to.equal(false);
 
       expect(function () {
-        attributeCollection.attribute3 = new attributes.Attribute.resolve(
+        attributeDictionary.attribute3 = new attributes.Attribute.resolve(
           'attribute3'
         );
       }).to.throw(TypeError);
 
-      expect(attributeCollection).to.not.have.property('attribute3');
+      expect(attributeDictionary).to.not.have.property('attribute3');
     });
 
     it('expect to not allow to delete attribute', function () {
       expect(function () {
-        delete attributeCollection.attribute1;
+        delete attributeDictionary.attribute1;
       }).to.throw(Error);
 
-      expect(attributeCollection).to.have.property('attribute1');
+      expect(attributeDictionary).to.have.property('attribute1');
     });
 
     it('expect to not allow to change method', function () {
       expect(function () {
-        attributeCollection.attribute1 = new attributes.Attribute('wontWork');
+        attributeDictionary.attribute1 = new attributes.Attribute('wontWork');
       }).to.throw(Error);
 
-      expect(attributeCollection.attribute1.name).to.equal('attribute1');
+      expect(attributeDictionary.attribute1.name).to.equal('attribute1');
     });
   });
 
   describe('.concat', function () {
-    var attributeCollection;
-    var concatenatedAttributeCollection;
+    var attributeDictionary;
+    var concatenatedAttributeDictionary;
 
     it(
       'expect to work with right arguments and have specified behavior',
       function () {
-        attributeCollection = new attributes.AttributeCollection([
+        attributeDictionary = new attributes.AttributeDictionary([
           attributes.Attribute.resolve('attribute1'),
           attributes.Attribute.resolve('attribute2')
         ]);
 
-        concatenatedAttributeCollection =
+        concatenatedAttributeDictionary =
           attributes
-            .AttributeCollection
+            .AttributeDictionary
             .concat(
-            attributeCollection,
+            attributeDictionary,
             attributes.Attribute.resolve('attribute3')
           );
 
-        expect(concatenatedAttributeCollection)
-          .to.not.deep.equal(attributeCollection);
+        expect(concatenatedAttributeDictionary)
+          .to.not.deep.equal(attributeDictionary);
 
-        expect(Object.keys(concatenatedAttributeCollection))
+        expect(Object.keys(concatenatedAttributeDictionary))
           .to.deep.equal(['attribute1', 'attribute2', 'attribute3']);
 
-        expect(concatenatedAttributeCollection.attribute1.name)
+        expect(concatenatedAttributeDictionary.attribute1.name)
           .to.equal('attribute1');
-        expect(concatenatedAttributeCollection.attribute2.name)
+        expect(concatenatedAttributeDictionary.attribute2.name)
           .to.equal('attribute2');
-        expect(concatenatedAttributeCollection.attribute3.name)
+        expect(concatenatedAttributeDictionary.attribute3.name)
           .to.equal('attribute3');
       }
     );
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
-        concatenatedAttributeCollection =
+        concatenatedAttributeDictionary =
           attributes
-            .AttributeCollection
+            .AttributeDictionary
             .concat(
             new attributes.Attribute('attribute3')
           );
       }).to.throw(AssertionError);
 
       expect(function () {
-        concatenatedAttributeCollection =
+        concatenatedAttributeDictionary =
           attributes
-            .AttributeCollection
+            .AttributeDictionary
             .concat(
-            attributeCollection,
+            attributeDictionary,
             new attributes.Attribute('attribute3'),
             null
           );
       }).to.throw(AssertionError);
 
       expect(function () {
-        concatenatedAttributeCollection =
+        concatenatedAttributeDictionary =
           attributes
-            .AttributeCollection
+            .AttributeDictionary
             .concat(
             {},
             new attributes.Attribute('attribute3')
@@ -199,11 +199,11 @@ describe('AttributeCollection', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        concatenatedAttributeCollection =
+        concatenatedAttributeDictionary =
           attributes
-            .AttributeCollection
+            .AttributeDictionary
             .concat(
-            attributeCollection,
+            attributeDictionary,
             {}
           );
       }).to.throw(AssertionError);
@@ -211,11 +211,11 @@ describe('AttributeCollection', function () {
 
     it('expect to not work with duplicated', function () {
       expect(function () {
-        concatenatedAttributeCollection =
+        concatenatedAttributeDictionary =
           attributes
-            .AttributeCollection
+            .AttributeDictionary
             .concat(
-            concatenatedAttributeCollection,
+            concatenatedAttributeDictionary,
             new attributes.Attribute('attribute3')
           );
       }).to.throw(AssertionError);

@@ -44,27 +44,27 @@ describe('EntitySpecification', function () {
 
         entitySpecification = new EntitySpecification({
           name: 'MyEntity',
-          attributes: new attributes.AttributeCollection(),
-          methods: new methods.MethodCollection()
+          attributes: new attributes.AttributeDictionary(),
+          methods: new methods.MethodDictionary()
         });
 
         entitySpecification = new EntitySpecification({
           name: 'MyEntity',
-          attributes: new attributes.AttributeCollection()
+          attributes: new attributes.AttributeDictionary()
         });
 
         entitySpecification = new EntitySpecification({
           name: 'MyEntity',
-          methods: new methods.MethodCollection()
+          methods: new methods.MethodDictionary()
         });
 
         entitySpecification = new EntitySpecification({
           name: 'MyEntity',
-          attributes: new attributes.AttributeCollection({
+          attributes: new attributes.AttributeDictionary({
             attribute1: new attributeTypes.ObjectAttribute('attribute1'),
             attribute2: new attributeTypes.ObjectAttribute('attribute2')
           }),
-          methods: new methods.MethodCollection({
+          methods: new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           })
@@ -80,29 +80,29 @@ describe('EntitySpecification', function () {
 
         entitySpecification = new EntitySpecification(
           'MyEntity',
-          new attributes.AttributeCollection(),
-          new methods.MethodCollection()
+          new attributes.AttributeDictionary(),
+          new methods.MethodDictionary()
         );
 
         entitySpecification = new EntitySpecification(
           'MyEntity',
           null,
-          new methods.MethodCollection()
+          new methods.MethodDictionary()
         );
 
         entitySpecification = new EntitySpecification(
           'MyEntity',
-          new attributes.AttributeCollection(),
+          new attributes.AttributeDictionary(),
           null
         );
 
         entitySpecification = new EntitySpecification(
           'MyEntity',
-          new attributes.AttributeCollection({
+          new attributes.AttributeDictionary({
             attribute1: new attributeTypes.BooleanAttribute('attribute1'),
             attribute2: new attributeTypes.BooleanAttribute('attribute2')
           }),
-          new methods.MethodCollection({
+          new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           })
@@ -139,11 +139,11 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification({
-          attributes: new attributes.AttributeCollection({
+          attributes: new attributes.AttributeDictionary({
             attribute1: new attributes.Attribute('attribute1'),
             attribute2: new attributes.Attribute('attribute2')
           }),
-          methods: new methods.MethodCollection({
+          methods: new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           }),
@@ -154,7 +154,7 @@ describe('EntitySpecification', function () {
       expect(function () {
         entitySpecification = new EntitySpecification({
           attributes: function () {},
-          methods: new methods.MethodCollection({
+          methods: new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           })
@@ -163,7 +163,7 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification({
-          attributes: new attributes.AttributeCollection({
+          attributes: new attributes.AttributeDictionary({
             attribute1: new attributes.Attribute('attribute1'),
             attribute2: new attributes.Attribute('attribute2')
           }),
@@ -174,7 +174,7 @@ describe('EntitySpecification', function () {
       expect(function () {
         entitySpecification = new EntitySpecification(
           function () {},
-          new methods.MethodCollection({
+          new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           })
@@ -183,7 +183,7 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification(
-          new attributes.AttributeCollection({
+          new attributes.AttributeDictionary({
             attribute1: new attributes.Attribute('attribute1'),
             attribute2: new attributes.Attribute('attribute2')
           }),

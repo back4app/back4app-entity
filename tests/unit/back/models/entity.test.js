@@ -51,8 +51,8 @@ describe('Entity', function () {
 
       Entity.specify({
         name: 'MyEntity4',
-        attributes: new attributes.AttributeCollection(),
-        methods: new methods.MethodCollection()
+        attributes: new attributes.AttributeDictionary(),
+        methods: new methods.MethodDictionary()
       });
 
       Entity.specify(new EntitySpecification('MyEntity5'));
@@ -65,19 +65,19 @@ describe('Entity', function () {
 
       Entity.specify(
         'MyEntity9',
-        new attributes.AttributeCollection(),
-        new methods.MethodCollection()
+        new attributes.AttributeDictionary(),
+        new methods.MethodDictionary()
       );
 
       Entity.specify(
         'MyEntity10',
         null,
-        new methods.MethodCollection()
+        new methods.MethodDictionary()
       );
 
       Entity.specify(
         'MyEntity11',
-        new attributes.AttributeCollection(),
+        new attributes.AttributeDictionary(),
         null
       );
     });
@@ -217,7 +217,7 @@ describe('Entity', function () {
       }).to.throw(Error);
 
       expect(function () {
-        C1.attributes = new attributes.AttributeCollection();
+        C1.attributes = new attributes.AttributeDictionary();
       }).to.throw(Error);
 
       expect(C1.attributes.c1A1.name).to.equal('c1A1');
@@ -251,7 +251,7 @@ describe('Entity', function () {
       }).to.throw(Error);
 
       expect(function () {
-        C1.methods = new methods.MethodCollection();
+        C1.methods = new methods.MethodDictionary();
       }).to.throw(Error);
 
       expect(C1.methods.c1M1('a1', 'a2')).to.equal('a1a2');

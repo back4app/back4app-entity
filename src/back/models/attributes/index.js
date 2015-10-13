@@ -5,7 +5,7 @@
 'use strict';
 
 var Attribute = require('./Attribute');
-var AttributeCollection = require('./AttributeCollection');
+var AttributeDictionary = require('./AttributeDictionary');
 var types = require('./types');
 
 /**
@@ -15,5 +15,5 @@ var types = require('./types');
 module.exports = {};
 
 module.exports.Attribute = Attribute;
-module.exports.AttributeCollection = AttributeCollection;
+module.exports.AttributeDictionary = AttributeDictionary;
 module.exports.types = types;

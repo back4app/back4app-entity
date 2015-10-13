@@ -19,31 +19,31 @@ module.exports = EntitySpecification;
  * @name EntitySpecification
  * @param {!string} name The new entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeCollection|
+ * {?(module:back4app/entity/models/attributes.AttributeDictionary|
  * module:back4app/entity/models/attributes.Attribute[]|
  * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * attributes The new entity specification attributes. It can be given as an
  * instance of
- * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeCollection}.
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodCollection|
+ * {?(module:back4app/entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
  * methods The new entity specification methods. It can be given as an instance
  * of
- * {@link module:back4app/entity/models/methods.MethodCollection} or an
+ * {@link module:back4app/entity/models/methods.MethodDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/methods.MethodCollection}.
+ * {@link module:back4app/entity/models/methods.MethodDictionary}.
  * @example
  * var entitySpecification = new EntitySpecification(
  *   'MyEntity',
- *   new AttributeCollection({
+ *   new AttributeDictionary({
  *     attribute1: new StringAttribute('attribute1'),
  *     attribute2: new StringAttribute('attribute2')
  *   }),
- *   new methods.MethodCollection({
+ *   new methods.MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
  *   })
@@ -57,31 +57,31 @@ module.exports = EntitySpecification;
  * @param {!Object} specification The new Entity specification.
  * @param {!string} specification.name The new Entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeCollection|
+ * {?(module:back4app/entity/models/attributes.AttributeDictionary|
  * module:back4app/entity/models/attributes.Attribute[]|
  * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * specification.attributes The new entity specification attributes. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeCollection}.
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodCollection|
+ * {?(module:back4app/entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
  * specification.methods The new entity specification methods. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/methods.MethodCollection} or an
+ * {@link module:back4app/entity/models/methods.MethodDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/methods.MethodCollection}.
+ * {@link module:back4app/entity/models/methods.MethodDictionary}.
  * @example
  * var entitySpecification = new EntitySpecification({
  *   name: 'MyEntity',
- *   attributes: new AttributeCollection({
+ *   attributes: new AttributeDictionary({
  *     attribute1: new StringAttribute('attribute1'),
  *     attribute2: new StringAttribute('attribute2')
  *   }),
- *   methods: new MethodCollection({
+ *   methods: new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
  *   })
@@ -110,18 +110,18 @@ function EntitySpecification() {
    */
   this.name = null;
   /**
-   * Collection of specific attributes of an entity.
+   * Dictionary of specific attributes of an entity.
    * @name module:back4app/entity/models.EntitySpecification#attributes
-   * @type {!module:back4app/entity/models/attributes.AttributeCollection}
+   * @type {!module:back4app/entity/models/attributes.AttributeDictionary}
    * @readonly
    * @example
    * var entitySpecification = new EntitySpecification({
    *   name: 'MyEntity',
-   *   attributes: new AttributeCollection({
+   *   attributes: new AttributeDictionary({
    *     attribute1: new StringAttribute('attribute1'),
    *     attribute2: new StringAttribute('attribute2')
    *   }),
-   *   methods: new MethodCollection({
+   *   methods: new MethodDictionary({
    *     method1: function () { return 'method1'; },
    *     method2: function () { return 'method2'; }
    *   })
@@ -132,18 +132,18 @@ function EntitySpecification() {
    */
   this.attributes = null;
   /**
-   * Collection of specific methods of an entity.
+   * Dictionary of specific methods of an entity.
    * @name module:back4app/entity/models.EntitySpecification#methods
-   * @type {!module:back4app/entity/models/methods.MethodCollection}
+   * @type {!module:back4app/entity/models/methods.MethodDictionary}
    * @readonly
    * @example
    * var entitySpecification = new EntitySpecification({
    *   name: 'MyEntity',
-   *   attributes: new AttributeCollection({
+   *   attributes: new AttributeDictionary({
    *     attribute1: new StringAttribute('attribute1'),
    *     attribute2: new StringAttribute('attribute2')
    *   }),
-   *   methods: new MethodCollection({
+   *   methods: new MethodDictionary({
    *     method1: function () { return 'method1'; },
    *     method2: function () { return 'method2'; }
    *   })
@@ -195,7 +195,7 @@ function EntitySpecification() {
 
   var _name = null;
 
-  var _attributes = new attributes.AttributeCollection();
+  var _attributes = new attributes.AttributeDictionary();
   Object.defineProperty(this, 'attributes', {
     get: function () {
       return _attributes;
@@ -209,7 +209,7 @@ function EntitySpecification() {
     configurable: false
   });
 
-  var _methods = new methods.MethodCollection();
+  var _methods = new methods.MethodDictionary();
   Object.defineProperty(this, 'methods', {
     get: function () {
       return _methods;
@@ -268,11 +268,11 @@ function EntitySpecification() {
       );
 
       if (
-        specification.attributes instanceof attributes.AttributeCollection
+        specification.attributes instanceof attributes.AttributeDictionary
       ) {
         _attributes = specification.attributes;
       } else {
-        _attributes = new attributes.AttributeCollection(
+        _attributes = new attributes.AttributeDictionary(
           specification.attributes
         );
       }
@@ -285,10 +285,10 @@ function EntitySpecification() {
         'EntitySpecification (it has to be an object)'
       );
 
-      if (specification.methods instanceof methods.MethodCollection) {
+      if (specification.methods instanceof methods.MethodDictionary) {
         _methods = specification.methods;
       } else {
-        _methods = new methods.MethodCollection(
+        _methods = new methods.MethodDictionary(
           specification.methods
         );
       }
@@ -311,10 +311,10 @@ function EntitySpecification() {
         'EntitySpecification (it has to be an object)'
       );
 
-      if (attributesArgument instanceof attributes.AttributeCollection) {
+      if (attributesArgument instanceof attributes.AttributeDictionary) {
         _attributes = attributesArgument;
       } else {
-        _attributes = new attributes.AttributeCollection(
+        _attributes = new attributes.AttributeDictionary(
           attributesArgument
         );
       }
@@ -329,10 +329,10 @@ function EntitySpecification() {
         '(it has to be an object)'
       );
 
-      if (methodsArgument instanceof methods.MethodCollection) {
+      if (methodsArgument instanceof methods.MethodDictionary) {
         _methods = methodsArgument;
       } else {
-        _methods = new methods.MethodCollection(
+        _methods = new methods.MethodDictionary(
           methodsArgument
         );
       }
@@ -540,7 +540,7 @@ function EntitySpecification() {
           Array.prototype.slice.call(arguments)
         );
 
-    var newAttributes = attributes.AttributeCollection.concat(
+    var newAttributes = attributes.AttributeDictionary.concat(
       _attributes,
       attribute
     );
@@ -565,7 +565,7 @@ function EntitySpecification() {
    * );
    */
   function addMethod(func, name) {
-    var newMethods = methods.MethodCollection.concat(
+    var newMethods = methods.MethodDictionary.concat(
       _methods,
       func,
       name
