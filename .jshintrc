@@ -19,8 +19,10 @@
     "angular": false,
     "joint": false,
     "window": false,
+    "document": false,
     "global": false,
     "alert": false,
+    "requirejs": false,
 
     // global for tests
     "it": false,

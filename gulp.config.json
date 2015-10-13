@@ -1,9 +1,33 @@
 {
   "paths": {
+
+    "core": {
+      "src": "src/back/",
+      "dest": "dist/lib/back4app-entity/"
+    },
+
+    "vendor": {
+      "dest": "dist/lib/vendor/",
+      "libs": {
+        "chai": "node_modules/chai/chai.js",
+        "util": "node_modules/util-browser/index.js",
+        "path": "node_modules/path-browserify/"
+      }
+    },
+
+    "tools": {
+      "rjs": "node_modules/.bin/r.js"
+    },
+
+    "build": {
+      "tmpDir": ".tmp-build/"
+    },
+
     "lintCheckFiles": [
       "src/**/*.js",
       "!src/front/lib/**",
       "tests/**/*.js",
+      "dist/back4app-entity.js",
       "!node_modules/",
       "!coverage/"
     ],
