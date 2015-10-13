@@ -7,6 +7,7 @@
 var expect = require('chai').expect;
 var AttributeTypeNotFoundError = require('../../errors')
   .AttributeTypeNotFoundError;
+var AssociationAttribute = require('./AssociationAttribute');
 var BooleanAttribute = require('./BooleanAttribute');
 var DateAttribute = require('./DateAttribute');
 var NumberAttribute = require('./NumberAttribute');
@@ -20,6 +21,7 @@ var StringAttribute = require('./StringAttribute');
  */
 module.exports = {};
 
+module.exports.AssociationAttribute = AssociationAttribute;
 module.exports.BooleanAttribute = BooleanAttribute;
 module.exports.DateAttribute = DateAttribute;
 module.exports.NumberAttribute = NumberAttribute;

@@ -5,6 +5,8 @@
 'use strict';
 
 var expect = require('chai').expect;
+var objects = require('../../utils/objects');
+var errors = require('../errors');
 
 module.exports = Attribute;
 
@@ -266,4 +268,129 @@ function Attribute() {
 
   Object.preventExtensions(this);
   Object.seal(this);
+}
+
+Attribute.resolve = resolve;
+
+/**
+ * Resolves the arguments and create a new instance of Attribute.
+ * @memberof module:back4app/entity/models/attributes.Attribute
+ * @name resolve
+ * @param {!Object} attribute This is the attribute to be resolved. It can be
+ * passed as an Object.
+ * @param {!string} attribute.name It is the name of the attribute.
+ * @param {!string} [attribute.type='Object'] It is the type of the attribute.
+ * It is optional and if not passed it will assume 'Object' as the default
+ * value.
+ * @param {!string} [attribute.multiplicity='1'] It is the multiplicity of the
+ * attribute. It is optional and if not passed it will assume '1' as the default
+ * value.
+ * @param {?(boolean|number|string|Object|function)} [attribute.default] It is
+ * the default expression of the attribute.
+ * @returns {module:back4app/entity/models/attributes.Attribute} The new
+ * Attribute instance.
+ * @throws {module:back4app/entity/models/errors.AttributeTypeNotFoundError}
+ * @example
+ * Attribute.resolve({
+ *   name: 'attribute',
+ *   type: 'String',
+ *   multiplicity: '0..1',
+ *   default: null
+ * });
+ */
+/**
+ * Resolves the arguments and create a new instance of Attribute. It tries to
+ * find the Attribute type. It it is not possible, it assumes that it is an
+ * AssociationAttribute.
+ * @memberof module:back4app/entity/models/attributes.Attribute
+ * @name resolve
+ * @param {!string} name It is the name of the attribute.
+ * @param {!string} [type='Object'] It is the type of the attribute. It is
+ * optional and if not passed it will assume 'Object' as the default value.
+ * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
+ * It is optional and if not passed it will assume '1' as the default value.
+ * @param {?(boolean|number|string|Object|function)} [default] It is the default
+ * expression of the attribute.
+ * @returns {module:back4app/entity/models/attributes.Attribute} The new
+ * Attribute instance.
+ * @throws {module:back4app/entity/models/errors.AttributeTypeNotFoundError}
+ * @example
+ * Attribute.call(
+ *   this,
+ *   'attribute',
+ *   'String',
+ *   '0..1',
+ *   null
+ * );
+ */
+function resolve() {
+  expect(arguments).to.have.length.within(
+    1,
+    4,
+    'Invalid arguments length when resolving an Attribute (it has to be ' +
+    'passed from 1 to 4 arguments)'
+  );
+
+  var argumentArray = Array.prototype.slice.call(arguments);
+  var TypedAttribute = require('./types').ObjectAttribute;
+
+  if (arguments.length === 1 && typeof arguments[0] !== 'string') {
+    var attribute = objects.copy(arguments[0]);
+    argumentArray[0] = attribute;
+
+    expect(attribute).to.be.an(
+      'object',
+      'Invalid argument type when resolving an Attribute (it has to be an ' +
+      'object)'
+    );
+
+    if (attribute.type) {
+      expect(attribute.type).to.be.a(
+        'string',
+        'Invalid argument "type" when resolving an Attribute' +
+        (attribute.name ? ' called' + attribute.name : '') +
+        ' (it has to be a string)'
+      );
+
+      try {
+        TypedAttribute = require('./types').get(attribute.type);
+      } catch (e) {
+        if (e instanceof errors.AttributeTypeNotFoundError) {
+          TypedAttribute = require('./types').AssociationAttribute;
+          attribute.entity = attribute.type;
+        } else {
+          throw e;
+        }
+      }
+
+      delete attribute.type;
+    }
+  } else {
+    if (arguments.length > 1) {
+      expect(arguments[1]).to.be.a(
+        'string',
+        'Invalid argument "type" when resolving an Attribute' +
+        (arguments[0] ? ' called' + arguments[0] : '') +
+        ' (it has to be a string)'
+      );
+
+      try {
+        TypedAttribute = require('./types').get(arguments[1]);
+      } catch (e) {
+        if (e instanceof errors.AttributeTypeNotFoundError) {
+          TypedAttribute = require('./types').AssociationAttribute;
+          argumentArray.splice(2, 0, arguments[1]);
+        } else {
+          throw e;
+        }
+      }
+
+      argumentArray.splice(1,1);
+    }
+  }
+
+  return new (Function.prototype.bind.apply(
+    TypedAttribute,
+    [null].concat(argumentArray)
+  ))();
 }

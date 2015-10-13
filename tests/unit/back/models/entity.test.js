@@ -39,41 +39,44 @@ describe('Entity', function () {
     });
 
     it('expect to work with right arguments', function () {
-      Entity.specify();
+      Entity.specify('MyEntity1');
 
-      Entity.specify(null);
-
-      Entity.specify({});
+      Entity.specify({name: 'MyEntity2'});
 
       Entity.specify({
+        name: 'MyEntity3',
         attributes: [],
         methods: {}
       });
 
       Entity.specify({
+        name: 'MyEntity4',
         attributes: new attributes.AttributeCollection(),
         methods: new methods.MethodCollection()
       });
 
-      Entity.specify(new EntitySpecification());
+      Entity.specify(new EntitySpecification('MyEntity5'));
 
-      Entity.specify(null, null);
+      Entity.specify('MyEntity6', null, null);
 
-      Entity.specify({}, {});
+      Entity.specify('MyEntity7', {}, {});
 
-      Entity.specify([], {});
+      Entity.specify('MyEntity8', [], {});
 
       Entity.specify(
+        'MyEntity9',
         new attributes.AttributeCollection(),
         new methods.MethodCollection()
       );
 
       Entity.specify(
+        'MyEntity10',
         null,
         new methods.MethodCollection()
       );
 
       Entity.specify(
+        'MyEntity11',
         new attributes.AttributeCollection(),
         null
       );
@@ -91,7 +94,19 @@ describe('Entity', function () {
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
-        Entity.specify({}, {}, {});
+        Entity.specify();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.specify(null);
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.specify({});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.specify('MyEntity12', {}, {}, {});
       }).to.throw(AssertionError);
 
       expect(function () {
@@ -103,7 +118,11 @@ describe('Entity', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify({}, function () {});
+        Entity.specify('MyEntity13', function () {}, {});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.specify('MyEntity14', {}, function () {});
       }).to.throw(AssertionError);
     });
   });
@@ -144,7 +163,7 @@ describe('Entity', function () {
     it(
       'expect to exist as a static property and contain the right class',
       function () {
-        entitySpecification = new EntitySpecification();
+        entitySpecification = new EntitySpecification('MyEntity15');
         MyEntity = Entity.specify(entitySpecification);
 
         expect(MyEntity.specification).to.equal(entitySpecification);
@@ -242,20 +261,19 @@ describe('Entity', function () {
   describe('.directSpecializations', function () {
     it('expect to exist and returns the right values', function () {
       expect(Entity).to.have.ownProperty('directSpecializations');
-      expect(Entity.directSpecializations).to.have.length.above(2);
-      expect(Entity.directSpecializations).to.include(C1);
-      expect(Entity.directSpecializations).to.include(C2);
+      expect(Entity.directSpecializations).to.have.ownProperty('C1');
+      expect(Entity.directSpecializations.C1).to.equal(C1);
+      expect(Entity.directSpecializations.C2).to.equal(C2);
 
       expect(C1).to.have.ownProperty('directSpecializations');
-      expect(C1.directSpecializations).to.deep.equal([
-        C11
-      ]);
+      expect(C1.directSpecializations).to.have.ownProperty('C11');
+      expect(C1.directSpecializations.C11).to.equal(C11);
 
       expect(C11).to.have.ownProperty('directSpecializations');
-      expect(C11.directSpecializations).to.deep.equal([]);
+      expect(C11.directSpecializations).to.deep.equal({});
 
       expect(C2).to.have.ownProperty('directSpecializations');
-      expect(C2.directSpecializations).to.deep.equal([]);
+      expect(C2.directSpecializations).to.deep.equal({});
     });
 
     it('expect to not be changeable', function () {
@@ -280,34 +298,40 @@ describe('Entity', function () {
       }).to.throw(Error);
 
       expect(function () {
-        delete C1.directSpecializations[0];
+        delete C1.directSpecializations.C11;
       }).to.throw(Error);
     });
   });
 
   describe('.specializations', function () {
     it('expect to exist and returns the right values', function () {
-      var C111 = C11.specify();
+      var C111 = C11.specify('C111');
 
       expect(Entity).to.have.ownProperty('specializations');
-      expect(Entity.specializations).to.have.length.above(3);
-      expect(Entity.specializations).to.include(C1);
-      expect(Entity.specializations).to.include(C11);
-      expect(Entity.specializations).to.include(C2);
+      expect(Entity.specializations).to.have.ownProperty('C1');
+      expect(Entity.specializations.C1).to.equal(C1);
+      expect(Entity.specializations).to.have.ownProperty('C11');
+      expect(Entity.specializations.C11).to.equal(C11);
+      expect(Entity.specializations).to.have.ownProperty('C111');
+      expect(Entity.specializations.C111).to.equal(C111);
+      expect(Entity.specializations).to.have.ownProperty('C2');
+      expect(Entity.specializations.C2).to.equal(C2);
 
       expect(C1).to.have.ownProperty('specializations');
-      expect(C1.specializations).to.deep.equal([
-        C11,
-        C111
-      ]);
+      expect(C1.specializations).to.have.ownProperty('C11');
+      expect(C1.specializations.C11).to.equal(C11);
+      expect(C1.specializations).to.have.ownProperty('C111');
+      expect(C1.specializations.C111).to.equal(C111);
 
       expect(C11).to.have.ownProperty('specializations');
-      expect(C11.specializations).to.deep.equal([
-        C111
-      ]);
+      expect(C11.specializations).to.have.ownProperty('C111');
+      expect(C11.specializations.C111).to.equal(C111);
+
+      expect(C111).to.have.ownProperty('specializations');
+      expect(C111.specializations).to.deep.equal({});
 
       expect(C2).to.have.ownProperty('specializations');
-      expect(C2.specializations).to.deep.equal([]);
+      expect(C2.specializations).to.deep.equal({});
     });
 
     it('expect to not be changeable', function () {
@@ -332,7 +356,7 @@ describe('Entity', function () {
       }).to.throw(Error);
 
       expect(function () {
-        delete C1.specializations[0];
+        delete C1.specializations.C11;
       }).to.throw(Error);
     });
   });

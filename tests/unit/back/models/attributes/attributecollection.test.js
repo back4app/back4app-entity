@@ -27,8 +27,8 @@ describe('AttributeCollection', function () {
 
     it('expect to work with right arguments', function () {
       attributeCollection = new attributes.AttributeCollection({
-        attribute1: new attributes.Attribute('attribute1'),
-        attribute2: new attributes.Attribute('attribute2')
+        attribute1: new attributes.Attribute.resolve('attribute1'),
+        attribute2: new attributes.Attribute.resolve('attribute2')
       });
 
       attributeCollection = new attributes.AttributeCollection({
@@ -37,8 +37,8 @@ describe('AttributeCollection', function () {
       });
 
       attributeCollection = new attributes.AttributeCollection([
-        new attributes.Attribute('attribute1'),
-        new attributes.Attribute('attribute2')
+        new attributes.Attribute.resolve('attribute1'),
+        new attributes.Attribute.resolve('attribute2')
       ]);
 
       attributeCollection = new attributes.AttributeCollection([
@@ -107,7 +107,7 @@ describe('AttributeCollection', function () {
       expect(Object.isExtensible(attributeCollection)).to.equal(false);
 
       expect(function () {
-        attributeCollection.attribute3 = new attributes.Attribute(
+        attributeCollection.attribute3 = new attributes.Attribute.resolve(
           'attribute3'
         );
       }).to.throw(TypeError);
@@ -140,8 +140,8 @@ describe('AttributeCollection', function () {
       'expect to work with right arguments and have specified behavior',
       function () {
         attributeCollection = new attributes.AttributeCollection([
-          new attributes.Attribute('attribute1'),
-          new attributes.Attribute('attribute2')
+          attributes.Attribute.resolve('attribute1'),
+          attributes.Attribute.resolve('attribute2')
         ]);
 
         concatenatedAttributeCollection =
@@ -149,7 +149,7 @@ describe('AttributeCollection', function () {
             .AttributeCollection
             .concat(
             attributeCollection,
-            new attributes.Attribute('attribute3')
+            attributes.Attribute.resolve('attribute3')
           );
 
         expect(concatenatedAttributeCollection)

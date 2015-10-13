@@ -3,6 +3,7 @@
 var Entity = require('../../../../').models.Entity;
 
 module.exports = Entity.specify({
+  name: 'C1',
   attributes: {
     c1A1: {
       type: 'Boolean',

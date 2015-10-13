@@ -33,38 +33,38 @@ describe('Attribute', function () {
 
     it('expect to work with right arguments passing as an object',
       function () {
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute'
         });
 
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute',
           type: 'String'
         });
 
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute',
           default: null
         });
 
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute',
           multiplicity: '0..1'
         });
 
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute',
           type: 'String',
           multiplicity: '0..1'
         });
 
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute',
           multiplicity: '0..1',
           default: null
         });
 
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute',
           type: 'String',
           multiplicity: '0..1',
@@ -75,22 +75,22 @@ describe('Attribute', function () {
 
     it('expect to work with right arguments passing as arguments',
       function () {
-        attribute = new attributes.Attribute(
+        attribute = new attributes.Attribute.resolve(
           'attribute'
         );
 
-        attribute = new attributes.Attribute(
+        attribute = new attributes.Attribute.resolve(
           'attribute',
           'String'
         );
 
-        attribute = new attributes.Attribute(
+        attribute = new attributes.Attribute.resolve(
           'attribute',
           'String',
           '0..1'
         );
 
-        attribute = new attributes.Attribute(
+        attribute = new attributes.Attribute.resolve(
           'attribute',
           'String',
           '0..1',
@@ -127,7 +127,7 @@ describe('Attribute', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: null,
           type: 'String',
           multiplicity: '0..1',
@@ -136,7 +136,7 @@ describe('Attribute', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute',
           type: 'String',
           multiplicity: '0..1',
@@ -146,7 +146,7 @@ describe('Attribute', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute',
           type: null,
           multiplicity: '0..1',
@@ -155,7 +155,7 @@ describe('Attribute', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute({
+        attribute = new attributes.Attribute.resolve({
           name: 'attribute',
           type: 'String',
           multiplicity: null,
@@ -251,7 +251,7 @@ describe('Attribute', function () {
     });
 
     it('expect to have the right default values', function () {
-      attribute = new attributes.Attribute('attributeName');
+      attribute = new attributes.Attribute.resolve('attributeName');
 
       expect(attribute.name).to.equal('attributeName');
       expect(attribute.type).to.equal('Object');

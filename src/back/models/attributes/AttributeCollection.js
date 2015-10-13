@@ -5,10 +5,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var objects = require('../../utils/objects');
 var Attribute = require('./Attribute');
-var attributeTypes = require('./types');
-var ObjectAttribute = attributeTypes.ObjectAttribute;
 
 module.exports = AttributeCollection;
 
@@ -113,26 +110,6 @@ AttributeCollection.concat = concat;
  * var attributeCollection = new AttributeCollection();
  * _addAttribute(attributeCollection, {}, 'attribute');
  */
-/**
- * Adds a new attribute to the collection.
- * @name
- * module:back4app/entity/models/attributes.AttributeCollection~_addAttribute
- * @function
- * @param {!module:back4app/entity/models/attributes.AttributeCollection}
- * attributeCollection It is the attribute collection to which the attribute
- * will be added.
- * @param {!string} name It is the name of the attribute.
- * @param {!string} [type='Object'] It is the type of the attribute. It is
- * optional and if not passed it will assume 'Object' as the default value.
- * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
- * It is optional and if not passed it will assume '1' as the default value.
- * @param {?(boolean|number|string|Object|function)} [default] It is the default
- * expression of the attribute.
- * @private
- * @example
- * var attributeCollection = new AttributeCollection();
- * _addAttribute(attributeCollection, 'attribute');
- */
 function _addAttribute() {
   var attributeCollection = arguments[0];
 
@@ -141,14 +118,9 @@ function _addAttribute() {
 
   if (arguments.length === 2) {
     attribute = arguments[1];
-  } else if (arguments.length === 3) {
+  } else {
     attribute = arguments[1];
     name = arguments[2];
-  } else {
-    attribute = new (Function.prototype.bind.apply(
-      Attribute,
-      [null].concat(Array.prototype.slice.call(arguments, 1))
-    ))();
   }
 
   expect(attribute).to.be.an(
@@ -171,16 +143,7 @@ function _addAttribute() {
   }
 
   if (!(attribute instanceof Attribute)) {
-    if (attribute.type) {
-      var TypedAttribute = attributeTypes.get(attribute.type);
-
-      attribute = objects.copy(attribute);
-      delete attribute.type;
-
-      attribute = new TypedAttribute(attribute);
-    } else {
-      attribute = new ObjectAttribute(attribute);
-    }
+    attribute = Attribute.resolve(attribute);
   }
 
   expect(attribute.constructor).to.not.equal(

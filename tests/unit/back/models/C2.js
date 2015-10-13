@@ -9,6 +9,7 @@ var ObjectAttribute = require('../../../../')
   .models.attributes.types.ObjectAttribute;
 
 module.exports = Entity.specify(
+  'C2',
   [
     new ObjectAttribute(
       'c2A1',
