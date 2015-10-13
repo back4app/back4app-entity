@@ -7,7 +7,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
-var attributes = require('../../../../../src/back/models/attributes');
+var attributes = require('../../../../../').models.attributes;
 
 describe('Attribute', function () {
   var attribute;

@@ -14,7 +14,8 @@ module.exports = Attribute;
 /**
  * Holds an Entity Attribute information. An instance of Attribute is not
  * extensible. The Attribute is an abstract class and cannot be directly
- * initialized.
+ * initialized. Use Attribute.resolve anywhere or Attribute.call inside a
+ * subclass' constructor to initialize a new Attribute.
  * @memberof module:back4app/entity/models/attributes
  * @name Attribute
  * @constructor
@@ -41,7 +42,8 @@ module.exports = Attribute;
 /**
  * Holds an Entity Attribute information. An instance of Attribute is not
  * extensible. The Attribute is an abstract class and cannot be directly
- * initialized.
+ * initialized. Use Attribute.resolve anywhere or Attribute.call inside a
+ * subclass' constructor to initialize a new Attribute.
  * @memberof module:back4app/entity/models/attributes
  * @name Attribute
  * @constructor
@@ -286,7 +288,9 @@ function Attribute() {
 Attribute.resolve = resolve;
 
 /**
- * Resolves the arguments and create a new instance of Attribute.
+ * Resolves the arguments and create a new instance of Attribute. It tries to
+ * find the Attribute type. It it is not possible, it assumes that it is an
+ * AssociationAttribute.
  * @memberof module:back4app/entity/models/attributes.Attribute
  * @name resolve
  * @param {!Object} attribute This is the attribute to be resolved. It can be
@@ -328,7 +332,7 @@ Attribute.resolve = resolve;
  * Attribute instance.
  * @throws {module:back4app/entity/models/errors.AttributeTypeNotFoundError}
  * @example
- * Attribute.call(
+ * Attribute.resolve(
  *   this,
  *   'attribute',
  *   'String',
