@@ -72,14 +72,14 @@ function NumberAttribute() {
     expect(numberAttribute).to.not.have.ownProperty(
       'type',
       'Property "type" cannot be set in an NumberAttribute. Its value will ' +
-      'be automatically set to Number'
+      'be automatically set to NumberAttribute'
     );
 
     numberAttribute = objects.copy(numberAttribute);
 
-    numberAttribute.type = 'Number';
+    numberAttribute.type = NumberAttribute;
   } else {
-    argumentsArray.splice(1, 0, 'Number');
+    argumentsArray.splice(1, 0, NumberAttribute);
   }
 
   Attribute.apply(this, argumentsArray);

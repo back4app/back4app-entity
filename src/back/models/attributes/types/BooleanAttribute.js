@@ -72,14 +72,14 @@ function BooleanAttribute() {
     expect(booleanAttribute).to.not.have.ownProperty(
       'type',
       'Property "type" cannot be set in an BooleanAttribute. Its value will ' +
-      'be automatically set to Boolean'
+      'be automatically set to BooleanAttribute'
     );
 
     booleanAttribute = objects.copy(booleanAttribute);
 
-    booleanAttribute.type = 'Boolean';
+    booleanAttribute.type = BooleanAttribute;
   } else {
-    argumentsArray.splice(1, 0, 'Boolean');
+    argumentsArray.splice(1, 0, BooleanAttribute);
   }
 
   Attribute.apply(this, argumentsArray);

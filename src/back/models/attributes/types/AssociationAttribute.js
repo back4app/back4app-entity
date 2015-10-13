@@ -114,12 +114,12 @@ function AssociationAttribute() {
     expect(associationAttribute).to.not.have.ownProperty(
       'type',
       'Property "type" cannot be set in an AssociationAttribute. Its value ' +
-      'will be automatically set to Association'
+      'will be automatically set to AssociationAttribute'
     );
 
     associationAttribute = objects.copy(associationAttribute);
 
-    associationAttribute.type = 'Association';
+    associationAttribute.type = AssociationAttribute;
 
     _Entity = associationAttribute.entity;
     if (_Entity) {
@@ -137,7 +137,7 @@ function AssociationAttribute() {
 
     argumentsArray[0] = associationAttribute;
   } else {
-    _Entity = argumentsArray.splice(1, 1, 'Association');
+    _Entity = argumentsArray.splice(1, 1, AssociationAttribute);
   }
 
   if (typeof _Entity !== 'string') {

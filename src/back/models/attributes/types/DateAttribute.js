@@ -72,14 +72,14 @@ function DateAttribute() {
     expect(dateAttribute).to.not.have.ownProperty(
       'type',
       'Property "type" cannot be set in an DateAttribute. Its value will ' +
-      'be automatically set to Date'
+      'be automatically set to DateAttribute'
     );
 
     dateAttribute = objects.copy(dateAttribute);
 
-    dateAttribute.type = 'Date';
+    dateAttribute.type = DateAttribute;
   } else {
-    argumentsArray.splice(1, 0, 'Date');
+    argumentsArray.splice(1, 0, DateAttribute);
   }
 
   Attribute.apply(this, argumentsArray);

@@ -152,7 +152,7 @@ describe('ObjectAttribute', function () {
         .that.equals('attribute');
 
       expect(objectAttribute).to.have.property('type')
-        .that.equals('Object');
+        .that.equals(ObjectAttribute);
 
       expect(objectAttribute).to.have.property('multiplicity')
         .that.equals('0..1');
@@ -184,7 +184,7 @@ describe('ObjectAttribute', function () {
       }).to.throw(Error);
 
       expect(objectAttribute).to.have.property('type')
-        .that.equals('Object');
+        .that.equals(ObjectAttribute);
 
       expect(function () {
         delete objectAttribute.multiplicity;
@@ -214,7 +214,7 @@ describe('ObjectAttribute', function () {
       }).to.throw(Error);
 
       expect(objectAttribute).to.have.property('type')
-        .that.equals('Object');
+        .that.equals(ObjectAttribute);
 
       expect(function () {
         objectAttribute.multiplicity = 'will not change';
@@ -235,7 +235,7 @@ describe('ObjectAttribute', function () {
       objectAttribute = new ObjectAttribute('attributeName');
 
       expect(objectAttribute.name).to.equal('attributeName');
-      expect(objectAttribute.type).to.equal('Object');
+      expect(objectAttribute.type).to.equal(ObjectAttribute);
       expect(objectAttribute.multiplicity).to.equal('1');
       expect(objectAttribute.default).to.equal(null);
     });

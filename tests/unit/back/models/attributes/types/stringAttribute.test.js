@@ -152,7 +152,7 @@ describe('StringAttribute', function () {
         .that.equals('attribute');
 
       expect(stringAttribute).to.have.property('type')
-        .that.equals('String');
+        .that.equals(StringAttribute);
 
       expect(stringAttribute).to.have.property('multiplicity')
         .that.equals('0..1');
@@ -184,7 +184,7 @@ describe('StringAttribute', function () {
       }).to.throw(Error);
 
       expect(stringAttribute).to.have.property('type')
-        .that.equals('String');
+        .that.equals(StringAttribute);
 
       expect(function () {
         delete stringAttribute.multiplicity;
@@ -214,7 +214,7 @@ describe('StringAttribute', function () {
       }).to.throw(Error);
 
       expect(stringAttribute).to.have.property('type')
-        .that.equals('String');
+        .that.equals(StringAttribute);
 
       expect(function () {
         stringAttribute.multiplicity = 'will not change';
@@ -235,7 +235,7 @@ describe('StringAttribute', function () {
       stringAttribute = new StringAttribute('attributeName');
 
       expect(stringAttribute.name).to.equal('attributeName');
-      expect(stringAttribute.type).to.equal('String');
+      expect(stringAttribute.type).to.equal(StringAttribute);
       expect(stringAttribute.multiplicity).to.equal('1');
       expect(stringAttribute.default).to.equal(null);
     });

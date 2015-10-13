@@ -72,14 +72,14 @@ function StringAttribute() {
     expect(stringAttribute).to.not.have.ownProperty(
       'type',
       'Property "type" cannot be set in an StringAttribute. Its value will ' +
-      'be automatically set to String'
+      'be automatically set to StringAttribute'
     );
 
     stringAttribute = objects.copy(stringAttribute);
 
-    stringAttribute.type = 'String';
+    stringAttribute.type = StringAttribute;
   } else {
-    argumentsArray.splice(1, 0, 'String');
+    argumentsArray.splice(1, 0, StringAttribute);
   }
 
   Attribute.apply(this, argumentsArray);

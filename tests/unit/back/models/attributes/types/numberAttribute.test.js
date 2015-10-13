@@ -152,7 +152,7 @@ describe('NumberAttribute', function () {
         .that.equals('attribute');
 
       expect(numberAttribute).to.have.property('type')
-        .that.equals('Number');
+        .that.equals(NumberAttribute);
 
       expect(numberAttribute).to.have.property('multiplicity')
         .that.equals('0..1');
@@ -184,7 +184,7 @@ describe('NumberAttribute', function () {
       }).to.throw(Error);
 
       expect(numberAttribute).to.have.property('type')
-        .that.equals('Number');
+        .that.equals(NumberAttribute);
 
       expect(function () {
         delete numberAttribute.multiplicity;
@@ -214,7 +214,7 @@ describe('NumberAttribute', function () {
       }).to.throw(Error);
 
       expect(numberAttribute).to.have.property('type')
-        .that.equals('Number');
+        .that.equals(NumberAttribute);
 
       expect(function () {
         numberAttribute.multiplicity = 'will not change';
@@ -235,7 +235,7 @@ describe('NumberAttribute', function () {
       numberAttribute = new NumberAttribute('attributeName');
 
       expect(numberAttribute.name).to.equal('attributeName');
-      expect(numberAttribute.type).to.equal('Number');
+      expect(numberAttribute.type).to.equal(NumberAttribute);
       expect(numberAttribute.multiplicity).to.equal('1');
       expect(numberAttribute.default).to.equal(null);
     });

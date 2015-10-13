@@ -72,14 +72,14 @@ function ObjectAttribute() {
     expect(objectAttribute).to.not.have.ownProperty(
       'type',
       'Property "type" cannot be set in an ObjectAttribute. Its value will ' +
-      'be automatically set to Object'
+      'be automatically set to ObjectAttribute'
     );
 
     objectAttribute = objects.copy(objectAttribute);
 
-    objectAttribute.type = 'Object';
+    objectAttribute.type = ObjectAttribute;
   } else {
-    argumentsArray.splice(1, 0, 'Object');
+    argumentsArray.splice(1, 0, ObjectAttribute);
   }
 
   Attribute.apply(this, argumentsArray);

@@ -7,66 +7,95 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var classes = require('../../../../../src/back/utils').classes;
 var attributes = require('../../../../../').models.attributes;
+var Attribute = attributes.Attribute;
+var StringAttribute = attributes.types.StringAttribute;
+var ObjectAttribute = attributes.types.ObjectAttribute;
 
 describe('Attribute', function () {
   var attribute;
 
+  function WrongAttributeProxy() {
+    attributes.Attribute.apply(this, Array.prototype.slice.call(arguments));
+  }
+
+  function AttributeProxy() {
+    attributes.Attribute.apply(this, Array.prototype.slice.call(arguments));
+  }
+
+  classes.generalize(Attribute, AttributeProxy);
+
   context('interface tests', function () {
+    it('expect to not be able to instantiate directly', function () {
+      expect(function () {
+        attribute = new Attribute();
+      }).to.throw(AssertionError);
+    });
+
+    it(
+      'expect to not be not able to instantiate from a non subclass',
+      function () {
+        expect(function () {
+          attribute = new WrongAttributeProxy();
+        }).to.throw(AssertionError);
+      }
+    );
+
     it('expect to not work without arguments', function () {
       expect(function () {
-        attribute = new attributes.Attribute();
+        attribute = new AttributeProxy();
       }).to.throw(AssertionError);
     });
 
     it('expect to not work with null argument', function () {
       expect(function () {
-        attribute = new attributes.Attribute(null);
+        attribute = new AttributeProxy(null);
       }).to.throw(AssertionError);
     });
 
     it('expect to not work with empty object', function () {
       expect(function () {
-        attribute = new attributes.Attribute({});
+        attribute = new AttributeProxy({});
       }).to.throw(AssertionError);
     });
 
     it('expect to work with right arguments passing as an object',
       function () {
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute'
         });
 
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute',
-          type: 'String'
+          type: StringAttribute
         });
 
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute',
           default: null
         });
 
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute',
           multiplicity: '0..1'
         });
 
-        attribute = attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute',
-          type: 'String',
+          type: StringAttribute,
           multiplicity: '0..1'
         });
 
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute',
           multiplicity: '0..1',
           default: null
         });
 
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute',
-          type: 'String',
+          type: StringAttribute,
           multiplicity: '0..1',
           default: null
         });
@@ -75,24 +104,24 @@ describe('Attribute', function () {
 
     it('expect to work with right arguments passing as arguments',
       function () {
-        attribute = new attributes.Attribute.resolve(
+        attribute = new AttributeProxy(
           'attribute'
         );
 
-        attribute = new attributes.Attribute.resolve(
+        attribute = new AttributeProxy(
           'attribute',
-          'String'
+          StringAttribute
         );
 
-        attribute = new attributes.Attribute.resolve(
+        attribute = new AttributeProxy(
           'attribute',
-          'String',
+          StringAttribute,
           '0..1'
         );
 
-        attribute = new attributes.Attribute.resolve(
+        attribute = new AttributeProxy(
           'attribute',
-          'String',
+          StringAttribute,
           '0..1',
           'defaultValue'
         );
@@ -101,13 +130,13 @@ describe('Attribute', function () {
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
-        attribute = new attributes.Attribute();
+        attribute = new AttributeProxy();
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute(
+        attribute = new AttributeProxy(
           'attribute',
-          'String',
+          StringAttribute,
           '0..1',
           null,
           null
@@ -115,30 +144,30 @@ describe('Attribute', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute(function () {});
+        attribute = new AttributeProxy(function () {});
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute({
-          type: 'String',
+        attribute = new AttributeProxy({
+          type: StringAttribute,
           multiplicity: '0..1',
           default: null
         });
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: null,
-          type: 'String',
+          type: StringAttribute,
           multiplicity: '0..1',
           default: null
         });
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute',
-          type: 'String',
+          type: StringAttribute,
           multiplicity: '0..1',
           default: null,
           doesNotExist: null
@@ -146,7 +175,7 @@ describe('Attribute', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute',
           type: null,
           multiplicity: '0..1',
@@ -155,10 +184,28 @@ describe('Attribute', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        attribute = new attributes.Attribute.resolve({
+        attribute = new AttributeProxy({
           name: 'attribute',
-          type: 'String',
+          type: function () {},
+          multiplicity: '0..1',
+          default: null
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        attribute = new AttributeProxy({
+          name: 'attribute',
+          type: StringAttribute,
           multiplicity: null,
+          default: null
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        attribute = new AttributeProxy({
+          name: 'attribute',
+          type: StringAttribute,
+          multiplicity: 'willnotwork',
           default: null
         });
       }).to.throw(AssertionError);
@@ -171,7 +218,7 @@ describe('Attribute', function () {
         .that.equals('attribute');
 
       expect(attribute).to.have.property('type')
-        .that.equals('String');
+        .that.equals(StringAttribute);
 
       expect(attribute).to.have.property('multiplicity')
         .that.equals('0..1');
@@ -203,7 +250,7 @@ describe('Attribute', function () {
       }).to.throw(Error);
 
       expect(attribute).to.have.property('type')
-        .that.equals('String');
+        .that.equals(StringAttribute);
 
       expect(function () {
         delete attribute.multiplicity;
@@ -229,11 +276,11 @@ describe('Attribute', function () {
         .that.equals('attribute');
 
       expect(function () {
-        attribute.type = 'will not change';
+        attribute.type = ObjectAttribute;
       }).to.throw(Error);
 
       expect(attribute).to.have.property('type')
-        .that.equals('String');
+        .that.equals(StringAttribute);
 
       expect(function () {
         attribute.multiplicity = 'will not change';
@@ -251,12 +298,12 @@ describe('Attribute', function () {
     });
 
     it('expect to have the right default values', function () {
-      attribute = new attributes.Attribute.resolve('attributeName');
+      var attribute2 = new AttributeProxy('attributeName');
 
-      expect(attribute.name).to.equal('attributeName');
-      expect(attribute.type).to.equal('Object');
-      expect(attribute.multiplicity).to.equal('1');
-      expect(attribute.default).to.equal(null);
+      expect(attribute2.name).to.equal('attributeName');
+      expect(attribute2.type).to.equal(ObjectAttribute);
+      expect(attribute2.multiplicity).to.equal('1');
+      expect(attribute2.default).to.equal(null);
     });
   });
 });

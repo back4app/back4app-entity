@@ -5,6 +5,7 @@
 'use strict';
 
 var expect = require('chai').expect;
+var classes = require('../../utils/classes');
 var objects = require('../../utils/objects');
 var errors = require('../errors');
 var attributes = require('./');
@@ -23,7 +24,8 @@ module.exports = Attribute;
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object.
  * @param {!string} attribute.name It is the name of the attribute.
- * @param {!string} [attribute.type='Object'] It is the type of the attribute.
+ * @param {!Class} [attribute.type=ObjectAttribute] It is the
+ * type of the attribute.
  * It is optional and if not passed it will assume 'Object' as the default
  * value.
  * @param {!string} [attribute.multiplicity='1'] It is the multiplicity of the
@@ -34,7 +36,7 @@ module.exports = Attribute;
  * @example
  * Attribute.call(this, {
  *   name: 'attribute',
- *   type: 'String',
+ *   type: StringAttribute,
  *   multiplicity: '0..1',
  *   default: null
  * });
@@ -48,7 +50,7 @@ module.exports = Attribute;
  * @name Attribute
  * @constructor
  * @param {!string} name It is the name of the attribute.
- * @param {!string} [type='Object'] It is the type of the attribute. It is
+ * @param {!Class} [type=ObjectAttribute] It is the type of the attribute. It is
  * optional and if not passed it will assume 'Object' as the default value.
  * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
  * It is optional and if not passed it will assume '1' as the default value.
@@ -58,7 +60,7 @@ module.exports = Attribute;
  * Attribute.call(
  *   this,
  *   'attribute',
- *   'String',
+ *   StringAttribute,
  *   '0..1',
  *   null
  * );
@@ -83,17 +85,17 @@ function Attribute() {
   /**
    * This is the attribute type.
    * @name module:back4app/entity/models/attributes.Attribute#type
-   * @type {!string}
+   * @type {!Class}
    * @readonly
    * @example
    * Attribute.call(
    *   this,
    *   'attribute',
-   *   'String',
+   *   StringAttribute,
    *   '0..1',
    *   'default'
    * );
-   * console.log(this.type); // Logs "String"
+   * console.log(this.type == StringAttribute); // Logs "true"
    */
   this.type = null;
   /**
@@ -143,7 +145,7 @@ function Attribute() {
   }
 
   var _name = null;
-  var _type = 'Object';
+  var _type = attributes.types.ObjectAttribute;
   var _multiplicity = '1';
   var _default = null;
 
@@ -186,9 +188,15 @@ function Attribute() {
 
     if (attribute.hasOwnProperty('type')) {
       expect(attribute.type).to.be.a(
-        'string',
+        'function',
         'Invalid property "type" when creating an Attribute called "' +
-        _name + '" (it has to be a string)'
+        _name + '" (it has to be a Class)'
+      );
+
+      expect(classes.isGeneral(Attribute, attribute.type)).to.equal(
+        true,
+        'Invalid property "type" when creating an Attribute called "' +
+          _name + '" (it has to be an Attribute specialization)'
       );
 
       _type = attribute.type;
@@ -224,9 +232,15 @@ function Attribute() {
 
     if (arguments.length > 1) {
       expect(arguments[1]).to.be.a(
-        'string',
+        'function',
         'Invalid argument "type" when creating an Attribute called "' + _name +
-        '" (it has to be a string)'
+        '" (it has to be a Class)'
+      );
+
+      expect(classes.isGeneral(Attribute, arguments[1])).to.equal(
+        true,
+        'Invalid property "type" when creating an Attribute called "' +
+        _name + '" (it has to be an Attribute specialization)'
       );
 
       _type = arguments[1];

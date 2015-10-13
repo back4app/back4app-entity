@@ -152,7 +152,7 @@ describe('DateAttribute', function () {
         .that.equals('attribute');
 
       expect(dateAttribute).to.have.property('type')
-        .that.equals('Date');
+        .that.equals(DateAttribute);
 
       expect(dateAttribute).to.have.property('multiplicity')
         .that.equals('0..1');
@@ -184,7 +184,7 @@ describe('DateAttribute', function () {
       }).to.throw(Error);
 
       expect(dateAttribute).to.have.property('type')
-        .that.equals('Date');
+        .that.equals(DateAttribute);
 
       expect(function () {
         delete dateAttribute.multiplicity;
@@ -214,7 +214,7 @@ describe('DateAttribute', function () {
       }).to.throw(Error);
 
       expect(dateAttribute).to.have.property('type')
-        .that.equals('Date');
+        .that.equals(DateAttribute);
 
       expect(function () {
         dateAttribute.multiplicity = 'will not change';
@@ -235,7 +235,7 @@ describe('DateAttribute', function () {
       dateAttribute = new DateAttribute('attributeName');
 
       expect(dateAttribute.name).to.equal('attributeName');
-      expect(dateAttribute.type).to.equal('Date');
+      expect(dateAttribute.type).to.equal(DateAttribute);
       expect(dateAttribute.multiplicity).to.equal('1');
       expect(dateAttribute.default).to.equal(null);
     });

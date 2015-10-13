@@ -152,7 +152,7 @@ describe('BooleanAttribute', function () {
         .that.equals('attribute');
 
       expect(booleanAttribute).to.have.property('type')
-        .that.equals('Boolean');
+        .that.equals(BooleanAttribute);
 
       expect(booleanAttribute).to.have.property('multiplicity')
         .that.equals('0..1');
@@ -184,7 +184,7 @@ describe('BooleanAttribute', function () {
       }).to.throw(Error);
 
       expect(booleanAttribute).to.have.property('type')
-        .that.equals('Boolean');
+        .that.equals(BooleanAttribute);
 
       expect(function () {
         delete booleanAttribute.multiplicity;
@@ -214,7 +214,7 @@ describe('BooleanAttribute', function () {
       }).to.throw(Error);
 
       expect(booleanAttribute).to.have.property('type')
-        .that.equals('Boolean');
+        .that.equals(BooleanAttribute);
 
       expect(function () {
         booleanAttribute.multiplicity = 'will not change';
@@ -235,7 +235,7 @@ describe('BooleanAttribute', function () {
       booleanAttribute = new BooleanAttribute('attributeName');
 
       expect(booleanAttribute.name).to.equal('attributeName');
-      expect(booleanAttribute.type).to.equal('Boolean');
+      expect(booleanAttribute.type).to.equal(BooleanAttribute);
       expect(booleanAttribute.multiplicity).to.equal('1');
       expect(booleanAttribute.default).to.equal(null);
     });
