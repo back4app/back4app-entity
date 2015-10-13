@@ -7,7 +7,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
-var errors = require('../../../../src/back/models/errors');
+var errors = require('../../../../').models.errors;
 
 describe('errors', function () {
   it(
