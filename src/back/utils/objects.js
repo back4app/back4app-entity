@@ -18,7 +18,7 @@ module.exports.copy = copy;
 /**
  * Makes a copy of a given object. This function is not exported to be used
  * outside this project.
- * @param (!Object) o The object to be copied.
+ * @param {!Object} o The object to be copied.
  * @returns {Object} The new copy of the given object.
  * @example
  * var copy = objects.copy(myObject);
