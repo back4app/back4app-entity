@@ -23,6 +23,6 @@ module.exports = Entity.specify(
     })
   ],
   {
-    constructor: function () {}
+    constructor: function () { return 'constructor'; }
   }
 );
