@@ -91,7 +91,7 @@ function _addMethod(methodDictionary, func, name) {
 }
 
 /**
- * Concatenates an MethodDictionary instance with a new method and returns a new
+ * Concatenates a MethodDictionary instance with a new method and returns a new
  * MethodDictionary.
  * @name module:back4app/entity/models/methods.MethodDictionary.concat
  * @function
