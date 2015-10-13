@@ -52,7 +52,7 @@ describe('Attribute', function () {
           multiplicity: '0..1'
         });
 
-        attribute = new attributes.Attribute.resolve({
+        attribute = attributes.Attribute.resolve({
           name: 'attribute',
           type: 'String',
           multiplicity: '0..1'

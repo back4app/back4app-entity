@@ -198,6 +198,12 @@ function Attribute() {
         _name + '" (it has to be a string'
       );
 
+      expect(['1', '0..1', '1..*', '*']).to.contain(
+        attribute.multiplicity,
+        'Invalid property "multiplicity" when creating an Attribtue called "' +
+        _name + '" (valid values are "1", "0..1", "1..*", "*")'
+      );
+
       _multiplicity = attribute.multiplicity;
     }
 
@@ -226,8 +232,14 @@ function Attribute() {
     if (arguments.length > 2) {
       expect(arguments[2]).to.be.a(
         'string',
-        'Invalid argument "multiplicity when creating an Attribute called "' +
+        'Invalid argument "multiplicity" when creating an Attribute called "' +
         _name + '" (it has to be a string)'
+      );
+
+      expect(['1', '0..1', '1..*', '*']).to.contain(
+        arguments[2],
+        'Invalid argument "multiplicity" when creating an Attribtue called "' +
+          _name + '" (valid values are "1", "0..1", "1..*", "*")'
       );
 
       _multiplicity = arguments[2];
