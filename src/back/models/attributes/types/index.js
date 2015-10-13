@@ -30,6 +30,8 @@ module.exports.StringAttribute = StringAttribute;
 
 module.exports.get = null;
 
+require('../').types = module.exports;
+
 Object.defineProperty(module.exports, 'get', {
   value: get,
   enumerable: false,

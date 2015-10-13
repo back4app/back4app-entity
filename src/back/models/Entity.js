@@ -10,6 +10,8 @@ var errors = require('./errors');
 
 module.exports = Entity;
 
+require('./').Entity = Entity;
+
 /**
  * Base class for entities.
  * @constructor

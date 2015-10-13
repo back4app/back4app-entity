@@ -7,6 +7,7 @@
 var expect = require('chai').expect;
 var objects = require('../../utils/objects');
 var errors = require('../errors');
+var attributes = require('./');
 
 module.exports = Attribute;
 
@@ -344,7 +345,7 @@ function resolve() {
   );
 
   var argumentArray = Array.prototype.slice.call(arguments);
-  var TypedAttribute = require('./types').ObjectAttribute;
+  var TypedAttribute = attributes.types.ObjectAttribute;
 
   if (arguments.length === 1 && typeof arguments[0] !== 'string') {
     var attribute = objects.copy(arguments[0]);
@@ -365,10 +366,10 @@ function resolve() {
       );
 
       try {
-        TypedAttribute = require('./types').get(attribute.type);
+        TypedAttribute = attributes.types.get(attribute.type);
       } catch (e) {
         if (e instanceof errors.AttributeTypeNotFoundError) {
-          TypedAttribute = require('./types').AssociationAttribute;
+          TypedAttribute = attributes.types.AssociationAttribute;
           attribute.entity = attribute.type;
         } else {
           throw e;
@@ -387,10 +388,10 @@ function resolve() {
       );
 
       try {
-        TypedAttribute = require('./types').get(arguments[1]);
+        TypedAttribute = attributes.types.get(arguments[1]);
       } catch (e) {
         if (e instanceof errors.AttributeTypeNotFoundError) {
-          TypedAttribute = require('./types').AssociationAttribute;
+          TypedAttribute = attributes.types.AssociationAttribute;
           argumentArray.splice(2, 0, arguments[1]);
         } else {
           throw e;

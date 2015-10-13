@@ -12,7 +12,7 @@ module.exports = Entity.specify(
   'C2',
   [
     new ObjectAttribute(
-      'c2A1',
+      'Entity',
       '1',
       null
     ),
@@ -22,5 +22,7 @@ module.exports = Entity.specify(
       default: function () { return { default: 'thisIsMyDefault' }; }
     })
   ],
-  null
+  {
+    constructor: function () {}
+  }
 );
