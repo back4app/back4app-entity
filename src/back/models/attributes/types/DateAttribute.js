@@ -4,9 +4,7 @@
 
 'use strict';
 
-var expect = require('chai').expect;
 var classes = require('../../../utils/classes');
-var objects = require('../../../utils/objects');
 var Attribute = require('../Attribute');
 
 module.exports = DateAttribute;
@@ -51,38 +49,7 @@ module.exports = DateAttribute;
  * );
  */
 function DateAttribute() {
-  var argumentsArray = Array.prototype.slice.call(arguments);
-
-  expect(argumentsArray).to.have.length.within(
-    1,
-    3,
-    'Invalid arguments length when creating an DateAttribute (it has to be ' +
-    'passed from 1 to 3 arguments)'
-  );
-
-  if (argumentsArray.length === 1 && typeof argumentsArray[0] !== 'string') {
-    var dateAttribute = argumentsArray[0];
-
-    expect(dateAttribute).to.be.an(
-      'object',
-      'Invalid argument type when creating an Attribute (it has to be an ' +
-      'object or a string)'
-    );
-
-    expect(dateAttribute).to.not.have.ownProperty(
-      'type',
-      'Property "type" cannot be set in an DateAttribute. Its value will ' +
-      'be automatically set to DateAttribute'
-    );
-
-    dateAttribute = objects.copy(dateAttribute);
-
-    dateAttribute.type = DateAttribute;
-  } else {
-    argumentsArray.splice(1, 0, DateAttribute);
-  }
-
-  Attribute.apply(this, argumentsArray);
+  Attribute.apply(this, Array.prototype.slice.call(arguments));
 }
 
 classes.generalize(Attribute, DateAttribute);

@@ -24,10 +24,6 @@ module.exports = Attribute;
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object.
  * @param {!string} attribute.name It is the name of the attribute.
- * @param {!Class} [attribute.type=ObjectAttribute] It is the
- * type of the attribute.
- * It is optional and if not passed it will assume 'Object' as the default
- * value.
  * @param {!string} [attribute.multiplicity='1'] It is the multiplicity of the
  * attribute. It is optional and if not passed it will assume '1' as the default
  * value.
@@ -36,7 +32,6 @@ module.exports = Attribute;
  * @example
  * Attribute.call(this, {
  *   name: 'attribute',
- *   type: StringAttribute,
  *   multiplicity: '0..1',
  *   default: null
  * });
@@ -50,8 +45,6 @@ module.exports = Attribute;
  * @name Attribute
  * @constructor
  * @param {!string} name It is the name of the attribute.
- * @param {!Class} [type=ObjectAttribute] It is the type of the attribute. It is
- * optional and if not passed it will assume 'Object' as the default value.
  * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
  * It is optional and if not passed it will assume '1' as the default value.
  * @param {?(boolean|number|string|Object|function)} [default] It is the default
@@ -60,7 +53,6 @@ module.exports = Attribute;
  * Attribute.call(
  *   this,
  *   'attribute',
- *   StringAttribute,
  *   '0..1',
  *   null
  * );
@@ -75,7 +67,6 @@ function Attribute() {
    * Attribute.call(
    *   this,
    *   'attribute',
-   *   'String',
    *   '0..1',
    *   'default'
    * );
@@ -88,14 +79,13 @@ function Attribute() {
    * @type {!Class}
    * @readonly
    * @example
-   * Attribute.call(
-   *   this,
+   * var attribute = Attribute.resolve(
    *   'attribute',
-   *   StringAttribute,
+   *   'String',
    *   '0..1',
    *   'default'
    * );
-   * console.log(this.type == StringAttribute); // Logs "true"
+   * console.log(attribute.type == StringAttribute); // Logs "true"
    */
   this.type = null;
   /**
@@ -107,7 +97,6 @@ function Attribute() {
    * Attribute.call(
    *   this,
    *   'attribute',
-   *   'String',
    *   '0..1',
    *   'default'
    * );
@@ -123,7 +112,6 @@ function Attribute() {
    * Attribute.call(
    *   this,
    *   'attribute',
-   *   'String',
    *   '0..1',
    *   'default'
    * );
@@ -131,29 +119,45 @@ function Attribute() {
    */
   this.default = null;
 
-  if (this) {
-    expect(this.constructor).to.not.equal(
-      Attribute,
-      'The Attribute is an abstract class and cannot be directly initialized'
-    );
+  expect(this).to.be.an(
+    'object',
+    'The Attribute\'s constructor can be only invoked from specialized' +
+    'classes\' constructors'
+  );
 
-    expect(this).to.be.instanceof(
-      Attribute,
-      'The Attribute\'s constructor can be only invoked from specialized' +
-      'classes'
-    );
-  }
+  expect(this.constructor).to.be.a(
+    'function',
+    'The Attribute\'s constructor can be only invoked from specialized' +
+    'classes\' constructors'
+  );
+
+  expect(this.constructor).to.not.equal(
+    Attribute,
+    'The Attribute is an abstract class and cannot be directly initialized'
+  );
+
+  expect(this).to.be.instanceof(
+    Attribute,
+    'The Attribute\'s constructor can be only invoked from specialized' +
+    'classes\' constructors'
+  );
+
+  expect(classes.isGeneral(Attribute, this.constructor)).to.equal(
+    true,
+    'The Attribute\'s constructor can be only invoked from specialized' +
+    'classes\' constructors'
+  );
 
   var _name = null;
-  var _type = attributes.types.ObjectAttribute;
+  var _type = this.constructor;
   var _multiplicity = '1';
   var _default = null;
 
   expect(arguments).to.have.length.within(
     1,
-    4,
+    3,
     'Invalid arguments length when creating an Attribute (it has to be ' +
-    'passed from 1 to 4 arguments)'
+    'passed from 1 to 3 arguments)'
   );
 
   if (arguments.length === 1 && typeof arguments[0] !== 'string') {
@@ -178,28 +182,12 @@ function Attribute() {
     _name = attribute.name;
 
     for (var property in attribute) {
-      expect(['name', 'type', 'multiplicity', 'default']).to.include(
+      expect(['name', 'multiplicity', 'default']).to.include(
         property,
         'Invalid property "' + property + '" when creating an Attribute ' +
-        'called "' + _name + '" (valid properties are "name", ' +
-        '"type", "multiplicity" and "default")'
+        'called "' + _name + '" (valid properties are "name", "type", ' +
+        '"multiplicity" and "default")'
       );
-    }
-
-    if (attribute.hasOwnProperty('type')) {
-      expect(attribute.type).to.be.a(
-        'function',
-        'Invalid property "type" when creating an Attribute called "' +
-        _name + '" (it has to be a Class)'
-      );
-
-      expect(classes.isGeneral(Attribute, attribute.type)).to.equal(
-        true,
-        'Invalid property "type" when creating an Attribute called "' +
-          _name + '" (it has to be an Attribute specialization)'
-      );
-
-      _type = attribute.type;
     }
 
     if (attribute.hasOwnProperty('multiplicity')) {
@@ -232,38 +220,22 @@ function Attribute() {
 
     if (arguments.length > 1) {
       expect(arguments[1]).to.be.a(
-        'function',
-        'Invalid argument "type" when creating an Attribute called "' + _name +
-        '" (it has to be a Class)'
-      );
-
-      expect(classes.isGeneral(Attribute, arguments[1])).to.equal(
-        true,
-        'Invalid property "type" when creating an Attribute called "' +
-        _name + '" (it has to be an Attribute specialization)'
-      );
-
-      _type = arguments[1];
-    }
-
-    if (arguments.length > 2) {
-      expect(arguments[2]).to.be.a(
         'string',
         'Invalid argument "multiplicity" when creating an Attribute called "' +
         _name + '" (it has to be a string)'
       );
 
       expect(['1', '0..1', '1..*', '*']).to.contain(
-        arguments[2],
+        arguments[1],
         'Invalid argument "multiplicity" when creating an Attribtue called "' +
           _name + '" (valid values are "1", "0..1", "1..*", "*")'
       );
 
-      _multiplicity = arguments[2];
+      _multiplicity = arguments[1];
     }
 
-    if (arguments.length > 3) {
-      _default = arguments[3];
+    if (arguments.length > 2) {
+      _default = arguments[2];
     }
   }
 

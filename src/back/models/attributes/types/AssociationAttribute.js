@@ -7,7 +7,7 @@
 var expect = require('chai').expect;
 var classes = require('../../../utils/classes');
 var objects = require('../../../utils/objects');
-var Entity = require('../../Entity');
+var models = require('../../');
 var Attribute = require('../Attribute');
 
 module.exports = AssociationAttribute;
@@ -79,7 +79,7 @@ function AssociationAttribute() {
   Object.defineProperty(this, 'Entity', {
     get: function () {
       if (typeof _Entity === 'string') {
-        _Entity = Entity.getSpecialization(_Entity);
+        _Entity = models.Entity.getSpecialization(_Entity);
       }
 
       return _Entity;
@@ -111,15 +111,7 @@ function AssociationAttribute() {
       'object or a string)'
     );
 
-    expect(associationAttribute).to.not.have.ownProperty(
-      'type',
-      'Property "type" cannot be set in an AssociationAttribute. Its value ' +
-      'will be automatically set to AssociationAttribute'
-    );
-
     associationAttribute = objects.copy(associationAttribute);
-
-    associationAttribute.type = AssociationAttribute;
 
     _Entity = associationAttribute.entity;
     if (_Entity) {
@@ -137,7 +129,7 @@ function AssociationAttribute() {
 
     argumentsArray[0] = associationAttribute;
   } else {
-    _Entity = argumentsArray.splice(1, 1, AssociationAttribute);
+    _Entity = argumentsArray.splice(1, 1)[0];
   }
 
   if (typeof _Entity !== 'string') {
@@ -147,7 +139,7 @@ function AssociationAttribute() {
       'has to be an object)'
     );
 
-    expect(classes.isGeneral(Entity, _Entity)).to.equal(
+    expect(classes.isGeneral(models.Entity, _Entity)).to.equal(
       true,
       'Invalid argument "entity" when creating an AssociationAttribute (it ' +
       'has to be a subclass of Entity)'

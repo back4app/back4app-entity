@@ -4,9 +4,7 @@
 
 'use strict';
 
-var expect = require('chai').expect;
 var classes = require('../../../utils/classes');
-var objects = require('../../../utils/objects');
 var Attribute = require('../Attribute');
 
 module.exports = StringAttribute;
@@ -51,38 +49,7 @@ module.exports = StringAttribute;
  * );
  */
 function StringAttribute() {
-  var argumentsArray = Array.prototype.slice.call(arguments);
-
-  expect(argumentsArray).to.have.length.within(
-    1,
-    3,
-    'Invalid arguments length when creating an StringAttribute (it has to be ' +
-    'passed from 1 to 3 arguments)'
-  );
-
-  if (argumentsArray.length === 1 && typeof argumentsArray[0] !== 'string') {
-    var stringAttribute = argumentsArray[0];
-
-    expect(stringAttribute).to.be.an(
-      'object',
-      'Invalid argument type when creating an Attribute (it has to be an ' +
-      'object or a string)'
-    );
-
-    expect(stringAttribute).to.not.have.ownProperty(
-      'type',
-      'Property "type" cannot be set in an StringAttribute. Its value will ' +
-      'be automatically set to StringAttribute'
-    );
-
-    stringAttribute = objects.copy(stringAttribute);
-
-    stringAttribute.type = StringAttribute;
-  } else {
-    argumentsArray.splice(1, 0, StringAttribute);
-  }
-
-  Attribute.apply(this, argumentsArray);
+  Attribute.apply(this, Array.prototype.slice.call(arguments));
 }
 
 classes.generalize(Attribute, StringAttribute);
