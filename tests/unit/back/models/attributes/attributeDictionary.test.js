@@ -7,7 +7,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
-var attributes = require('../../../../../src/back/models/attributes');
+var attributes = require('../../../../../').models.attributes;
 
 describe('AttributeDictionary', function () {
   var attributeDictionary;
@@ -27,8 +27,8 @@ describe('AttributeDictionary', function () {
 
     it('expect to work with right arguments', function () {
       attributeDictionary = new attributes.AttributeDictionary({
-        attribute1: new attributes.Attribute.resolve('attribute1'),
-        attribute2: new attributes.Attribute.resolve('attribute2')
+        attribute1: attributes.Attribute.resolve('attribute1'),
+        attribute2: attributes.Attribute.resolve('attribute2')
       });
 
       attributeDictionary = new attributes.AttributeDictionary({
@@ -37,8 +37,8 @@ describe('AttributeDictionary', function () {
       });
 
       attributeDictionary = new attributes.AttributeDictionary([
-        new attributes.Attribute.resolve('attribute1'),
-        new attributes.Attribute.resolve('attribute2')
+        attributes.Attribute.resolve('attribute1'),
+        attributes.Attribute.resolve('attribute2')
       ]);
 
       attributeDictionary = new attributes.AttributeDictionary([
@@ -107,7 +107,7 @@ describe('AttributeDictionary', function () {
       expect(Object.isExtensible(attributeDictionary)).to.equal(false);
 
       expect(function () {
-        attributeDictionary.attribute3 = new attributes.Attribute.resolve(
+        attributeDictionary.attribute3 = attributes.Attribute.resolve(
           'attribute3'
         );
       }).to.throw(TypeError);
@@ -125,7 +125,9 @@ describe('AttributeDictionary', function () {
 
     it('expect to not allow to change method', function () {
       expect(function () {
-        attributeDictionary.attribute1 = new attributes.Attribute('wontWork');
+        attributeDictionary.attribute1 = attributes.Attribute.resolve(
+          'wontWork'
+        );
       }).to.throw(Error);
 
       expect(attributeDictionary.attribute1.name).to.equal('attribute1');
@@ -148,9 +150,9 @@ describe('AttributeDictionary', function () {
           attributes
             .AttributeDictionary
             .concat(
-            attributeDictionary,
-            attributes.Attribute.resolve('attribute3')
-          );
+              attributeDictionary,
+              attributes.Attribute.resolve('attribute3')
+            );
 
         expect(concatenatedAttributeDictionary)
           .to.not.deep.equal(attributeDictionary);
@@ -173,8 +175,8 @@ describe('AttributeDictionary', function () {
           attributes
             .AttributeDictionary
             .concat(
-            new attributes.Attribute('attribute3')
-          );
+              attributes.Attribute.resolve('attribute3')
+            );
       }).to.throw(AssertionError);
 
       expect(function () {
@@ -182,10 +184,10 @@ describe('AttributeDictionary', function () {
           attributes
             .AttributeDictionary
             .concat(
-            attributeDictionary,
-            new attributes.Attribute('attribute3'),
-            null
-          );
+              attributeDictionary,
+              attributes.Attribute.resolve('attribute3'),
+              null
+            );
       }).to.throw(AssertionError);
 
       expect(function () {
@@ -193,9 +195,9 @@ describe('AttributeDictionary', function () {
           attributes
             .AttributeDictionary
             .concat(
-            {},
-            new attributes.Attribute('attribute3')
-          );
+              {},
+              attributes.Attribute.resolve('attribute3')
+            );
       }).to.throw(AssertionError);
 
       expect(function () {
@@ -203,9 +205,9 @@ describe('AttributeDictionary', function () {
           attributes
             .AttributeDictionary
             .concat(
-            attributeDictionary,
-            {}
-          );
+              attributeDictionary,
+              {}
+            );
       }).to.throw(AssertionError);
     });
 
@@ -215,9 +217,9 @@ describe('AttributeDictionary', function () {
           attributes
             .AttributeDictionary
             .concat(
-            concatenatedAttributeDictionary,
-            new attributes.Attribute('attribute3')
-          );
+              concatenatedAttributeDictionary,
+              attributes.Attribute.resolve('attribute3')
+            );
       }).to.throw(AssertionError);
     });
   });
