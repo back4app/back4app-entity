@@ -7,13 +7,10 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
-var classes = require('../../../../../../src/back/utils/classes');
-var Attribute = require(
-  '../../../../../../src/back/models/attributes/Attribute'
-);
-var ObjectAttribute = require(
-  '../../../../../../src/back/models/attributes/types/ObjectAttribute'
-);
+var classes = require('../../../../../../src/back/utils').classes;
+var attributes = require('../../../../../../').models.attributes;
+var Attribute = attributes.Attribute;
+var ObjectAttribute = attributes.types.ObjectAttribute;
 
 describe('ObjectAttribute', function () {
   var objectAttribute;

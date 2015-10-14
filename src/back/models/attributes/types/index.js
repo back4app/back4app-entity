@@ -16,7 +16,7 @@ var StringAttribute = require('./StringAttribute');
 
 /**
  * Contains specializations of the Attribute class to be used as types of
- * attributes
+ * attributes.
  * @module back4app/entity/models/attributes/types
  */
 module.exports = {};

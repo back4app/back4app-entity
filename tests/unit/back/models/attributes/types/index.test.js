@@ -7,15 +7,15 @@
 var chai = require('chai');
 var AssertionError = chai.AssertionError;
 var expect = chai.expect;
-var classes = require('../../../../../../src/back/utils/classes');
-var AttributeTypeNotFoundError = require(
-  '../../../../../../src/back/models/errors'
-).AttributeTypeNotFoundError;
-var Attribute = require(
-  '../../../../../../src/back/models/attributes/Attribute'
-);
+var classes = require('../../../../../../src/back/utils').classes;
+var models = require('../../../../../../').models;
+var AttributeTypeNotFoundError = models.errors.AttributeTypeNotFoundError;
+var Attribute = models.attributes.Attribute;
 var attributesTypesIndex = require(
   '../../../../../../src/back/models/attributes/types'
+);
+var AssociationAttribute = require(
+  '../../../../../../src/back/models/attributes/types/AssociationAttribute'
 );
 var BooleanAttribute = require(
   '../../../../../../src/back/models/attributes/types/BooleanAttribute'
@@ -34,6 +34,15 @@ var StringAttribute = require(
 );
 
 describe('attributesTypesIndex', function () {
+  it(
+    'expect to export AssociationAttribute in the AssociationAttribute ' +
+    'property',
+    function () {
+      expect(attributesTypesIndex).to.have.property('AssociationAttribute')
+        .that.equals(AssociationAttribute);
+    }
+  );
+
   it(
     'expect to export BooleanAttribute in the BooleanAttribute property',
     function () {
