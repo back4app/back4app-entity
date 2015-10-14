@@ -16,19 +16,24 @@ require('./').Entity = Entity;
  * Base class for entities.
  * @constructor
  * @memberof module:back4app/entity/models
+ * @param {?Object.<!string, ?Object>} [attributeValues] It has to be passed as
+ * a dictionary of attribute's name and values to initialize a new Entity.
  * @example
  * var entity = new Entity();
  */
-function Entity() {
+function Entity(attributeValues) {
   /**
    * This is a read-only property to get the Entity Class of an instance.
+   * @name module:back4app/entity/models.Entity#Entity
    * @type {!Class}
    * @readonly
    * @example
    * var entity = new Entity();
    * console.log(entity.Entity == Entity); // Logs "true"
    */
-  this.Entity = null;
+  if (!this.hasOwnProperty('Entity') || !this.Entity) {
+    this.Entity = null;
+  }
   /**
    * This is a read-only property to get the general Entity Class of an
    * instance. This is just an alias to this.Entity.General.
@@ -41,17 +46,14 @@ function Entity() {
    */
   this.General = null;
 
-  expect(arguments).to.have.length(
-    0,
-    'Invalid arguments length when creating an Entity (it has not to be ' +
-    'passed any argument)');
-
-  Object.defineProperty(this, 'Entity', {
-    value: Entity,
-    enumerable: false,
-    writable: false,
-    configurable: true
-  });
+  if (!this.hasOwnProperty('Entity') || !this.Entity) {
+    Object.defineProperty(this, 'Entity', {
+      value: Entity,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
+  }
 
   Object.defineProperty(this, 'General', {
     get: function () {
@@ -65,6 +67,51 @@ function Entity() {
     enumerable: false,
     configurable: true
   });
+
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when creating "' +
+    this.Entity.specification.name +
+    '" (it has to be passed less than 2 arguments)');
+
+  if (attributeValues) {
+    expect(attributeValues).to.be.an(
+      'object',
+      'Invalid argument "attributeValues" when creating a new "' +
+      this.Entity.specification.name + '" (it has to be an object)'
+    );
+
+    var attributes = this.Entity.attributes;
+
+    for (var attribute in attributeValues) {
+      expect(attributes).to.include.keys(
+        attribute,
+        'Invalid property "' + attribute + '" when creating a new "' +
+        this.Entity.specification.name + '" (it does not exist)'
+      );
+    }
+
+    for (attribute in attributes) {
+      var attributeValue = null;
+
+      if (attributeValues.hasOwnProperty(attribute)) {
+        attributeValue = attributeValues[attribute];
+      }
+
+      Object.defineProperty(this, attribute, {
+        value: attributeValue,
+        enumerable: true,
+        writable: true,
+        configurable: false
+      });
+    }
+
+    for (attribute in attributes) {
+      if (this[attribute] === null && attributes[attribute].default !== null) {
+        this[attribute] = attributes[attribute].getDefault(this);
+      }
+    }
+  }
 }
 
 /**
@@ -266,15 +313,17 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       'passed from 1 to 3 arguments)'
     );
 
-    var SpecificEntity = function () {
-      CurrentEntity.call(this);
+    var SpecificEntity = function (attributeValues) {
+      if (!this.hasOwnProperty('Entity') || !this.Entity) {
+        Object.defineProperty(this, 'Entity', {
+          value: SpecificEntity,
+          enumerable: false,
+          writable: false,
+          configurable: true
+        });
+      }
 
-      Object.defineProperty(this, 'Entity', {
-        value: SpecificEntity,
-        enumerable: false,
-        writable: false,
-        configurable: true
-      });
+      CurrentEntity.call(this, attributeValues);
     };
 
     classes.generalize(CurrentEntity, SpecificEntity);

@@ -8,6 +8,7 @@ var expect = require('chai').expect;
 var classes = require('../../utils/classes');
 var objects = require('../../utils/objects');
 var errors = require('../errors');
+var models = require('../');
 var attributes = require('./');
 
 module.exports = Attribute;
@@ -273,6 +274,8 @@ function Attribute() {
 
 Attribute.resolve = resolve;
 
+Attribute.prototype.getDefaultValue = getDefaultValue;
+
 /**
  * Resolves the arguments and create a new instance of Attribute. It tries to
  * find the Attribute type. It it is not possible, it assumes that it is an
@@ -396,4 +399,34 @@ function resolve() {
     TypedAttribute,
     [null].concat(argumentArray)
   ))();
+}
+
+/**
+ * Gets the default value of the current Attribute to a given Entity instance.
+ * @param {!module:back4app/entity/models.Entity} entity The Entity instance to
+ * which the default value will be get.
+ * @returns {boolean|number|string|Object|function} The default value.
+ * @example
+ * var defaultValue = MyEntity.attributes.myAttribute.getDefaultValue(
+ *   new MyEntity()
+ * );
+ */
+function getDefaultValue(entity) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when getting the default value of an Attribute ' +
+    'to an Entity instance (it has to be given 1 argument)'
+  );
+
+  expect(entity).to.be.an.instanceOf(
+    models.Entity,
+    'Invalid type of argument "entity" when getting the default value of an ' +
+    'Attribute to an Entity instance (it has to be an Entity)'
+  );
+
+  if (typeof this.default === 'function') {
+    return this.default.call(entity);
+  } else {
+    return this.default;
+  }
 }

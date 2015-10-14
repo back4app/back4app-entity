@@ -25,11 +25,15 @@ describe('Entity', function () {
   context('interface tests', function () {
     it('expect to instantiate new Entity without error', function () {
       entity = new Entity();
+
+      entity = new Entity(null);
+
+      entity = new Entity({});
     });
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
-        entity = new Entity(null);
+        entity = new Entity(null, null);
       }).to.throw(AssertionError);
     });
   });
