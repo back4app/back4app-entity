@@ -139,9 +139,10 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification({
+          name: 'MyEntity',
           attributes: new attributes.AttributeDictionary({
-            attribute1: new attributes.Attribute('attribute1'),
-            attribute2: new attributes.Attribute('attribute2')
+            attribute1: attributes.Attribute.resolve('attribute1'),
+            attribute2: attributes.Attribute.resolve('attribute2')
           }),
           methods: new methods.MethodDictionary({
             method1: function () { return 'method1'; },
@@ -153,6 +154,7 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification({
+          name: 'MyEntity',
           attributes: function () {},
           methods: new methods.MethodDictionary({
             method1: function () { return 'method1'; },
@@ -163,9 +165,10 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification({
+          name: 'MyEntity',
           attributes: new attributes.AttributeDictionary({
-            attribute1: new attributes.Attribute('attribute1'),
-            attribute2: new attributes.Attribute('attribute2')
+            attribute1: attributes.Attribute.resolve('attribute1'),
+            attribute2: attributes.Attribute.resolve('attribute2')
           }),
           methods: function () {}
         });
@@ -173,6 +176,7 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification(
+          'MyEntity',
           function () {},
           new methods.MethodDictionary({
             method1: function () { return 'method1'; },
@@ -183,9 +187,10 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification(
+          'MyEntity',
           new attributes.AttributeDictionary({
-            attribute1: new attributes.Attribute('attribute1'),
-            attribute2: new attributes.Attribute('attribute2')
+            attribute1: attributes.Attribute.resolve('attribute1'),
+            attribute2: attributes.Attribute.resolve('attribute2')
           }),
           function () {}
         );
@@ -389,6 +394,7 @@ describe('EntitySpecification', function () {
 
         expect(function () {
           Entity.specify({
+            name: 'MyEntity',
             attributes: {
               attribute1: {}
             },
@@ -471,6 +477,7 @@ describe('EntitySpecification', function () {
 
         expect(function () {
           MyEntity3.specify({
+            name: 'MyEntity',
             attributes: {
               method1: {}
             }
@@ -518,6 +525,7 @@ describe('EntitySpecification', function () {
 
         expect(function () {
           MyEntity3.specify({
+            name: 'MyEntity',
             methods: {
               attribute1: function () {}
             }
