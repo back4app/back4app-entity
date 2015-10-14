@@ -21,7 +21,7 @@ module.exports = AssociationAttribute;
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object.
  * @param {!string} attribute.name It is the name of the attribute.
- * @param {!(string|module:back4app/models.Entity)} attribute.entity It is the
+ * @param {!(string|Class)} attribute.entity It is the
  * Entity that is associated with the current AssociationAttribute.
  * @param {!string} [attribute.multiplicity='1'] It is the multiplicity of the
  * attribute. It is optional and if not passed it will assume '1' as the default
@@ -43,7 +43,7 @@ module.exports = AssociationAttribute;
  * @constructor
  * @extends module:back4app/entity/models/attributes.Attribute
  * @param {!string} name It is the name of the attribute.
- * @param {!(string|module:back4app/models.Entity)} entity It is the Entity that
+ * @param {!(string|Class)} entity It is the Entity that
  * is associated with the current AssociationAttribute.
  * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
  * It is optional and if not passed it will assume '1' as the default value.
@@ -62,8 +62,8 @@ function AssociationAttribute() {
    * It is a readonly property with the Entity that is associated with the
    * current AssociationAttribute.
    * @name
-   * module:back4app/entity/models/attributes/types/AssociationAttribute#Entity
-   * @type {!module:back4app/models.Entity}
+   * module:back4app/entity/models/attributes/types.AssociationAttribute#Entity
+   * @type {!Class}
    * @readonly
    * @throws {module:back4app/entity/models/errors.EntityNotFoundError}
    * @example
@@ -108,7 +108,7 @@ function AssociationAttribute() {
     expect(associationAttribute).to.be.an(
       'object',
       'Invalid argument type when creating an Attribute (it has to be an ' +
-      'object or a string)'
+      'object)'
     );
 
     associationAttribute = objects.copy(associationAttribute);
@@ -133,10 +133,10 @@ function AssociationAttribute() {
   }
 
   if (typeof _Entity !== 'string') {
-    expect(_Entity).to.be.an(
-      'object',
+    expect(_Entity).to.be.a(
+      'function',
       'Invalid argument "entity" when creating an AssociationAttribute (it ' +
-      'has to be an object)'
+      'has to be a Class)'
     );
 
     expect(classes.isGeneral(models.Entity, _Entity)).to.equal(
