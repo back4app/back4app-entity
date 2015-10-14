@@ -53,7 +53,9 @@ function generalize(GeneralClass, SpecificClass) {
   util.inherits(SpecificClass, GeneralClass);
 
   for (var property in GeneralClass) {
-    SpecificClass[property] = GeneralClass[property];
+    if (property !== 'super_') {
+      SpecificClass[property] = GeneralClass[property];
+    }
   }
 }
 

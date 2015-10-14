@@ -266,7 +266,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       'passed from 1 to 3 arguments)'
     );
 
-    function SpecificEntity() {
+    var SpecificEntity = function () {
       CurrentEntity.call(this);
 
       Object.defineProperty(this, 'Entity', {

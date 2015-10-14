@@ -3,12 +3,12 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
-var Entity = require('../../../../src/back/models/Entity');
-var EntitySpecification = require(
-  '../../../../src/back/models/EntitySpecification'
-);
-var attributes = require('../../../../src/back/models/attributes');
-var methods = require('../../../../src/back/models/methods');
+var classes = require('../../../../src/back/utils').classes;
+var models = require('../../../../src/back/models');
+var Entity = models.Entity;
+var EntitySpecification = models.EntitySpecification;
+var attributes = models.attributes;
+var methods = models.methods;
 
 describe('Entity', function () {
   var entity;
@@ -361,6 +361,10 @@ describe('Entity', function () {
     });
   });
 
+  describe('.getSpecialization', function () {
+
+  });
+
   describe('.new', function () {
     it('expect to exist', function () {
       expect(Entity).itself.to.respondTo('new');
@@ -442,11 +446,25 @@ describe('Entity', function () {
 
   describe('functional tests', function () {
     it('expect correct inheritances', function () {
+      expect(classes.isGeneral(Entity, Entity)).to.equal(true);
+      expect(classes.isGeneral(Entity, C1)).to.equal(true);
+      expect(classes.isGeneral(Entity, C11)).to.equal(true);
+      expect(classes.isGeneral(Entity, C2)).to.equal(true);
+
+      expect(classes.isGeneral(C1, C1)).to.equal(true);
+      expect(classes.isGeneral(C1, C11)).to.equal(true);
+
+      expect(classes.isGeneral(C11, C11)).to.equal(true);
+
+      expect(classes.isGeneral(C2, C2)).to.equal(true);
+
       expect(c1).be.instanceof(Entity);
       expect(c1).be.instanceof(C1);
+
       expect(c11).be.instanceof(Entity);
       expect(c11).be.instanceof(C1);
       expect(c11).be.instanceof(C11);
+
       expect(c2).be.instanceof(Entity);
       expect(c2).be.instanceof(C2);
     });

@@ -7,14 +7,13 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
-var classes = require('../../../../src/back/utils/classes');
-var Entity = require('../../../../src/back/models/Entity');
-var EntitySpecification = require(
-  '../../../../src/back/models/EntitySpecification'
-);
-var attributes = require('../../../../src/back/models/attributes');
-var attributeTypes = require('../../../../src/back/models/attributes/types');
-var methods = require('../../../../src/back/models/methods');
+var classes = require('../../../../src/back/utils').classes;
+var models = require('../../../../src/back/models');
+var Entity = models.Entity;
+var EntitySpecification = models.EntitySpecification;
+var attributes = models.attributes;
+var attributeTypes = attributes.types;
+var methods = models.methods;
 
 describe('EntitySpecification', function () {
   var entitySpecification;
