@@ -5,6 +5,7 @@ var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var classes = require('../../../../src/back/utils').classes;
 var models = require('../../../../src/back/models');
+var EntityNotFoundError = models.errors.EntityNotFoundError;
 var Entity = models.Entity;
 var EntitySpecification = models.EntitySpecification;
 var attributes = models.attributes;
@@ -308,6 +309,7 @@ describe('Entity', function () {
       var C111 = C11.specify('C111');
 
       expect(Entity).to.have.ownProperty('specializations');
+      expect(Entity.specializations).to.not.have.ownProperty('Entity');
       expect(Entity.specializations).to.have.ownProperty('C1');
       expect(Entity.specializations.C1).to.equal(C1);
       expect(Entity.specializations).to.have.ownProperty('C11');
@@ -318,19 +320,23 @@ describe('Entity', function () {
       expect(Entity.specializations.C2).to.equal(C2);
 
       expect(C1).to.have.ownProperty('specializations');
+      expect(C1.specializations).to.not.have.ownProperty('C1');
       expect(C1.specializations).to.have.ownProperty('C11');
       expect(C1.specializations.C11).to.equal(C11);
       expect(C1.specializations).to.have.ownProperty('C111');
       expect(C1.specializations.C111).to.equal(C111);
 
       expect(C11).to.have.ownProperty('specializations');
+      expect(C11.specializations).to.not.have.ownProperty('C11');
       expect(C11.specializations).to.have.ownProperty('C111');
       expect(C11.specializations.C111).to.equal(C111);
 
       expect(C111).to.have.ownProperty('specializations');
+      expect(C111.specializations).to.not.have.ownProperty('C111');
       expect(C111.specializations).to.deep.equal({});
 
       expect(C2).to.have.ownProperty('specializations');
+      expect(C2.specializations).to.not.have.ownProperty('C2');
       expect(C2.specializations).to.deep.equal({});
     });
 
@@ -362,7 +368,88 @@ describe('Entity', function () {
   });
 
   describe('.getSpecialization', function () {
+    it('expect to exist', function () {
+      expect(Entity).itself.to.respondTo('getSpecialization');
+      expect(C1).itself.to.respondTo('getSpecialization');
+      expect(C11).itself.to.respondTo('getSpecialization');
+      expect(C2).itself.to.respondTo('getSpecialization');
+    });
 
+    it('expect to return the right classes', function () {
+      expect(function () {
+        Entity.getSpecialization('Entity');
+      }).to.throw(EntityNotFoundError);
+      expect(Entity.getSpecialization('C1')).to.equal(C1);
+      expect(Entity.getSpecialization('C11')).to.equal(C11);
+      expect(Entity.getSpecialization('C2')).to.equal(C2);
+
+      expect(function () {
+        C1.getSpecialization('Entity');
+      }).to.throw(EntityNotFoundError);
+      expect(function () {
+        C1.getSpecialization('C1');
+      }).to.throw(EntityNotFoundError);
+      expect(C1.getSpecialization('C11')).to.equal(C11);
+      expect(function () {
+        C1.getSpecialization('C2');
+      }).to.throw(EntityNotFoundError);
+
+      expect(function () {
+        C11.getSpecialization('Entity');
+      }).to.throw(EntityNotFoundError);
+      expect(function () {
+        C11.getSpecialization('C1');
+      }).to.throw(EntityNotFoundError);
+      expect(function () {
+        C11.getSpecialization('C11');
+      }).to.throw(EntityNotFoundError);
+      expect(function () {
+        C11.getSpecialization('C2');
+      }).to.throw(EntityNotFoundError);
+
+      expect(function () {
+        C2.getSpecialization('Entity');
+      }).to.throw(EntityNotFoundError);
+      expect(function () {
+        C2.getSpecialization('C1');
+      }).to.throw(EntityNotFoundError);
+      expect(function () {
+        C2.getSpecialization('C11');
+      }).to.throw(EntityNotFoundError);
+      expect(function () {
+        C2.getSpecialization('C2');
+      }).to.throw(EntityNotFoundError);
+    });
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        Entity.getSpecialization();
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        Entity.getSpecialization(null);
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        Entity.getSpecialization('C1', 'C1');
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        Entity.getSpecialization('C1', null);
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        Entity.getSpecialization({});
+      }).to.throw(AssertionError);
+    });
   });
 
   describe('.new', function () {

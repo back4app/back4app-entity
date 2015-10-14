@@ -143,7 +143,7 @@ Entity.directSpecializations = null;
 Entity.specializations = null;
 
 Entity.specify = null;
-Entity.getSpecialization = getSpecialization;
+Entity.getSpecialization = null;
 Entity.new = null;
 
 Object.defineProperty(Entity, 'General', {
@@ -275,7 +275,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
         writable: false,
         configurable: true
       });
-    }
+    };
 
     classes.generalize(CurrentEntity, SpecificEntity);
 
@@ -471,6 +471,9 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       SpecificEntity,
       _specificEntityDirectSpecializations
     );
+    SpecificEntity.getSpecialization = _getGetSpecializationFunction(
+      SpecificEntity
+    );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
 
     return SpecificEntity;
@@ -609,6 +612,47 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 Entity.specify = _getSpecifyFunction(Entity, _directSpecializations);
 
 /**
+ * Private function used to get the getSpecialization function specific for the
+ * current Entity class.
+ * @name module:back4app/entity/models.Entity~_getGetSpecializationFunction
+ * @function
+ * @param {!Class} CurrentEntity The current entity class for which the new
+ * function will be created.
+ * @returns {Function} The new function.
+ * @private
+ * @example
+ * Entity.getSpecialization = _getGetSpecializationFunction(Entity);
+ */
+var _getGetSpecializationFunction = function (CurrentEntity) {
+  return function (entity) {
+    expect(arguments).to.have.length(
+      1,
+      'Invalid arguments length when getting an Entity specialization (it ' +
+      'has to be passed 1 argument)'
+    );
+
+    expect(entity).to.be.a(
+      'string',
+      'Invalid argument when creating a new Entity function (it has to be ' +
+      'a string'
+    );
+
+    var entities = CurrentEntity.specializations;
+
+    try {
+      expect(entities).to.have.ownProperty(entity);
+    } catch (e) {
+      throw new errors.EntityNotFoundError(
+        entity,
+        e
+      );
+    }
+
+    return entities[entity];
+  };
+};
+
+/**
  * Gets an Entity specialization by its name.
  * @memberof module:back4app/entity/models.Entity
  * @name getSpecialization
@@ -619,32 +663,7 @@ Entity.specify = _getSpecifyFunction(Entity, _directSpecializations);
  * @example
  * var MyEntity = Entity.getSpecialization('MyEntity');
  */
-function getSpecialization(entity) {
-  expect(arguments).to.have.length(
-    1,
-    'Invalid arguments length when getting an Entity specialization (it ' +
-    'has to be passed 1 argument)'
-  );
-
-  expect(entity).to.be.a(
-    'string',
-    'Invalid argument when creating a new Entity function (it has to be ' +
-    'a string'
-  );
-
-  var entities = Entity.specializations;
-
-  try {
-    expect(entities).to.have.ownProperty(entity);
-  } catch (e) {
-    throw new errors.EntityNotFoundError(
-      entity,
-      e
-    );
-  }
-
-  return entities[entity];
-}
+Entity.getSpecialization = _getGetSpecializationFunction(Entity);
 
 /**
  * Private function used to get the new function specific for the current Entity
