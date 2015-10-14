@@ -403,6 +403,8 @@ function resolve() {
 
 /**
  * Gets the default value of the current Attribute to a given Entity instance.
+ * @name module:back4app/entity/models/attributes.Attribute#getDefaultValue
+ * @function
  * @param {!module:back4app/entity/models.Entity} entity The Entity instance to
  * which the default value will be get.
  * @returns {boolean|number|string|Object|function} The default value.
