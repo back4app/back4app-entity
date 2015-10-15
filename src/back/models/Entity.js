@@ -192,6 +192,8 @@ Entity.specializations = null;
 Entity.specify = null;
 Entity.getSpecialization = null;
 Entity.new = null;
+Entity.prototype.validate = validate;
+Entity.prototype.isValid = isValid;
 
 Object.defineProperty(Entity, 'General', {
   value: null,
@@ -609,7 +611,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @name specify
  * @function
  * @param {!Object} specification The new Entity specification.
- * @param {!string} name The new Entity name.
+ * @param {!string} specification.name The new Entity name.
  * @param
  * {?(module:back4app/entity/models/attributes.AttributeDictionary|
  * module:back4app/entity/models/attributes.Attribute[]|
@@ -766,3 +768,7 @@ var _getNewFunction = function (CurrentEntity) {
  * var c1 = c1NewFunction();
  */
 Entity.new = _getNewFunction(Entity);
+
+function validate(attribtue) {}
+
+function isValid(attribute) {}

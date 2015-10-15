@@ -17,6 +17,21 @@ describe('errors', function () {
     }
   );
 
+  it(
+    'expect to export AttributeTypeNotFoundError in the ' +
+    'AttributeTypeNotFoundError property',
+    function () {
+      expect(errors).to.have.property('AttributeTypeNotFoundError');
+    }
+  );
+
+  it(
+    'expect to export ValidationError in the ValidationError property',
+    function () {
+      expect(errors).to.have.property('ValidationError');
+    }
+  );
+
   describe('EntityNotFoundError', function () {
     var entityNotFoundError;
 
@@ -148,6 +163,108 @@ describe('errors', function () {
         error
       );
       expect(attributeTypeNotFoundError)
+        .to.have.property('stack')
+        .that.contains(error.stack);
+    });
+  });
+
+  describe('ValidationError', function () {
+    var validationError;
+
+    it('expect to work with right parameters', function () {
+      validationError = new errors.ValidationError();
+      validationError = new errors.ValidationError(null, null, null, null);
+      validationError = new errors.ValidationError(
+        'my validation message'
+      );
+      validationError = new errors.ValidationError(
+        'my validation message',
+        'MyEntity'
+      );
+      validationError = new errors.ValidationError(
+        'my validation message',
+        'MyEntity',
+        'myAttribute'
+      );
+      validationError = new errors.ValidationError(
+        'my validation message',
+        'MyEntity',
+        'myAttribute',
+        new Error()
+      );
+    });
+
+    it('expect to not work with wrong parameters', function () {
+      expect(function () {
+        validationError = new errors.ValidationError({});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        validationError = new errors.ValidationError(
+          null,
+          {}
+        );
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        validationError = new errors.ValidationError(
+          null,
+          null,
+          {}
+        );
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        validationError = new errors.ValidationError(
+          null,
+          null,
+          null,
+          {}
+        );
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        validationError = new errors.ValidationError(
+          null,
+          null,
+          null,
+          null,
+          null
+        );
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to be an Error', function () {
+      expect(new errors.ValidationError())
+        .to.be.an.instanceof(Error);
+    });
+
+    it('expect to have the right name', function () {
+      expect(new errors.ValidationError()).to.have.property('name')
+        .that.equals('ValidationError');
+    });
+
+    it('expect to have the right message', function () {
+      expect(new errors.ValidationError(
+        'this attribute is required',
+        'MyEntity',
+        'myAttribute',
+        null
+      )).to.have.property('message')
+        .that.equals('Error when validating an attribute called ' +
+        '"myAttribute" of an entity called "MyEntity": this attribute is ' +
+        'required');
+    });
+
+    it('expect to concatenate the stack of the inner error', function () {
+      var error = new Error();
+      validationError = new errors.ValidationError(
+        null,
+        null,
+        null,
+        error
+      );
+      expect(validationError)
         .to.have.property('stack')
         .that.contains(error.stack);
     });
