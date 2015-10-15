@@ -629,4 +629,54 @@ describe('Attribute', function () {
       });
     });
   });
+
+  describe('#getDefaultValue', function () {
+    var objectAttribute = new ObjectAttribute('objectAttribute');
+    it('expect to work only with right arguments', function () {
+      expect(function () {
+        objectAttribute.getDefaultValue();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        objectAttribute.getDefaultValue(null);
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        objectAttribute.getDefaultValue({});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        objectAttribute.getDefaultValue(function () {});
+      }).to.throw(AssertionError);
+
+      objectAttribute.getDefaultValue(new Entity());
+
+      expect(function () {
+        objectAttribute.getDefaultValue(new Entity(), new Entity());
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to have the right values', function () {
+      objectAttribute = new ObjectAttribute(
+        'objectAttribute',
+        '1',
+        null
+      );
+      expect(objectAttribute.getDefaultValue(new Entity())).to.equal(null);
+
+      objectAttribute = new ObjectAttribute(
+        'objectAttribute',
+        '1',
+        {}
+      );
+      expect(objectAttribute.getDefaultValue(new Entity())).to.deep.equal({});
+
+      objectAttribute = new ObjectAttribute(
+        'objectAttribute',
+        '1',
+        function () { return this.Entity.specification.name; }
+      );
+      expect(objectAttribute.getDefaultValue(new Entity())).to.equal('Entity');
+    });
+  });
 });
