@@ -80,36 +80,36 @@ function Entity(attributeValues) {
       'Invalid argument "attributeValues" when creating a new "' +
       this.Entity.specification.name + '" (it has to be an object)'
     );
+  }
 
-    var attributes = this.Entity.attributes;
+  var attributes = this.Entity.attributes;
 
-    for (var attribute in attributeValues) {
-      expect(attributes).to.include.keys(
-        attribute,
-        'Invalid property "' + attribute + '" when creating a new "' +
-        this.Entity.specification.name + '" (it does not exist)'
-      );
+  for (var attribute in attributeValues) {
+    expect(
+      attributes,
+      'Invalid property "' + attribute + '" when creating a new "' +
+      this.Entity.specification.name + '" (it does not exist)'
+    ).to.include.keys(attribute);
+  }
+
+  for (attribute in attributes) {
+    var attributeValue = null;
+
+    if (attributeValues && attributeValues.hasOwnProperty(attribute)) {
+      attributeValue = attributeValues[attribute];
     }
 
-    for (attribute in attributes) {
-      var attributeValue = null;
+    Object.defineProperty(this, attribute, {
+      value: attributeValue,
+      enumerable: true,
+      writable: true,
+      configurable: false
+    });
+  }
 
-      if (attributeValues.hasOwnProperty(attribute)) {
-        attributeValue = attributeValues[attribute];
-      }
-
-      Object.defineProperty(this, attribute, {
-        value: attributeValue,
-        enumerable: true,
-        writable: true,
-        configurable: false
-      });
-    }
-
-    for (attribute in attributes) {
-      if (this[attribute] === null && attributes[attribute].default !== null) {
-        this[attribute] = attributes[attribute].getDefault(this);
-      }
+  for (attribute in attributes) {
+    if (this[attribute] === null && attributes[attribute].default !== null) {
+      this[attribute] = attributes[attribute].getDefaultValue(this);
     }
   }
 }

@@ -8,13 +8,13 @@ var Entity = require('../../../../').models.Entity;
 var ObjectAttribute = require('../../../../')
   .models.attributes.types.ObjectAttribute;
 
-module.exports = Entity.specify(
+var C2 = module.exports = Entity.specify(
   'C2',
   [
     new ObjectAttribute(
       'Entity',
       '1',
-      null
+      function () { return C2; }
     ),
     new ObjectAttribute({
       name: 'c2A2',

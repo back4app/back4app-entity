@@ -29,11 +29,11 @@ function c11M() {
   var attribute = null;
 
   for (attribute in this.General.attributes) {
-    toReturn += this[attribute];
+    toReturn += attribute;
   }
 
   for (attribute in this.Entity.attributes) {
-    toReturn += this[attribute];
+    toReturn += attribute;
   }
 
   return toReturn;

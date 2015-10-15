@@ -559,5 +559,81 @@ describe('Entity', function () {
       expect(c2).be.instanceof(Entity);
       expect(c2).be.instanceof(C2);
     });
+
+    it('expect to store data correctly', function () {
+      expect(c1).to.have.property('c1A1').that.equals(false);
+      expect(c1).to.have.property('c1A2');
+      expect(c1).to.have.property('c1A3').that.deep.equals([0]);
+      expect(c1).to.have.property('c1A4').that.equals(null);
+      expect(c1).to.have.property('c1A5').that.equals(0.0);
+      expect(c1).to.have.property('c1A6').that.equals('');
+      expect(c1).to.have.property('c1A7').that.equals(null);
+      expect(c1).to.have.property('c1A8').that.equals(null);
+      expect(c1).to.have.property('c1A9').that.deep.equals([new C2()]);
+      expect(c1).to.have.property('c1A10').that.deep.equals(new C2());
+
+      expect(c11).to.have.property('c1A1').that.equals(false);
+      expect(c11).to.have.property('c1A2');
+      expect(c11).to.have.property('c1A3').that.deep.equals([0]);
+      expect(c11).to.have.property('c1A4').that.equals(null);
+      expect(c11).to.have.property('c1A5').that.equals(0.0);
+      expect(c11).to.have.property('c1A6').that.equals('');
+      expect(c11).to.have.property('c1A7').that.equals(null);
+      expect(c11).to.have.property('c1A8').that.equals(null);
+      expect(c11).to.have.property('c1A9').that.deep.equals([new C2()]);
+      expect(c11).to.have.property('c1A10').that.deep.equals(new C2());
+      expect(c11).to.have.property('c11A1').that.equals(null);
+
+      expect(c2).to.have.property('Entity').that.equals(C2);
+      expect(c2).to.have.property('c2A2').that.deep.equals({
+        default: 'thisIsMyDefault'
+      });
+
+      var newC11 = new C11({
+        c1A2: new Date(1982, 11, 23),
+        c1A4: [{a: 'a'}, {b: 'b'}],
+        c1A6: 'c1A6',
+        c1A8: new C11(),
+        c11A1: {z: 'z'}
+      });
+
+      expect(newC11).to.have.property('c1A1').that.equals(false);
+      expect(newC11).to.have.property('c1A2').that.deep.equals(
+        new Date(1982, 11, 23)
+      );
+      expect(newC11).to.have.property('c1A3').that.deep.equals([0]);
+      expect(newC11).to.have.property('c1A4').that.deep.equals(
+        [{a: 'a'}, {b: 'b'}]
+      );
+      expect(newC11).to.have.property('c1A5').that.equals(0.0);
+      expect(newC11).to.have.property('c1A6').that.equals('c1A6');
+      expect(newC11).to.have.property('c1A7').that.equals(null);
+      expect(newC11).to.have.property('c1A8');
+      expect(newC11).to.have.property('c1A9').that.deep.equals([new C2()]);
+      expect(newC11).to.have.property('c1A10').that.deep.equals(new C2());
+      expect(newC11).to.have.property('c11A1').that.deep.equals({z: 'z'});
+    });
+
+    it('expect methods to run correctly', function () {
+      expect(c1.c1A6M('teste')).to.equal('teste');
+      expect(c1.c1A6M()).to.equal('teste');
+      expect(c1.c1M1(1, 2)).to.equal(3);
+      expect(c1.c1M1('a', 'b')).to.equal('ab');
+      expect(c1.c1M2(1, 2)).to.equal(3);
+      expect(c1.c1M2('a', 'b')).to.equal('ab');
+
+      expect(c11.c1A6M('teste')).to.equal('teste');
+      expect(c11.c1A6M()).to.equal('teste');
+      expect(c11.c1M1(1, 2, 3)).to.equal(6);
+      expect(c11.c1M1('a', 'b', 'c')).to.equal('abc');
+      expect(c11.c1M2(1, 2)).to.equal(3);
+      expect(c11.c1M2('a', 'b')).to.equal('ab');
+      expect(c11.c11M()).to.equal(
+        'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10c11A1c1A1c1A2c1A3c1A4c1A5' +
+        'c1A6c1A7c1A8c1A9c1A10'
+      );
+
+      expect(c2.constructor()).to.equal('constructor');
+    });
   });
 });

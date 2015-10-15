@@ -427,7 +427,7 @@ function getDefaultValue(entity) {
   );
 
   if (typeof this.default === 'function') {
-    return this.default.call(entity);
+    return this.default.call(new models.Entity());
   } else {
     return this.default;
   }

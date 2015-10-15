@@ -15,6 +15,7 @@ var Attribute = attributes.Attribute;
 var AssociationAttribute = attributes.types.AssociationAttribute;
 
 describe('AssociationAttribute', function () {
+  Entity.specify('MyEntity30');
   var associationAttribute;
 
   context('interface tests', function () {
@@ -40,18 +41,18 @@ describe('AssociationAttribute', function () {
       function () {
         associationAttribute = new AssociationAttribute({
           name: 'attribute',
-          entity: 'MyEntity'
+          entity: 'MyEntity30'
         });
 
         associationAttribute = new AssociationAttribute({
           name: 'attribute',
-          Entity: 'MyEntity',
+          Entity: 'MyEntity30',
           default: null
         });
 
         associationAttribute = new AssociationAttribute({
           name: 'attribute',
-          entity: Entity.getSpecialization('MyEntity'),
+          entity: Entity.getSpecialization('MyEntity30'),
           multiplicity: '0..1'
         });
 
@@ -70,7 +71,7 @@ describe('AssociationAttribute', function () {
       function () {
         associationAttribute = new AssociationAttribute(
           'attribute',
-          'MyEntity'
+          'MyEntity30'
         );
 
         associationAttribute = new AssociationAttribute(
@@ -81,7 +82,7 @@ describe('AssociationAttribute', function () {
 
         associationAttribute = new AssociationAttribute(
           'attribute',
-          'MyEntity',
+          'MyEntity30',
           '0..1',
           { propertyTest: 'justATest' }
         );
@@ -92,7 +93,7 @@ describe('AssociationAttribute', function () {
       expect(function () {
         associationAttribute = new AssociationAttribute(
           'attribute',
-          'MyEntity',
+          'MyEntity30',
           '0..1',
           null,
           null
@@ -120,7 +121,7 @@ describe('AssociationAttribute', function () {
 
       expect(function () {
         associationAttribute = new AssociationAttribute({
-          name: 'MyEntity',
+          name: 'MyEntity30',
           multiplicity: '0..1',
           default: null
         });
@@ -129,7 +130,7 @@ describe('AssociationAttribute', function () {
       expect(function () {
         associationAttribute = new AssociationAttribute({
           name: null,
-          Entity: 'MyEntity',
+          Entity: 'MyEntity30',
           multiplicity: '0..1',
           default: null
         });
@@ -147,7 +148,7 @@ describe('AssociationAttribute', function () {
       expect(function () {
         associationAttribute = new AssociationAttribute({
           name: 'attribute',
-          Entity: 'MyEntity',
+          Entity: 'MyEntity30',
           multiplicity: '0..1',
           default: null,
           doesNotExist: null
@@ -158,7 +159,7 @@ describe('AssociationAttribute', function () {
         associationAttribute = new AssociationAttribute({
           name: 'attribute',
           type: 'Association',
-          Entity: 'MyEntity',
+          Entity: 'MyEntity30',
           multiplicity: '0..1',
           default: null
         });
@@ -167,7 +168,7 @@ describe('AssociationAttribute', function () {
       expect(function () {
         associationAttribute = new AssociationAttribute({
           name: 'attribute',
-          Entity: 'MyEntity',
+          Entity: 'MyEntity30',
           multiplicity: null,
           default: null
         });
@@ -179,7 +180,7 @@ describe('AssociationAttribute', function () {
     it('expect to be a specialization of Attribute', function () {
       expect(classes.isGeneral(Attribute, AssociationAttribute)).to.equal(true);
 
-      expect(new AssociationAttribute('myAssociationAttribute', 'MyEntity'))
+      expect(new AssociationAttribute('myAssociationAttribute', 'MyEntity30'))
         .to.be.an.instanceof(Attribute);
     });
 
@@ -191,7 +192,7 @@ describe('AssociationAttribute', function () {
         .that.equals(AssociationAttribute);
 
       expect(associationAttribute).to.have.property('Entity')
-        .that.equals(Entity.getSpecialization('MyEntity'));
+        .that.equals(Entity.getSpecialization('MyEntity30'));
 
       expect(associationAttribute).to.have.property('multiplicity')
         .that.equals('0..1');
@@ -230,7 +231,7 @@ describe('AssociationAttribute', function () {
       }).to.throw(Error);
 
       expect(associationAttribute).to.have.property('Entity')
-        .that.equals(Entity.getSpecialization('MyEntity'));
+        .that.equals(Entity.getSpecialization('MyEntity30'));
 
       expect(function () {
         delete associationAttribute.multiplicity;
@@ -263,11 +264,11 @@ describe('AssociationAttribute', function () {
         .that.equals(AssociationAttribute);
 
       expect(function () {
-        associationAttribute.MyEntity = 'will not change';
+        associationAttribute.Entity = 'will not change';
       }).to.throw(Error);
 
       expect(associationAttribute).to.have.property('Entity')
-        .that.equals(Entity.getSpecialization('MyEntity'));
+        .that.equals(Entity.getSpecialization('MyEntity30'));
 
       expect(function () {
         associationAttribute.multiplicity = 'will not change';
