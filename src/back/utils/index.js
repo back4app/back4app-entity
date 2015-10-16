@@ -3,6 +3,7 @@
 //
 
 var classes = require('./classes');
+var objects = require('./objects');
 
 /**
  * Contains utilities functions to be used around the project. This module is
@@ -12,3 +13,4 @@ var classes = require('./classes');
 module.exports = {};
 
 module.exports.classes = classes;
+module.exports.objects = objects;

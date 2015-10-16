@@ -1,4 +1,3 @@
-var settings = require('./settings');
 var models = require('./models');
 
 /**
@@ -7,5 +6,4 @@ var models = require('./models');
  */
 module.exports = {};
 
-module.exports.settings = settings;
 module.exports.models = models;

@@ -1,56 +1,59 @@
 'use strict';
 
-var path = require('path');
 var expect = require('chai').expect;
-var settings = require('../settings');
 var classes = require('../utils/classes');
+var objects = require('../utils/objects');
 var EntitySpecification = require('./EntitySpecification');
-var AttributeCollection = require('./attributes').AttributeCollection;
-var MethodCollection = require('./methods').MethodCollection;
+var AttributeDictionary = require('./attributes/AttributeDictionary');
+var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
 
 module.exports = Entity;
+
+require('./').Entity = Entity;
 
 /**
  * Base class for entities.
  * @constructor
  * @memberof module:back4app/entity/models
+ * @param {?Object.<!string, ?Object>} [attributeValues] It has to be passed as
+ * a dictionary of attribute's name and values to initialize a new Entity.
  * @example
  * var entity = new Entity();
  */
-function Entity() {
+function Entity(attributeValues) {
   /**
    * This is a read-only property to get the Entity Class of an instance.
+   * @name module:back4app/entity/models.Entity#Entity
    * @type {!Class}
    * @readonly
    * @example
    * var entity = new Entity();
    * console.log(entity.Entity == Entity); // Logs "true"
    */
-  this.Entity = null;
+  if (!this.hasOwnProperty('Entity') || !this.Entity) {
+    this.Entity = null;
+  }
   /**
    * This is a read-only property to get the general Entity Class of an
    * instance. This is just an alias to this.Entity.General.
    * @type {!Class}
    * @readonly
    * @example
-   * var MyEntity = Entity.specify();
+   * var MyEntity = Entity.specify('MyEntity');
    * var myEntity = new MyEntity();
    * console.log(myEntity.General == Entity); // Logs "true"
    */
   this.General = null;
 
-  expect(arguments).to.have.length(
-    0,
-    'Invalid arguments length when creating an Entity (it has not to be ' +
-    'passed any argument)');
-
-  Object.defineProperty(this, 'Entity', {
-    value: Entity,
-    enumerable: false,
-    writable: false,
-    configurable: true
-  });
+  if (!this.hasOwnProperty('Entity') || !this.Entity) {
+    Object.defineProperty(this, 'Entity', {
+      value: Entity,
+      enumerable: false,
+      writable: false,
+      configurable: true
+    });
+  }
 
   Object.defineProperty(this, 'General', {
     get: function () {
@@ -64,6 +67,51 @@ function Entity() {
     enumerable: false,
     configurable: true
   });
+
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when creating "' +
+    this.Entity.specification.name +
+    '" (it has to be passed less than 2 arguments)');
+
+  if (attributeValues) {
+    expect(attributeValues).to.be.an(
+      'object',
+      'Invalid argument "attributeValues" when creating a new "' +
+      this.Entity.specification.name + '" (it has to be an object)'
+    );
+  }
+
+  var attributes = this.Entity.attributes;
+
+  for (var attribute in attributeValues) {
+    expect(
+      attributes,
+      'Invalid property "' + attribute + '" when creating a new "' +
+      this.Entity.specification.name + '" (it does not exist)'
+    ).to.include.keys(attribute);
+  }
+
+  for (attribute in attributes) {
+    var attributeValue = null;
+
+    if (attributeValues && attributeValues.hasOwnProperty(attribute)) {
+      attributeValue = attributeValues[attribute];
+    }
+
+    Object.defineProperty(this, attribute, {
+      value: attributeValue,
+      enumerable: true,
+      writable: true,
+      configurable: false
+    });
+  }
+
+  for (attribute in attributes) {
+    if (this[attribute] === null && attributes[attribute].default !== null) {
+      this[attribute] = attributes[attribute].getDefaultValue(this);
+    }
+  }
 }
 
 /**
@@ -101,13 +149,13 @@ Entity.attributes = null;
  */
 Entity.methods = null;
 /**
- * This is an Array with all Entity classes that were directly specified from
- * the current one.
- * @type {Class[]}
+ * This is a dictionary with all Entity classes that were directly specified
+ * from the current one.
+ * @type {!Object.<!string, !Class>}
  * @readonly
  * @example
- * var MyEntity = Entity.specify();
- * var MyEntitySpecialization = MyEntity.specify();
+ * var MyEntity = Entity.specify('MyEntity');
+ * var MyEntitySpecialization = MyEntity.specify('MyEntitySpecialization');
  * console.log(
  *   MyEntity.directSpecializations.length
  * ); // Logs "1"
@@ -118,12 +166,14 @@ Entity.methods = null;
 Entity.directSpecializations = null;
 /**
  * This is an Array with all Entity classes that the current one is general.
- * @type {Class[]}
+ * @type {!Object.<!string, !Class>}
  * @readonly
  * @example
- * var MyEntity = Entity.specify();
- * var MyEntitySpecialization = MyEntity.specify();
- * var MyEntitySpecialization2 = MyEntitySpecialization.specify();
+ * var MyEntity = Entity.specify('MyEntity');
+ * var MyEntitySpecialization = MyEntity.specify('MyEntitySpecialization');
+ * var MyEntitySpecialization2 = MyEntitySpecialization.specify(
+ *   'MyEntitySpecialization2'
+ * );
  * console.log(
  *   MyEntity.specializations.length
  * ); // Logs "2"
@@ -140,7 +190,10 @@ Entity.directSpecializations = null;
 Entity.specializations = null;
 
 Entity.specify = null;
+Entity.getSpecialization = null;
 Entity.new = null;
+Entity.prototype.validate = validate;
+Entity.prototype.isValid = isValid;
 
 Object.defineProperty(Entity, 'General', {
   value: null,
@@ -149,7 +202,7 @@ Object.defineProperty(Entity, 'General', {
   configurable: false
 });
 
-var _entitySpecification = new EntitySpecification();
+var _entitySpecification = new EntitySpecification('Entity');
 
 Object.defineProperty(Entity, 'specification', {
   value: _entitySpecification,
@@ -174,10 +227,10 @@ Object.defineProperty(Entity, 'methods', {
   configurable: false
 });
 
-var _directSpecializations = [];
+var _directSpecializations = {};
 Object.defineProperty(Entity, 'directSpecializations', {
   get: function () {
-    var specializations = [].concat(_directSpecializations);
+    var specializations = objects.copy(_directSpecializations);
 
     Object.preventExtensions(specializations);
     Object.seal(specializations);
@@ -194,11 +247,10 @@ Object.defineProperty(Entity, 'directSpecializations', {
   configurable: false
 });
 
+var _specializations = {};
 Object.defineProperty(Entity, 'specializations', {
   get: function () {
-    var specializations = [];
-
-    _visitSpecializations(_directSpecializations, specializations);
+    var specializations = objects.copy(_specializations);
 
     Object.preventExtensions(specializations);
     Object.seal(specializations);
@@ -217,7 +269,7 @@ Object.defineProperty(Entity, 'specializations', {
 
 /**
  * Visits all specializations of a list of entities.
- * @name module:back4app/entity/models.Entity~__visitSpecializations
+ * @name module:back4app/entity/models.Entity~_visitSpecializations
  * @function
  * @param entities The entities whose specializations shall be visited.
  * @param visitedEntities The list of visited entities.
@@ -228,11 +280,14 @@ Object.defineProperty(Entity, 'specializations', {
  * console.log(specializations); // Logs all specializations of MyEntity
  */
 function _visitSpecializations(entities, visitedEntities) {
-  for (var i = 0; i < entities.length; i++) {
-    if (visitedEntities.indexOf(entities[i]) === -1) {
-      visitedEntities.push(entities[i]);
+  for (var entityName in entities) {
+    if (!visitedEntities.hasOwnProperty(entityName)) {
+      visitedEntities[entityName] = entities[entityName];
 
-      _visitSpecializations(entities[i].directSpecializations, visitedEntities);
+      _visitSpecializations(
+        entities[entityName].directSpecializations,
+        visitedEntities
+      );
     }
   }
 }
@@ -253,28 +308,27 @@ function _visitSpecializations(entities, visitedEntities) {
  */
 var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
   return function () {
-    expect(arguments).to.have.length.below(
+    expect(arguments).to.have.length.within(
+      1,
       3,
       'Invalid arguments length when specifying an Entity (it has to be ' +
-      'passed less than 3 arguments)'
+      'passed from 1 to 3 arguments)'
     );
 
-    function SpecificEntity() {
-      CurrentEntity.call(this);
+    var SpecificEntity = function (attributeValues) {
+      if (!this.hasOwnProperty('Entity') || !this.Entity) {
+        Object.defineProperty(this, 'Entity', {
+          value: SpecificEntity,
+          enumerable: false,
+          writable: false,
+          configurable: true
+        });
+      }
 
-      Object.defineProperty(this, 'Entity', {
-        value: SpecificEntity,
-        enumerable: false,
-        writable: false,
-        configurable: true
-      });
-    }
+      CurrentEntity.call(this, attributeValues);
+    };
 
     classes.generalize(CurrentEntity, SpecificEntity);
-
-    if (directSpecializations.indexOf(SpecificEntity) === -1) {
-      directSpecializations.push(SpecificEntity);
-    }
 
     Object.defineProperty(SpecificEntity, 'General', {
       value: CurrentEntity,
@@ -285,12 +339,13 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
     var _specificEntitySpecification = null;
 
-    if (arguments.length === 1 && arguments[0]) {
+    if (arguments.length === 1 && typeof arguments[0] !== 'string') {
       var specification = arguments[0];
 
       expect(specification).to.be.an(
         'object',
-        'Invalid argument type when specifying an Entity'
+        'Invalid argument type when specifying an Entity (it has to be an ' +
+        'object or a string)'
       );
 
       if (specification instanceof EntitySpecification) {
@@ -298,11 +353,21 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       } else {
         _specificEntitySpecification = new EntitySpecification(specification);
       }
-    } else if (arguments.length > 1) {
-      var attributes = arguments[0];
-      var methods = arguments[1];
+    } else {
+      var name = arguments[0];
 
-      if (attributes) {
+      expect(name).to.be.a(
+        'string',
+        'Invalid argument "name" when specifying an Entity (it has to be a ' +
+        'string)'
+      );
+
+      var attributes = null;
+      var methods = null;
+
+      if (arguments.length > 1 && arguments[1]) {
+        attributes = arguments[1];
+
         expect(typeof attributes).to.equal(
           'object',
           'Invalid property "attributes" when specifying an Entity (it has ' +
@@ -310,7 +375,9 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
         );
       }
 
-      if (methods) {
+      if (arguments.length > 2 && arguments[2]) {
+        methods = arguments[2];
+
         expect(methods).to.be.an(
           'object',
           'Invalid property "methods" when specifying an Entity (it has to ' +
@@ -319,12 +386,20 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       }
 
       _specificEntitySpecification = new EntitySpecification(
+        name,
         attributes,
         methods
       );
-    } else {
-      _specificEntitySpecification = new EntitySpecification();
     }
+
+    expect(_specializations).to.not.have.ownProperty(
+      _specificEntitySpecification.name,
+      'It was not possible to specify a new Entity called "' +
+      _specificEntitySpecification.name + '" because duplicates are not allowed'
+    );
+
+    _specializations[_specificEntitySpecification.name] = SpecificEntity;
+    directSpecializations[_specificEntitySpecification.name] = SpecificEntity;
 
     Object.defineProperty(SpecificEntity, 'specification', {
       value: _specificEntitySpecification,
@@ -361,7 +436,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
           CurrentEntity = CurrentEntity.General;
         }
 
-        return new AttributeCollection(attributesObject);
+        return new AttributeDictionary(attributesObject);
       },
       set: function () {
         throw new Error('Attributes of an Entity cannot be changed');
@@ -388,7 +463,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
           CurrentEntity = CurrentEntity.General;
         }
 
-        return new MethodCollection(methodsObject);
+        return new MethodDictionary(methodsObject);
       },
       set: function () {
         throw new Error('Methods of an Entity cannot be changed');
@@ -397,10 +472,12 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       configurable: false
     });
 
-    var _specificEntityDirectSpecializations = [];
+    var _specificEntityDirectSpecializations = {};
     Object.defineProperty(SpecificEntity, 'directSpecializations', {
       get: function () {
-        var specializations = [].concat(_specificEntityDirectSpecializations);
+        var specializations = objects.copy(
+          _specificEntityDirectSpecializations
+        );
 
         Object.preventExtensions(specializations);
         Object.seal(specializations);
@@ -419,7 +496,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
     Object.defineProperty(SpecificEntity, 'specializations', {
       get: function () {
-        var specializations = [];
+        var specializations = {};
 
         _visitSpecializations(
           _specificEntityDirectSpecializations,
@@ -445,6 +522,9 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       SpecificEntity,
       _specificEntityDirectSpecializations
     );
+    SpecificEntity.getSpecialization = _getGetSpecializationFunction(
+      SpecificEntity
+    );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
 
     return SpecificEntity;
@@ -456,22 +536,19 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @memberof module:back4app/entity/models.Entity
  * @name specify
  * @function
- * @param {?module:back4app/entity/models.EntitySpecification} [specification]
+ * @param {!module:back4app/entity/models.EntitySpecification} specification
  * The new Entity specification.
  * @returns {Class} The new Entity Class.
  * @example
- * var MyEntity = Entity.specify();
- * @example
- * var MyEntity = Entity.specify(null);
- * @example
- * var MyEntity = Entity.specify(new EntitySpecification());
+ * var MyEntity = Entity.specify(new EntitySpecification('MyEntity'));
  * @example
  * var MyEntity = Entity.specify(new EntitySpecification(
- *   new AttributeCollection([
- *     new Attribute('attribute1', 'String', '0..1', 'default'),
- *     new Attribute('attribute2', 'String', '0..1', 'default')
+ *   'MyEntity',
+ *   new AttributeDictionary([
+ *     new StringAttribute('attribute1', '0..1', 'default'),
+ *     new StringAttribute('attribute2', '0..1', 'default')
  *   ]),
- *   new MethodCollection({
+ *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
  *   })
@@ -482,43 +559,47 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @memberof module:back4app/entity/models.Entity
  * @name specify
  * @function
+ * @param {!string} name The new entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeCollection|
+ * {?(module:back4app/entity/models/attributes.AttributeDictionary|
  * module:back4app/entity/models/attributes.Attribute[]|
  * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
- * attributes The new entity specification attributes. It can be given as an
+ * [attributes] The new entity specification attributes. It can be given as an
  * instance of
- * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeCollection}.
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodCollection|
+ * {?(module:back4app/entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
- * methods The new entity specification methods. It can be given as an instance
- * of
- * {@link module:back4app/entity/models/methods.MethodCollection} or an
- * object, as specified in
- * {@link module:back4app/entity/models/methods.MethodCollection}.
+ * [methods] The new entity specification methods. It can be given as an
+ * instance of {@link module:back4app/entity/models/methods.MethodDictionary}
+ * or an object, as specified in
+ * {@link module:back4app/entity/models/methods.MethodDictionary}.
  * @returns {Class} The new Entity Class.
  * @example
- * var MyEntity = Entity.specify(null, null);
+ * var MyEntity = Entity.specify('MyEntity');
  * @example
- * var MyEntity = Entity.specify({}, {});
+ * var MyEntity = Entity.specify('MyEntity', null, null);
  * @example
- * var MyEntity = Entity.specify([], {});
+ * var MyEntity = Entity.specify('MyEntity', {}, {});
+ * @example
+ * var MyEntity = Entity.specify('MyEntity', [], {});
  * @example
  * var MyEntity = Entity.specify(
- *   new AttributeCollection(),
- *   new MethodCollection()
+ *   'MyEntity',
+ *   new AttributeDictionary(),
+ *   new MethodDictionary()
  * );
  * @example
  * var MyEntity = Entity.specify(
- *   new AttributeCollection([
- *     new Attribute('attribute1', 'String', '0..1', 'default'),
- *     new Attribute('attribute2', 'String', '0..1', 'default')
+ *   'MyEntity',
+ *   new AttributeDictionary([
+ *     new StringAttribute('attribute1', '0..1', 'default'),
+ *     new StringAttribute('attribute2', '0..1', 'default')
  *   ]),
- *   new MethodCollection({
+ *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
  *   })
@@ -529,35 +610,38 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * @memberof module:back4app/entity/models.Entity
  * @name specify
  * @function
- * @param {?Object} [specification] The new Entity specification.
+ * @param {!Object} specification The new Entity specification.
+ * @param {!string} specification.name The new Entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeCollection|
+ * {?(module:back4app/entity/models/attributes.AttributeDictionary|
  * module:back4app/entity/models/attributes.Attribute[]|
  * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
  * Object)>)}
  * [specification.attributes] The new entity specification attributes. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/attributes.AttributeCollection} or an
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeCollection}.
+ * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodCollection|
+ * {?(module:back4app/entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
  * [specification.methods] The new entity specification methods. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/methods.MethodCollection} or an
+ * {@link module:back4app/entity/models/methods.MethodDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/methods.MethodCollection}.
+ * {@link module:back4app/entity/models/methods.MethodDictionary}.
  * @returns {Class} The new Entity Class.
  * @example
- * var MyEntity = Entity.specify({});
+ * var MyEntity = Entity.specify({ name: 'MyEntity' });
  * @example
  * var MyEntity = Entity.specify({
+ *   name: 'MyEntity',
  *   attributes: {},
  *   methods: {}
  * });
  * @example
  * var MyEntity = Entity.specify({
+ *   name: 'MyEntity',
  *   attributes: {
  *     attribute1: {
  *       type: 'String',
@@ -579,6 +663,60 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 Entity.specify = _getSpecifyFunction(Entity, _directSpecializations);
 
 /**
+ * Private function used to get the getSpecialization function specific for the
+ * current Entity class.
+ * @name module:back4app/entity/models.Entity~_getGetSpecializationFunction
+ * @function
+ * @param {!Class} CurrentEntity The current entity class for which the new
+ * function will be created.
+ * @returns {Function} The new function.
+ * @private
+ * @example
+ * Entity.getSpecialization = _getGetSpecializationFunction(Entity);
+ */
+var _getGetSpecializationFunction = function (CurrentEntity) {
+  return function (entity) {
+    expect(arguments).to.have.length(
+      1,
+      'Invalid arguments length when getting an Entity specialization (it ' +
+      'has to be passed 1 argument)'
+    );
+
+    expect(entity).to.be.a(
+      'string',
+      'Invalid argument when creating a new Entity function (it has to be ' +
+      'a string'
+    );
+
+    var entities = CurrentEntity.specializations;
+
+    try {
+      expect(entities).to.have.ownProperty(entity);
+    } catch (e) {
+      throw new errors.EntityNotFoundError(
+        entity,
+        e
+      );
+    }
+
+    return entities[entity];
+  };
+};
+
+/**
+ * Gets an Entity specialization by its name.
+ * @memberof module:back4app/entity/models.Entity
+ * @name getSpecialization
+ * @function
+ * @param {!string} entity The name of the entity.
+ * @returns {Class}
+ * @throws {module:back4app/entity/models/errors.EntityNotFoundError}
+ * @example
+ * var MyEntity = Entity.getSpecialization('MyEntity');
+ */
+Entity.getSpecialization = _getGetSpecializationFunction(Entity);
+
+/**
  * Private function used to get the new function specific for the current Entity
  * class.
  * @name module:back4app/entity/models.Entity~_getNewFunction
@@ -598,30 +736,18 @@ var _getNewFunction = function (CurrentEntity) {
       'to be passed less than 2 arguments)'
     );
 
-    var EntityClass = CurrentEntity;
-    if (entity) {
-      expect(entity).to.be.a(
-        'string',
-        'Invalid argument when creating a new Entity function (it has to be ' +
-        'a string'
-      );
-      try {
-        EntityClass = require(path.join(settings.ENTITIESPATH, entity));
-      }
-      catch (e) {
-        throw new errors.EntityNotFoundError(
-          entity,
-          e
-        );
-      }
-    }
-
     return function () {
       expect(arguments).to.have.length(
         0,
         'Invalid arguments length when creating a new Entity (it has ' +
         'not to be passed any argument)'
       );
+
+      var EntityClass = CurrentEntity;
+
+      if (entity) {
+        EntityClass = Entity.getSpecialization(entity);
+      }
 
       return new EntityClass();
     };
@@ -630,6 +756,8 @@ var _getNewFunction = function (CurrentEntity) {
 
 /**
  * Returns a function that creates new instances of an Entity Class.
+ * @memberof module:back4app/entity/models.Entity
+ * @name new
  * @function
  * @param {?string} [entity] The Entity Class of which the new instances will be
  * created. If the parameter is not given, the function will create instances of
@@ -640,3 +768,77 @@ var _getNewFunction = function (CurrentEntity) {
  * var c1 = c1NewFunction();
  */
 Entity.new = _getNewFunction(Entity);
+
+/**
+ * Validates an entity and throws a
+ * {@link module:back4app/entity/models/errors.ValidationError} if it is not
+ * validated.
+ * @name module:back4app/entity/models.Entity#validate
+ * @function
+ * @param {?string} attribute The name of the attribute to be validated. If no
+ * attribute is passed, all attributes will be validated.
+ * @throws {module:back4app/entity/models/errors.ValidationError}
+ * @example
+ * myEntity.validate('myAttribute'); // Validates attribute "myAttribute" of
+ *                                   // Entity "myEntity"
+ * @example
+ * myEntity.validate(); // Validates all attributes of "myEntity"
+ */
+function validate(attribute) {
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when validating an Entity (it has to be passed ' +
+    'less than 2 arguments)'
+  );
+
+  var attributes = this.Entity.attributes;
+
+  if (attribute) {
+    expect(attribute).to.be.a(
+      'string',
+      'Invalid argument "attribute" when validating an Entity (it has to be ' +
+      'a string)'
+    );
+
+    expect(attributes).to.have.ownProperty(
+      attribute,
+      'Invalid argument "attribute" when validating an Entity (this ' +
+      'attribute does not exist in the Entity)'
+    );
+
+    var newAttributes = {};
+    newAttributes[attribute] = attributes[attribute];
+    attributes = newAttributes;
+  }
+
+  for (attribute in attributes) {
+    attributes[attribute].validate(this, attribute);
+  }
+}
+
+/**
+ * Validates an entity and returns a boolean indicating if it is valid.
+ * @name module:back4app/entity/models.Entity#isValid
+ * @function
+ * @param {?string} attribute The name of the attribute to be validated. If no
+ * attribute is passed, all attributes will be validated.
+ * @returns {boolean} The validation result.
+ * @example
+ * myEntity.isValid('myAttribute'); // Validates attribute "myAttribute" of
+ *                                  // Entity "myEntity" and returns true/false
+ * @example
+ * myEntity.isValid(); // Validates all attributes of "myEntity" and returns
+ *                     // true/false
+ */
+function isValid(attribute) {
+  try {
+    validate(attribute);
+  } catch (e) {
+    if (e instanceof errors.ValidationError) {
+      return false;
+    } else {
+      throw e;
+    }
+  }
+  return true;
+}

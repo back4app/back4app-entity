@@ -7,7 +7,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
-var classes = require('../../../../src/back/utils/classes');
+var classes = require('../../../../src/back/utils').classes;
 
 describe('classes', function () {
   describe('~generalize', function () {
@@ -35,6 +35,15 @@ describe('classes', function () {
         function () {
           expect(function () {
             classes.generalize(function () {}, function () {}, function () {});
+          }).to.throw(AssertionError);
+        }
+      );
+
+      it(
+        'expect to throw AssertionError with more less than two parameters',
+        function () {
+          expect(function () {
+            classes.generalize(function () {});
           }).to.throw(AssertionError);
         }
       );
@@ -200,6 +209,15 @@ describe('classes', function () {
         function () {
           expect(function () {
             classes.isGeneral(function () {}, function () {}, function () {});
+          }).to.throw(AssertionError);
+        }
+      );
+
+      it(
+        'expect to throw AssertionError with less than two parameters',
+        function () {
+          expect(function () {
+            classes.isGeneral(function () {});
           }).to.throw(AssertionError);
         }
       );

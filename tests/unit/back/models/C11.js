@@ -4,7 +4,10 @@
 
 'use strict';
 
-module.exports = require('./C1').specify({
+var C1 = require('./C1');
+
+module.exports = C1.specify({
+  name: 'C11',
   attributes: {
     c11A1: {
       type: 'Object',
@@ -26,11 +29,11 @@ function c11M() {
   var attribute = null;
 
   for (attribute in this.General.attributes) {
-    toReturn += this[attribute];
+    toReturn += attribute;
   }
 
   for (attribute in this.Entity.attributes) {
-    toReturn += this[attribute];
+    toReturn += attribute;
   }
 
   return toReturn;

@@ -7,61 +7,63 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
-var classes = require('../../../../src/back/utils/classes');
-var Entity = require('../../../../src/back/models/Entity');
-var EntitySpecification = require(
-  '../../../../src/back/models/EntitySpecification'
-);
-var attributes = require('../../../../src/back/models/attributes');
-var methods = require('../../../../src/back/models/methods');
+var classes = require('../../../../src/back/utils').classes;
+var models = require('../../../../src/back/models');
+var Entity = models.Entity;
+var EntitySpecification = models.EntitySpecification;
+var attributes = models.attributes;
+var attributeTypes = attributes.types;
+var methods = models.methods;
 
 describe('EntitySpecification', function () {
   var entitySpecification;
 
   context('interface tests', function () {
-    it('expect to work without arguments', function () {
-      entitySpecification = new EntitySpecification();
-    });
-
-    it('expect to work with null argument', function () {
-      entitySpecification = new EntitySpecification(null);
-    });
-
-    it('expect to work with empty object', function () {
-      entitySpecification = new EntitySpecification({});
+    it('expect to work only with the name', function () {
+      entitySpecification = new EntitySpecification('MyEntity');
     });
 
     it('expect to work with right arguments passing as an object',
       function () {
         entitySpecification = new EntitySpecification({
+          name: 'MyEntity'
+        });
+
+        entitySpecification = new EntitySpecification({
+          name: 'MyEntity',
           attributes: null,
           methods: null
         });
 
         entitySpecification = new EntitySpecification({
+          name: 'MyEntity',
           attributes: {},
           methods: {}
         });
 
         entitySpecification = new EntitySpecification({
-          attributes: new attributes.AttributeCollection(),
-          methods: new methods.MethodCollection()
+          name: 'MyEntity',
+          attributes: new attributes.AttributeDictionary(),
+          methods: new methods.MethodDictionary()
         });
 
         entitySpecification = new EntitySpecification({
-          attributes: new attributes.AttributeCollection()
+          name: 'MyEntity',
+          attributes: new attributes.AttributeDictionary()
         });
 
         entitySpecification = new EntitySpecification({
-          methods: new methods.MethodCollection()
+          name: 'MyEntity',
+          methods: new methods.MethodDictionary()
         });
 
         entitySpecification = new EntitySpecification({
-          attributes: new attributes.AttributeCollection({
-            attribute1: new attributes.Attribute('attribute1'),
-            attribute2: new attributes.Attribute('attribute2')
+          name: 'MyEntity',
+          attributes: new attributes.AttributeDictionary({
+            attribute1: new attributeTypes.ObjectAttribute('attribute1'),
+            attribute2: new attributeTypes.ObjectAttribute('attribute2')
           }),
-          methods: new methods.MethodCollection({
+          methods: new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           })
@@ -71,37 +73,59 @@ describe('EntitySpecification', function () {
 
     it('expect to work with right arguments passing as arguments',
       function () {
-        entitySpecification = new EntitySpecification(null, null);
+        entitySpecification = new EntitySpecification('MyEntity', null, null);
 
-        entitySpecification = new EntitySpecification({}, {});
+        entitySpecification = new EntitySpecification('MyEntity', {}, {});
 
         entitySpecification = new EntitySpecification(
-          new attributes.AttributeCollection(),
-          new methods.MethodCollection()
+          'MyEntity',
+          new attributes.AttributeDictionary(),
+          new methods.MethodDictionary()
         );
 
         entitySpecification = new EntitySpecification(
+          'MyEntity',
           null,
-          new methods.MethodCollection()
+          new methods.MethodDictionary()
         );
 
         entitySpecification = new EntitySpecification(
-          new attributes.AttributeCollection(),
+          'MyEntity',
+          new attributes.AttributeDictionary(),
           null
         );
 
         entitySpecification = new EntitySpecification(
-          new attributes.AttributeCollection({
-            attribute1: new attributes.Attribute('attribute1'),
-            attribute2: new attributes.Attribute('attribute2')
+          'MyEntity',
+          new attributes.AttributeDictionary({
+            attribute1: new attributeTypes.BooleanAttribute('attribute1'),
+            attribute2: new attributeTypes.BooleanAttribute('attribute2')
           }),
-          new methods.MethodCollection({
+          new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           })
         );
       }
     );
+
+    it('expect to not work without arguments', function () {
+      expect(function () {
+        entitySpecification = new EntitySpecification();
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to not work with null argument', function () {
+      expect(function () {
+        entitySpecification = new EntitySpecification(null);
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to not work with empty object', function () {
+      expect(function () {
+        entitySpecification = new EntitySpecification({});
+      }).to.throw(AssertionError);
+    });
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
@@ -114,11 +138,12 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification({
-          attributes: new attributes.AttributeCollection({
-            attribute1: new attributes.Attribute('attribute1'),
-            attribute2: new attributes.Attribute('attribute2')
+          name: 'MyEntity',
+          attributes: new attributes.AttributeDictionary({
+            attribute1: attributes.Attribute.resolve('attribute1'),
+            attribute2: attributes.Attribute.resolve('attribute2')
           }),
-          methods: new methods.MethodCollection({
+          methods: new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           }),
@@ -128,8 +153,9 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification({
+          name: 'MyEntity',
           attributes: function () {},
-          methods: new methods.MethodCollection({
+          methods: new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           })
@@ -138,9 +164,10 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification({
-          attributes: new attributes.AttributeCollection({
-            attribute1: new attributes.Attribute('attribute1'),
-            attribute2: new attributes.Attribute('attribute2')
+          name: 'MyEntity',
+          attributes: new attributes.AttributeDictionary({
+            attribute1: attributes.Attribute.resolve('attribute1'),
+            attribute2: attributes.Attribute.resolve('attribute2')
           }),
           methods: function () {}
         });
@@ -148,8 +175,9 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification(
+          'MyEntity',
           function () {},
-          new methods.MethodCollection({
+          new methods.MethodDictionary({
             method1: function () { return 'method1'; },
             method2: function () { return 'method2'; }
           })
@@ -158,9 +186,10 @@ describe('EntitySpecification', function () {
 
       expect(function () {
         entitySpecification = new EntitySpecification(
-          new attributes.AttributeCollection({
-            attribute1: new attributes.Attribute('attribute1'),
-            attribute2: new attributes.Attribute('attribute2')
+          'MyEntity',
+          new attributes.AttributeDictionary({
+            attribute1: attributes.Attribute.resolve('attribute1'),
+            attribute2: attributes.Attribute.resolve('attribute2')
           }),
           function () {}
         );
@@ -240,13 +269,13 @@ describe('EntitySpecification', function () {
     });
 
     it(
-      'expect to now work with classes that are not an Entity specification',
+      'expect to not work with classes that are not an Entity specification',
       function () {
         var MyEntity = function () {};
 
         //classes.generalize(Entity, MyEntity);
 
-        var myEntitySpecification = new EntitySpecification();
+        var myEntitySpecification = new EntitySpecification('MyEntity');
 
         MyEntity.specification = myEntitySpecification;
 
@@ -257,13 +286,13 @@ describe('EntitySpecification', function () {
     );
 
     it(
-      'expect to now work with classes that has a differente specification',
+      'expect to not work with classes that has a different specification',
       function () {
         var MyEntity = function () {};
 
         classes.generalize(Entity, MyEntity);
 
-        var myEntitySpecification = new EntitySpecification();
+        var myEntitySpecification = new EntitySpecification('MyEntity');
 
         //MyEntity.specification = myEntitySpecification;
 
@@ -276,7 +305,7 @@ describe('EntitySpecification', function () {
     it(
       'expect to contain the right value after Entity initialization',
       function () {
-        var myEntitySpecification = new EntitySpecification();
+        var myEntitySpecification = new EntitySpecification('MyEntity');
 
         var MyEntity = Entity.specify(myEntitySpecification);
 
@@ -292,7 +321,7 @@ describe('EntitySpecification', function () {
       'expect to work with right arguments and have specified behavior',
       function () {
         entitySpecification.addAttribute(
-          new attributes.Attribute('attribute3')
+          new attributeTypes.BooleanAttribute('attribute3')
         );
 
         entitySpecification.addAttribute(
@@ -353,6 +382,7 @@ describe('EntitySpecification', function () {
       'expect to not allow attribute with same name of an existing method',
       function () {
         MyEntity = Entity.specify(
+          'MyEntity12',
           entitySpecification.attributes,
           entitySpecification.methods
         );
@@ -363,6 +393,7 @@ describe('EntitySpecification', function () {
 
         expect(function () {
           Entity.specify({
+            name: 'MyEntity',
             attributes: {
               attribute1: {}
             },
@@ -377,8 +408,24 @@ describe('EntitySpecification', function () {
     it(
       'expect to not allow attribute with same name of an ancestral attribute',
       function () {
-        MyEntity2 = MyEntity.specify();
-        MyEntity3 = MyEntity2.specify();
+        MyEntity2 = MyEntity.specify(
+          'MyEntity16',
+          {
+            attribute21: {}
+          },
+          {
+            method21: function () { return 'method21'; }
+          }
+        );
+        MyEntity3 = MyEntity2.specify(
+          'MyEntity17',
+          {
+            attribute31: {}
+          },
+          {
+            method31: function () { return 'method31'; }
+          }
+        );
 
         expect(function () {
           MyEntity2.specification.addAttribute('attribute1');
@@ -390,10 +437,28 @@ describe('EntitySpecification', function () {
 
         expect(function () {
           MyEntity3.specify({
+            name: 'MyEntity18',
             attributes: {
               attribute1: {}
             }
           });
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to not allow attribute with same name of a descendant attribute',
+      function () {
+        expect(function () {
+          MyEntity.specification.addAttribute('attribute21');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity.specification.addAttribute('attribute31');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity2.specification.addAttribute('attribute31');
         }).to.throw(AssertionError);
       }
     );
@@ -411,10 +476,28 @@ describe('EntitySpecification', function () {
 
         expect(function () {
           MyEntity3.specify({
+            name: 'MyEntity',
             attributes: {
               method1: {}
             }
           });
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to not allow attribute with same name of a descendant method',
+      function () {
+        expect(function () {
+          MyEntity.specification.addAttribute('method21');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity.specification.addAttribute('method31');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity2.specification.addAttribute('method31');
         }).to.throw(AssertionError);
       }
     );
@@ -441,6 +524,7 @@ describe('EntitySpecification', function () {
 
         expect(function () {
           MyEntity3.specify({
+            name: 'MyEntity',
             methods: {
               attribute1: function () {}
             }
@@ -448,5 +532,71 @@ describe('EntitySpecification', function () {
         }).to.throw(AssertionError);
       }
     );
+
+    it(
+      'expect to not allow method with same name of a descendant attribute',
+      function () {
+        expect(function () {
+          MyEntity.specification.addMethod('attribute21');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity.specification.addMethod('attribute31');
+        }).to.throw(AssertionError);
+
+        expect(function () {
+          MyEntity2.specification.addMethod('attribute31');
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it(
+      'expect to allow method with same name of ancestral or descendant method',
+      function () {
+        MyEntity.specification.addMethod(
+          function () { return 'method21'; },
+          'method21'
+        );
+
+        MyEntity.specification.addMethod(
+          function () { return 'method31'; },
+          'method31'
+        );
+
+        MyEntity2.specification.addMethod(
+          function () { return 'method3'; },
+          'method3'
+        );
+
+        MyEntity2.specification.addMethod(
+          function () { return 'method31'; },
+          'method31'
+        );
+
+        MyEntity3.specification.addMethod(
+          function () { return 'method3'; },
+          'method3'
+        );
+
+        MyEntity3.specification.addMethod(
+          function () { return 'method21'; },
+          'method21'
+        );
+      }
+    );
+
+    it('expect to load methods in the Entity prototype', function () {
+      expect(MyEntity.prototype).to.respondTo('method1');
+      expect(MyEntity.prototype.method1.call(null)).to.equal('method1');
+
+      expect(MyEntity.prototype).to.respondTo('method3');
+      expect(MyEntity.prototype.method3.call(null)).to.equal('method3');
+
+      expect(MyEntity2.prototype).to.respondTo('method21');
+      expect(MyEntity2.prototype.method21.call(null)).to.equal('method21');
+
+      expect(MyEntity3.prototype).to.respondTo('method31');
+      expect(MyEntity3.prototype.method31.call(null)).to.equal('method31');
+    });
   });
 });

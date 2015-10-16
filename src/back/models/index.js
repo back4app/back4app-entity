@@ -9,7 +9,7 @@ var methods = require('./methods');
 var errors = require('./errors');
 
 /**
- * Contains base classes to model the entities.
+ * Contains base classes for entities modelling.
  * @module back4app/entity/models
  */
 module.exports = {};

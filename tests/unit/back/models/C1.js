@@ -3,6 +3,7 @@
 var Entity = require('../../../../').models.Entity;
 
 module.exports = Entity.specify({
+  name: 'C1',
   attributes: {
     c1A1: {
       type: 'Boolean',
@@ -10,12 +11,12 @@ module.exports = Entity.specify({
       default: false
     },
     c1A2: {
-      type: 'Datetime',
+      type: 'Date',
       multiplicity: '0..1',
       default: Date.now
     },
     c1A3: {
-      type: 'Integer',
+      type: 'Number',
       multiplicity: '1..*',
       default: function () { return [0]; }
     },
@@ -25,7 +26,7 @@ module.exports = Entity.specify({
       default: null
     },
     c1A5: {
-      type: 'Real',
+      type: 'Number',
       multiplicity: '1',
       default: 0.0
     },
@@ -36,8 +37,7 @@ module.exports = Entity.specify({
     },
     c1A7: {
       type: 'C1',
-      multiplicity: '1',
-      default: Entity.new('C1')
+      multiplicity: '1'
     },
     c1A8: {
       type: 'C11',
@@ -47,7 +47,7 @@ module.exports = Entity.specify({
     c1A9: {
       type: 'C2',
       multiplicity: '1..*',
-      default: function () { return [new Entity('C2')]; }
+      default: function () { return [new (Entity.getSpecialization('C2'))()]; }
     },
     c1A10: {
       type: 'C2',
