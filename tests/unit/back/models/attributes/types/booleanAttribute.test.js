@@ -8,7 +8,9 @@ var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var classes = require('../../../../../../src/back/utils').classes;
-var attributes = require('../../../../../../').models.attributes;
+var models = require('../../../../../../').models;
+var ValidationError = models.errors.ValidationError;
+var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var BooleanAttribute = attributes.types.BooleanAttribute;
 
@@ -235,6 +237,19 @@ describe('BooleanAttribute', function () {
       expect(booleanAttribute.type).to.equal(BooleanAttribute);
       expect(booleanAttribute.multiplicity).to.equal('1');
       expect(booleanAttribute.default).to.equal(null);
+    });
+  });
+
+  describe('#validateValue', function () {
+    it('expect to work correctly', function () {
+      booleanAttribute.validateValue(true);
+      booleanAttribute.validateValue(false);
+      expect(function () {
+        booleanAttribute.validateValue({});
+      }).to.throw(ValidationError);
+      expect(function () {
+        booleanAttribute.validateValue(null);
+      }).to.throw(ValidationError);
     });
   });
 });

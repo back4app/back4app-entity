@@ -8,7 +8,9 @@ var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var classes = require('../../../../../../src/back/utils').classes;
-var attributes = require('../../../../../../').models.attributes;
+var models = require('../../../../../../').models;
+var ValidationError = models.errors.ValidationError;
+var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var NumberAttribute = attributes.types.NumberAttribute;
 
@@ -235,6 +237,27 @@ describe('NumberAttribute', function () {
       expect(numberAttribute.type).to.equal(NumberAttribute);
       expect(numberAttribute.multiplicity).to.equal('1');
       expect(numberAttribute.default).to.equal(null);
+    });
+  });
+
+  describe('#validateValue', function () {
+    it('expect to work correctly', function () {
+      numberAttribute.validateValue(1.5);
+      numberAttribute.validateValue(1);
+      numberAttribute.validateValue(0);
+      numberAttribute.validateValue(new Number());
+      expect(function () {
+        numberAttribute.validateValue({});
+      }).to.throw(ValidationError);
+      expect(function () {
+        numberAttribute.validateValue(null);
+      }).to.throw(ValidationError);
+      expect(function () {
+        numberAttribute.validateValue(false);
+      }).to.throw(ValidationError);
+      expect(function () {
+        numberAttribute.validateValue(true);
+      }).to.throw(ValidationError);
     });
   });
 });

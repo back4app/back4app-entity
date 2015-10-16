@@ -8,7 +8,9 @@ var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var classes = require('../../../../../../src/back/utils').classes;
-var attributes = require('../../../../../../').models.attributes;
+var models = require('../../../../../../').models;
+var ValidationError = models.errors.ValidationError;
+var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var DateAttribute = attributes.types.DateAttribute;
 
@@ -235,6 +237,24 @@ describe('DateAttribute', function () {
       expect(dateAttribute.type).to.equal(DateAttribute);
       expect(dateAttribute.multiplicity).to.equal('1');
       expect(dateAttribute.default).to.equal(null);
+    });
+  });
+
+  describe('#validateValue', function () {
+    it('expect to work correctly', function () {
+      dateAttribute.validateValue(new Date());
+      expect(function () {
+        dateAttribute.validateValue({});
+      }).to.throw(ValidationError);
+      expect(function () {
+        dateAttribute.validateValue(null);
+      }).to.throw(ValidationError);
+      expect(function () {
+        dateAttribute.validateValue(false);
+      }).to.throw(ValidationError);
+      expect(function () {
+        dateAttribute.validateValue(true);
+      }).to.throw(ValidationError);
     });
   });
 });

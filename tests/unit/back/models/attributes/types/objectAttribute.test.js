@@ -8,7 +8,10 @@ var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var classes = require('../../../../../../src/back/utils').classes;
-var attributes = require('../../../../../../').models.attributes;
+var models = require('../../../../../../').models;
+var ValidationError = models.errors.ValidationError;
+var Entity = models.Entity;
+var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var ObjectAttribute = attributes.types.ObjectAttribute;
 
@@ -235,6 +238,29 @@ describe('ObjectAttribute', function () {
       expect(objectAttribute.type).to.equal(ObjectAttribute);
       expect(objectAttribute.multiplicity).to.equal('1');
       expect(objectAttribute.default).to.equal(null);
+    });
+  });
+
+  describe('#validateValue', function () {
+    it('expect to work correctly', function () {
+      objectAttribute.validateValue({});
+      objectAttribute.validateValue(new Date());
+      objectAttribute.validateValue(new Entity());
+      expect(function () {
+        objectAttribute.validateValue(1);
+      }).to.throw(ValidationError);
+      expect(function () {
+        objectAttribute.validateValue(function () {});
+      }).to.throw(ValidationError);
+      expect(function () {
+        objectAttribute.validateValue(null);
+      }).to.throw(ValidationError);
+      expect(function () {
+        objectAttribute.validateValue(false);
+      }).to.throw(ValidationError);
+      expect(function () {
+        objectAttribute.validateValue(true);
+      }).to.throw(ValidationError);
     });
   });
 });

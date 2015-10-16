@@ -8,7 +8,9 @@ var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var classes = require('../../../../../../src/back/utils').classes;
-var attributes = require('../../../../../../').models.attributes;
+var models = require('../../../../../../').models;
+var ValidationError = models.errors.ValidationError;
+var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var StringAttribute = attributes.types.StringAttribute;
 
@@ -235,6 +237,29 @@ describe('StringAttribute', function () {
       expect(stringAttribute.type).to.equal(StringAttribute);
       expect(stringAttribute.multiplicity).to.equal('1');
       expect(stringAttribute.default).to.equal(null);
+    });
+  });
+
+  describe('#validateValue', function () {
+    it('expect to work correctly', function () {
+      stringAttribute.validateValue('');
+      stringAttribute.validateValue('anything');
+      stringAttribute.validateValue(new String());
+      expect(function () {
+        stringAttribute.validateValue(1);
+      }).to.throw(ValidationError);
+      expect(function () {
+        stringAttribute.validateValue(function () {});
+      }).to.throw(ValidationError);
+      expect(function () {
+        stringAttribute.validateValue(null);
+      }).to.throw(ValidationError);
+      expect(function () {
+        stringAttribute.validateValue(false);
+      }).to.throw(ValidationError);
+      expect(function () {
+        stringAttribute.validateValue(true);
+      }).to.throw(ValidationError);
     });
   });
 });

@@ -58,7 +58,7 @@ classes.generalize(Attribute, ObjectAttribute);
 ObjectAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {
-  if (typeof value !== 'object') {
+  if (typeof value !== 'object' || value === null) {
     throw new ValidationError(
       'this attribute\'s value should be an object'
     );
