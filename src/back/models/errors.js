@@ -35,6 +35,17 @@ module.exports.ValidationError = ValidationError;
  * }
  */
 function EntityNotFoundError(entity, innerError) {
+  /**
+   * The name of the entity that was not found.
+   * @type {?string}
+   */
+  this.entity = entity;
+  /**
+   * The inner error that generated the current error.
+   * @type {?Error}
+   */
+  this.innerError = innerError;
+
   expect(arguments).to.have.length.below(
     3,
     'Invalid arguments length when creating a new EntityNotFoundError (it ' +
@@ -83,6 +94,17 @@ util.inherits(EntityNotFoundError, Error);
  * }
  */
 function AttributeTypeNotFoundError(type, innerError) {
+  /**
+   * The attribute type that was not found.
+   * @type {?string}
+   */
+  this.type = type;
+  /**
+   * The inner error that generated the current error.
+   * @type {?Error}
+   */
+  this.innerError = innerError;
+
   expect(arguments).to.have.length.below(
     3,
     'Invalid arguments length when creating a new ' +
@@ -123,6 +145,8 @@ util.inherits(AttributeTypeNotFoundError, Error);
  * error.
  * @param {?string} [entity] The entity whose attribute is not valid.
  * @param {?string} [attribute] The attribute that is not valid.
+ * @param {?(string|number)} [position] The position in the attribute that is
+ * not valid.
  * @param {?Error} [innerError] The inner error.
  * @memberof module:back4app/entity/models/errors
  * @example
@@ -132,19 +156,52 @@ util.inherits(AttributeTypeNotFoundError, Error);
  *     'this attribute is required',
  *     'MyEntity',
  *     'myAttribute',
+ *     1,
  *     null
  *   );
  * } catch(e) {
  *   console.log(e.message); // Logs "Error when validating an attribute called
- *                           // "myAttribute" of an entity called "MyEntity":
- *                           //  this attribute is required"
+ *                           // "myAttribute" of an entity called "MyEntity" in
+ *                           // position 1: this attribute is required"
  * }
  */
-function ValidationError(validationMessage, entity, attribute, innerError) {
+function ValidationError(
+  validationMessage,
+  entity,
+  attribute,
+  position,
+  innerError
+) {
+  /**
+   * The validation message to be included in the error.
+   * @type {?string}
+   */
+  this.validationMessage = validationMessage;
+  /**
+   * The name of the entity that was not validated.
+   * @type {?string}
+   */
+  this.entity = entity;
+  /**
+   * The name of the attribute that was not validated.
+   * @type {?string}
+   */
+  this.attribute = attribute;
+  /**
+   * The position of the item in the attribute that was not validated.
+   * @type {?(string|number)}
+   */
+  this.position = position;
+  /**
+   * The inner error that generated the current error.
+   * @type {?Error}
+   */
+  this.innerError = innerError;
+
   expect(arguments).to.have.length.below(
-    5,
+    6,
     'Invalid arguments length when creating a new ' +
-    'AttributeTypeNotFoundError (it has to be passed less than 5 arguments)'
+    'AttributeTypeNotFoundError (it has to be passed less than 6 arguments)'
   );
 
   this.name = 'ValidationError';
@@ -167,6 +224,15 @@ function ValidationError(validationMessage, entity, attribute, innerError) {
       'to be a string)'
     );
     this.message += ' called "' + entity + '"';
+  }
+
+  if (position) {
+    expect(['string', 'number']).to.include(
+      typeof position,
+      'Invalid argument "position" when creating a new ValidationError (it ' +
+      'has to be a string or a number)'
+    );
+    this.message += ' in position ' + position;
   }
 
   if (validationMessage) {

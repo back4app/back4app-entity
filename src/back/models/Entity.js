@@ -769,6 +769,76 @@ var _getNewFunction = function (CurrentEntity) {
  */
 Entity.new = _getNewFunction(Entity);
 
-function validate(attribtue) {}
+/**
+ * Validates an entity and throws a
+ * {@link module:back4app/entity/models/errors.ValidationError} if it is not
+ * validated.
+ * @name module:back4app/entity/models.Entity#validate
+ * @function
+ * @param {?string} attribute The name of the attribute to be validated. If no
+ * attribute is passed, all attributes will be validated.
+ * @throws {module:back4app/entity/models/errors.ValidationError}
+ * @example
+ * myEntity.validate('myAttribute'); // Validates attribute "myAttribute" of
+ *                                   // Entity "myEntity"
+ * @example
+ * myEntity.validate(); // Validates all attributes of "myEntity"
+ */
+function validate(attribute) {
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when validating an Entity (it has to be passed ' +
+    'less than 2 arguments)'
+  );
 
-function isValid(attribute) {}
+  var attributes = this.Entity.attributes;
+
+  if (attribute) {
+    expect(attribute).to.be.a(
+      'string',
+      'Invalid argument "attribute" when validating an Entity (it has to be ' +
+      'a string)'
+    );
+
+    expect(attributes).to.have.ownProperty(
+      attribute,
+      'Invalid argument "attribute" when validating an Entity (this ' +
+      'attribute does not exist in the Entity)'
+    );
+
+    var newAttributes = {};
+    newAttributes[attribute] = attributes[attribute];
+    attributes = newAttributes;
+  }
+
+  for (attribute in attributes) {
+    attributes[attribute].validate(this, attribute);
+  }
+}
+
+/**
+ * Validates an entity and returns a boolean indicating if it is valid.
+ * @name module:back4app/entity/models.Entity#isValid
+ * @function
+ * @param {?string} attribute The name of the attribute to be validated. If no
+ * attribute is passed, all attributes will be validated.
+ * @returns {boolean} The validation result.
+ * @example
+ * myEntity.isValid('myAttribute'); // Validates attribute "myAttribute" of
+ *                                  // Entity "myEntity" and returns true/false
+ * @example
+ * myEntity.isValid(); // Validates all attributes of "myEntity" and returns
+ *                     // true/false
+ */
+function isValid(attribute) {
+  try {
+    validate(attribute);
+  } catch (e) {
+    if (e instanceof errors.ValidationError) {
+      return false;
+    } else {
+      throw e;
+    }
+  }
+  return true;
+}

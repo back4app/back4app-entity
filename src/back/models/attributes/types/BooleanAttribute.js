@@ -5,6 +5,7 @@
 'use strict';
 
 var classes = require('../../../utils/classes');
+var ValidationError = require('../../errors').ValidationError;
 var Attribute = require('../Attribute');
 
 module.exports = BooleanAttribute;
@@ -53,3 +54,13 @@ function BooleanAttribute() {
 }
 
 classes.generalize(Attribute, BooleanAttribute);
+
+BooleanAttribute.prototype.validateValue = validateValue;
+
+function validateValue(value) {
+  if (typeof value !== 'boolean') {
+    throw new ValidationError(
+      'this attribute\'s value should be a boolean'
+    );
+  }
+}

@@ -8,6 +8,7 @@ var expect = require('chai').expect;
 var classes = require('../../utils/classes');
 var objects = require('../../utils/objects');
 var errors = require('../errors');
+var ValidationError = errors.ValidationError;
 var models = require('../');
 var attributes = require('./');
 
@@ -275,6 +276,8 @@ function Attribute() {
 Attribute.resolve = resolve;
 
 Attribute.prototype.getDefaultValue = getDefaultValue;
+Attribute.prototype.validate = validate;
+Attribute.prototype.validateValue = validateValue;
 
 /**
  * Resolves the arguments and create a new instance of Attribute. It tries to
@@ -432,3 +435,124 @@ function getDefaultValue(entity) {
     return this.default;
   }
 }
+
+/**
+ * Validates an attribute of an Entity instance and throws a
+ * {@link module:back4app/entity/models/errors.ValidationError} if
+ * it is not validated.
+ * @name module:back4app/entity/models/attributes.Attribute#validate
+ * @function
+ * @param {!module:back4app/entity/models.Entity} entity The entity whose
+ * attribute will be validated.
+ * @throws {module:back4app/entity/models/errors.ValidationError}
+ * @example
+ * myEntity.Entity.attributes.myAttribute.validate(myEntity);
+ */
+function validate(entity) {
+  expect(arguments).to.have.length(
+    2,
+    'Invalid argument length when validating an attribute of an entity (it ' +
+    'has to be passed 2 arguments)'
+  );
+
+  expect(entity).to.be.instanceof(
+    models.Entity,
+    'Invalid argument "entity" when validating an attribute of an entity (it ' +
+    'has to be an Entity)'
+  );
+
+  var attributeValue = null;
+
+  if (entity.hasOwnProperty(this.name)) {
+    attributeValue = entity[this.name];
+  }
+
+  if (
+    (
+      this.multiplicity === '1' ||
+      this.multiplicity === '1..*'
+    ) &&
+    attributeValue === null
+  ) {
+    throw new ValidationError(
+      'this attribute is required',
+      entity.Entity.specification.name,
+      this.name
+    );
+  } else if (
+    this.multiplicity === '0..1' && attributeValue !== null ||
+    this.multiplicity === '1'
+  ) {
+    try {
+      this.validateValue(attributeValue);
+    } catch (e) {
+      if (e instanceof ValidationError) {
+        throw new ValidationError(
+          e.validationMessage,
+          entity.Entity.specification.name,
+          this.name
+        );
+      } else {
+        throw e;
+      }
+    }
+  } else if (
+    this.multiplicity === '*' && attributeValue !== null ||
+    this.multiplicity === '1..*'
+  ) {
+    if (!(attributeValue instanceof Array)) {
+      throw new ValidationError(
+        'this attribute\'s value should be an Array',
+        entity.Entity.specification.name,
+        this.name
+      );
+    } else {
+      var found = false;
+
+      for (var i = 0; i < attributeValue.length; i++) {
+        if (attributeValue[i] !== null) {
+          try {
+            this.validateValue(attributeValue[i]);
+          } catch (e) {
+            if (e instanceof ValidationError) {
+              throw new ValidationError(
+                e.validationMessage,
+                entity.Entity.specification.name,
+                this.name,
+                i
+              );
+            } else {
+              throw e;
+            }
+          }
+          found = true;
+        }
+      }
+
+      if (
+        this.multiplicity === '1..*' &&
+        !found
+      ) {
+        throw new ValidationError(
+          'this attribute\'s value should be a non empty Array',
+          entity.Entity.specification.name,
+          this.name
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Validates a value and throws a
+ * {@link module:back4app/entity/models/errors.ValidationError} if
+ * it is not validated. It shall be implemented in the specializations of
+ * Attribute class.
+ * @name module:back4app/entity/models/attributes.Attribute#validateValue
+ * @function
+ * @param {*} value The value to be validated.
+ * @throws {module:back4app/entity/models/errors.ValidationError}
+ * @example
+ * myEntity.Entity.attributes.myAttribute.validateValue(myEntity.myAttribute);
+ */
+function validateValue() {}

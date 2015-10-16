@@ -8,6 +8,7 @@ var expect = require('chai').expect;
 var classes = require('../../../utils/classes');
 var objects = require('../../../utils/objects');
 var models = require('../../');
+var ValidationError = require('../../errors').ValidationError;
 var Attribute = require('../Attribute');
 
 module.exports = AssociationAttribute;
@@ -150,3 +151,15 @@ function AssociationAttribute() {
 }
 
 classes.generalize(Attribute, AssociationAttribute);
+
+AssociationAttribute.prototype.validateValue = validateValue;
+
+function validateValue(value) {
+  if (!(value instanceof this.Entity)) {
+    throw new ValidationError(
+      'this attribute\'s value should be a "' +
+      this.Entity.specification.name +
+      '"'
+    );
+  }
+}

@@ -48,6 +48,14 @@ describe('errors', function () {
       );
     });
 
+    it('expect have properties storing right values', function () {
+      expect(entityNotFoundError).to.have.property('entity')
+        .that.equals('MyEntity');
+
+      expect(entityNotFoundError).to.have.property('innerError')
+        .that.deep.equals(new Error());
+    });
+
     it('expect to not work with wrong parameters', function () {
       expect(function () {
         entityNotFoundError = new errors.EntityNotFoundError({});
@@ -112,6 +120,14 @@ describe('errors', function () {
       );
     });
 
+    it('expect have properties storing right values', function () {
+      expect(attributeTypeNotFoundError).to.have.property('type')
+        .that.equals('MyCustomAttribute');
+
+      expect(attributeTypeNotFoundError).to.have.property('innerError')
+        .that.deep.equals(new Error());
+    });
+
     it('expect to not work with wrong parameters', function () {
       expect(function () {
         attributeTypeNotFoundError = new errors.AttributeTypeNotFoundError({});
@@ -173,7 +189,13 @@ describe('errors', function () {
 
     it('expect to work with right parameters', function () {
       validationError = new errors.ValidationError();
-      validationError = new errors.ValidationError(null, null, null, null);
+      validationError = new errors.ValidationError(
+        null,
+        null,
+        null,
+        null,
+        null
+      );
       validationError = new errors.ValidationError(
         'my validation message'
       );
@@ -190,8 +212,32 @@ describe('errors', function () {
         'my validation message',
         'MyEntity',
         'myAttribute',
+        1
+      );
+      validationError = new errors.ValidationError(
+        'my validation message',
+        'MyEntity',
+        'myAttribute',
+        1,
         new Error()
       );
+    });
+
+    it('expect have properties storing right values', function () {
+      expect(validationError).to.have.property('validationMessage')
+        .that.equals('my validation message');
+
+      expect(validationError).to.have.property('entity')
+        .that.equals('MyEntity');
+
+      expect(validationError).to.have.property('attribute')
+        .that.equals('myAttribute');
+
+      expect(validationError).to.have.property('position')
+        .that.equals(1);
+
+      expect(validationError).to.have.property('innerError')
+        .that.deep.equals(new Error());
     });
 
     it('expect to not work with wrong parameters', function () {
@@ -229,6 +275,17 @@ describe('errors', function () {
           null,
           null,
           null,
+          {}
+        );
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        validationError = new errors.ValidationError(
+          null,
+          null,
+          null,
+          null,
+          null,
           null
         );
       }).to.throw(AssertionError);
@@ -249,16 +306,18 @@ describe('errors', function () {
         'this attribute is required',
         'MyEntity',
         'myAttribute',
+        1,
         null
       )).to.have.property('message')
         .that.equals('Error when validating an attribute called ' +
-        '"myAttribute" of an entity called "MyEntity": this attribute is ' +
-        'required');
+        '"myAttribute" of an entity called "MyEntity" in position 1: this ' +
+        'attribute is required');
     });
 
     it('expect to concatenate the stack of the inner error', function () {
       var error = new Error();
       validationError = new errors.ValidationError(
+        null,
         null,
         null,
         null,

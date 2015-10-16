@@ -5,6 +5,7 @@
 'use strict';
 
 var classes = require('../../../utils/classes');
+var ValidationError = require('../../errors').ValidationError;
 var Attribute = require('../Attribute');
 
 module.exports = NumberAttribute;
@@ -53,3 +54,13 @@ function NumberAttribute() {
 }
 
 classes.generalize(Attribute, NumberAttribute);
+
+NumberAttribute.prototype.validateValue = validateValue;
+
+function validateValue(value) {
+  if (typeof value !== 'number') {
+    throw new ValidationError(
+      'this attribute\'s value should be a number'
+    );
+  }
+}

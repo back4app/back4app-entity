@@ -5,6 +5,7 @@
 'use strict';
 
 var classes = require('../../../utils/classes');
+var ValidationError = require('../../errors').ValidationError;
 var Attribute = require('../Attribute');
 
 module.exports = StringAttribute;
@@ -53,3 +54,13 @@ function StringAttribute() {
 }
 
 classes.generalize(Attribute, StringAttribute);
+
+StringAttribute.prototype.validateValue = validateValue;
+
+function validateValue(value) {
+  if (typeof value !== 'string') {
+    throw new ValidationError(
+      'this attribute\'s value should be a string'
+    );
+  }
+}

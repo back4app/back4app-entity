@@ -9,13 +9,14 @@ var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var classes = require('../../../../../../src/back/utils').classes;
 var models = require('../../../../../../').models;
+var ValidationError = models.errors.ValidationError;
 var Entity = models.Entity;
 var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var AssociationAttribute = attributes.types.AssociationAttribute;
 
 describe('AssociationAttribute', function () {
-  Entity.specify('MyEntity30');
+  var MyEntity30 = Entity.specify('MyEntity30');
   var associationAttribute;
 
   context('interface tests', function () {
@@ -296,6 +297,27 @@ describe('AssociationAttribute', function () {
       expect(associationAttribute.Entity).to.equal(Entity);
       expect(associationAttribute.multiplicity).to.equal('1');
       expect(associationAttribute.default).to.equal(null);
+    });
+  });
+
+  describe('#validateValue', function () {
+    it('expect to work correctly', function () {
+      associationAttribute = new AssociationAttribute(
+        'attribute',
+        'MyEntity30',
+        '0..1',
+        { propertyTest: 'justATest' }
+      );
+      associationAttribute.validateValue(new MyEntity30());
+      associationAttribute.validateValue(
+        new (MyEntity30.specify('MyEntity31'))()
+      );
+      expect(function () {
+        associationAttribute.validateValue(new Entity());
+      }).to.throw(ValidationError);
+      expect(function () {
+        associationAttribute.validateValue(null);
+      }).to.throw(ValidationError);
     });
   });
 });
