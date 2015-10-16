@@ -9,6 +9,7 @@ var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var classes = require('../../../../../src/back/utils').classes;
 var models = require('../../../../../').models;
+var ValidationError = models.errors.ValidationError;
 var Entity = models.Entity;
 var attributes = models.attributes;
 var Attribute = attributes.Attribute;
@@ -18,6 +19,8 @@ var DateAttribute = attributes.types.DateAttribute;
 var NumberAttribute = attributes.types.NumberAttribute;
 var ObjectAttribute = attributes.types.ObjectAttribute;
 var StringAttribute = attributes.types.StringAttribute;
+var C1 = require('../C1');
+var C2 = require('../C2');
 
 describe('Attribute', function () {
   var attribute;
@@ -677,6 +680,84 @@ describe('Attribute', function () {
         function () { return this.Entity.specification.name; }
       );
       expect(objectAttribute.getDefaultValue(new Entity())).to.equal('Entity');
+    });
+  });
+
+  describe('#validate', function () {
+    it('expect to run with no error', function () {
+      var c1 = new C1();
+
+      c1.c1A1 = null;
+      expect(function () {
+        C1.attributes.c1A1.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A1 = {};
+      expect(function () {
+        C1.attributes.c1A1.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A1 = true;
+      C1.attributes.c1A1.validate(c1);
+
+      c1.c1A9 = null;
+      expect(function () {
+        C1.attributes.c1A9.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A9 = {};
+      expect(function () {
+        C1.attributes.c1A9.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A9 = [];
+      expect(function () {
+        C1.attributes.c1A9.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A9 = [{}];
+      expect(function () {
+        C1.attributes.c1A9.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A9 = [new C2(), {}];
+      expect(function () {
+        C1.attributes.c1A9.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A9 = [new C2()];
+      C1.attributes.c1A9.validate(c1);
+      c1.c1A9 = [null, new C2()];
+      C1.attributes.c1A9.validate(c1);
+      c1.c1A9 = new Array(new C2());
+      C1.attributes.c1A9.validate(c1);
+
+      c1.c1A6 = {};
+      expect(function () {
+        C1.attributes.c1A6.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A6 = null;
+      C1.attributes.c1A6.validate(c1);
+      c1.c1A6 = '';
+      C1.attributes.c1A6.validate(c1);
+      c1.c1A6 = 'anything';
+      C1.attributes.c1A6.validate(c1);
+
+      c1.c1A4 = null;
+      C1.attributes.c1A4.validate(c1);
+      c1.c1A4 = {};
+      expect(function () {
+        C1.attributes.c1A4.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A4 = [];
+      C1.attributes.c1A4.validate(c1);
+      c1.c1A4 = [function () {}];
+      expect(function () {
+        C1.attributes.c1A4.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A4 = [function () {}, {}];
+      expect(function () {
+        C1.attributes.c1A4.validate(c1);
+      }).to.throw(ValidationError);
+      c1.c1A4 = [new C2()];
+      C1.attributes.c1A4.validate(c1);
+      c1.c1A4 = [null, new C2()];
+      C1.attributes.c1A4.validate(c1);
+      c1.c1A4 = new Array(new C2());
+      C1.attributes.c1A4.validate(c1);
     });
   });
 });

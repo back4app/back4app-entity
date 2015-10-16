@@ -450,9 +450,9 @@ function getDefaultValue(entity) {
  */
 function validate(entity) {
   expect(arguments).to.have.length(
-    2,
+    1,
     'Invalid argument length when validating an attribute of an entity (it ' +
-    'has to be passed 2 arguments)'
+    'has to be passed 1 argument)'
   );
 
   expect(entity).to.be.instanceof(
