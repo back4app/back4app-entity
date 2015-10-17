@@ -1,6 +1,10 @@
 back4app entity layer implementations
 =================================
 
+[![Build Status](
+    http://jenkins.back4app.com:8080/buildStatus/icon?job=back4app-entity-master)](
+    http://jenkins.back4app.com:8080/job/back4app-entity-master/)
+
 ## Table of contents
 
 * [Getting Started] (#getting-started)
