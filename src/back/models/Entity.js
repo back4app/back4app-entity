@@ -408,16 +408,6 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       configurable: false
     });
 
-    if (_specificEntitySpecification.Entity) {
-      expect(_specificEntitySpecification.Entity).to.equal(
-        SpecificEntity,
-        'The property "Entity" of the EntitySpecification instance should be ' +
-        'equal to the Entity that is being specified.'
-      );
-    } else {
-      _specificEntitySpecification.Entity = SpecificEntity;
-    }
-
     Object.defineProperty(SpecificEntity, 'attributes', {
       get: function () {
         var attributesObject = {};
@@ -526,6 +516,16 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       SpecificEntity
     );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
+
+    if (_specificEntitySpecification.Entity) {
+      expect(_specificEntitySpecification.Entity).to.equal(
+        SpecificEntity,
+        'The property "Entity" of the EntitySpecification instance should be ' +
+        'equal to the Entity that is being specified.'
+      );
+    } else {
+      _specificEntitySpecification.Entity = SpecificEntity;
+    }
 
     return SpecificEntity;
   };
@@ -812,7 +812,7 @@ function validate(attribute) {
   }
 
   for (attribute in attributes) {
-    attributes[attribute].validate(this, attribute);
+    attributes[attribute].validate(this);
   }
 }
 
@@ -832,7 +832,7 @@ function validate(attribute) {
  */
 function isValid(attribute) {
   try {
-    validate(attribute);
+    this.validate(attribute);
   } catch (e) {
     if (e instanceof errors.ValidationError) {
       return false;
