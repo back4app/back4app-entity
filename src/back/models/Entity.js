@@ -7,6 +7,7 @@ var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
+var Adapters = require('../adapters');
 
 module.exports = Entity;
 
@@ -526,6 +527,8 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       SpecificEntity
     );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
+
+    Adapters.registerEntity();
 
     return SpecificEntity;
   };

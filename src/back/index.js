@@ -1,4 +1,5 @@
 var models = require('./models');
+var adapters = require('./adapters');
 
 /**
  * Contains all back{4}app's entity implementations.
@@ -7,3 +8,4 @@ var models = require('./models');
 module.exports = {};
 
 module.exports.models = models;
+module.exports.adapters = adapters;
