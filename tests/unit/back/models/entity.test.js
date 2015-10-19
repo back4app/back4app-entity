@@ -162,6 +162,19 @@ describe('Entity', function () {
     });
   });
 
+  describe('._id', function () {
+    it('expect not be undefined', function () {
+
+
+    });
+    it('expect to be valid', function () {
+
+    });
+    it('expect to generate different ids', function () {
+
+    });
+  });
+
   describe('.specification', function () {
     var entitySpecification = null;
     var MyEntity = null;
