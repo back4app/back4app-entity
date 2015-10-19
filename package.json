@@ -1,11 +1,10 @@
 {
   "name": "@back4app/back4app-entity",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "back{4}app implementations for the plataform's entity layer",
   "main": "index.js",
   "scripts": {
-    "lint": "gulp lint",
-    "test": "gulp mocha"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",

@@ -245,7 +245,9 @@ describe('NumberAttribute', function () {
       numberAttribute.validateValue(1.5);
       numberAttribute.validateValue(1);
       numberAttribute.validateValue(0);
+      /* jshint ignore:start */
       numberAttribute.validateValue(new Number());
+      /* jshint ignore:end */
       expect(function () {
         numberAttribute.validateValue({});
       }).to.throw(ValidationError);

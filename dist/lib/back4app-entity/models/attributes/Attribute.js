@@ -1,4 +1,4 @@
-//
+define(function (require, exports, module) {//
 // Created by davimacedo on 08/10/15.
 //
 
@@ -556,3 +556,5 @@ function validate(entity) {
  * myEntity.Entity.attributes.myAttribute.validateValue(myEntity.myAttribute);
  */
 function validateValue() {}
+
+});
