@@ -4,6 +4,7 @@ requirejs(['back4app-entity'], function (entity) {
   var Entity = entity.models.Entity;
 
   var Person = Entity.specify({
+    name: 'Person',
     attributes: {
       name: {
         type: 'String'

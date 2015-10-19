@@ -6,7 +6,7 @@
 
 var expect = require('chai').expect;
 var classes = require('../utils/classes');
-var models = require('./');
+var models = require('./index');
 var attributes = require('./attributes');
 var methods = require('./methods');
 

@@ -1,4 +1,4 @@
-//
+define(function (require, exports, module) {//
 // Created by davimacedo on 08/10/15.
 //
 
@@ -74,3 +74,5 @@ function get(type) {
     throw new AttributeTypeNotFoundError(type);
   }
 }
+
+});

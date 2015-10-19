@@ -10,7 +10,7 @@ var errors = require('./errors');
 
 module.exports = Entity;
 
-require('./').Entity = Entity;
+require('./index').Entity = Entity;
 
 /**
  * Base class for entities.

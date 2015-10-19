@@ -1,4 +1,4 @@
-//
+define(function (require, exports, module) {//
 // Created by davimacedo on 10/10/15.
 //
 
@@ -163,3 +163,5 @@ function validateValue(value) {
     );
   }
 }
+
+});
