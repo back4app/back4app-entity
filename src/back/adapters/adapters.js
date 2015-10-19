@@ -6,29 +6,30 @@
 module.exports = new Adapters();
 
 function Adapters() {
-  var adapters = {};
-  adapters.Adapters = null;
+  //var adapters = {};
+  //adapters.Adapters = null;
+  var handler = this;
 
-  adapters.defaultAdapter = null;
-  adapters.adapters = [];
+  this.defaultAdapter = null;
+  this.adapters = [];
 
-  adapters.init = init;
-  adapters.config = config;
-  adapters.registerAdapters = registerAdapters;
-  adapters.registerEntity = registerEntity;
+  this.init = init;
+  this.config = config;
+  this.registerAdapters = registerAdapters;
+  this.registerEntity = registerEntity;
   //this.save;
   //this.update;
   //this.delete;
 
   function init(adapters) {
     if (adapters) {
-      var config = {};
+      var conf = {};
       if (adapters instanceof Object) {
-        config.adapters = [adapters];
+        conf.adapters = [adapters];
       } else if (adapters instanceof Array) {
-        config.adapters = adapters;
+        conf.adapters = adapters;
       }
-      adapters.config(config);
+      this.config(conf);
     }
   }
 
@@ -39,13 +40,12 @@ function Adapters() {
   }
 
   function registerAdapters(adapters) {
-    for (var adapter in adapters) {
-      adapters.adapters.push(adapter);
-    }
+    handler.adapters = adapters;
   }
 
   function registerEntity(entity) {
-    for (var adapter in this.adapters) {
+    for (var index in handler.adapters) {
+      var adapter = handler.adapters[index];
       adapter.registerEntity(entity);
     }
   }
@@ -58,5 +58,5 @@ function Adapters() {
     }
   }*/
 
-  return adapters;
+  //return adapters;
 }
