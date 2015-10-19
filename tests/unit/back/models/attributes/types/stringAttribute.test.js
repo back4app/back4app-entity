@@ -244,7 +244,9 @@ describe('StringAttribute', function () {
     it('expect to work correctly', function () {
       stringAttribute.validateValue('');
       stringAttribute.validateValue('anything');
+      /* jshint ignore:start */
       stringAttribute.validateValue(new String());
+      /* jshint ignore:end */
       expect(function () {
         stringAttribute.validateValue(1);
       }).to.throw(ValidationError);

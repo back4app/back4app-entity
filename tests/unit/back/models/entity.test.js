@@ -6,6 +6,7 @@ var AssertionError = chai.AssertionError;
 var classes = require('../../../../src/back/utils').classes;
 var models = require('../../../../src/back/models');
 var EntityNotFoundError = models.errors.EntityNotFoundError;
+var ValidationError = models.errors.ValidationError;
 var Entity = models.Entity;
 var EntitySpecification = models.EntitySpecification;
 var attributes = models.attributes;
@@ -634,6 +635,98 @@ describe('Entity', function () {
       );
 
       expect(c2.constructor()).to.equal('constructor');
+    });
+  });
+
+  describe('#validate', function () {
+    it('expect to run without error', function () {
+      var MyEntity40 = Entity.specify(
+        'MyEntity40',
+        {
+          a1: {
+            multiplicity: '1'
+          },
+          a2: {
+            multiplicity: '1'
+          }
+        }
+      );
+
+      var myEntity40 = new MyEntity40();
+
+      expect(function () {
+        myEntity40.validate();
+      }).to.throw(ValidationError);
+
+      expect(function () {
+        myEntity40.validate('a1');
+      }).to.throw(ValidationError);
+
+      expect(function () {
+        myEntity40.validate('a2');
+      }).to.throw(ValidationError);
+
+      myEntity40.a1 = {};
+
+      myEntity40.validate('a1');
+
+      expect(function () {
+        myEntity40.validate('a2');
+      }).to.throw(ValidationError);
+
+      myEntity40.a1 = '';
+      myEntity40.a2 = {};
+
+      expect(function () {
+        myEntity40.validate('a1');
+      }).to.throw(ValidationError);
+
+      myEntity40.validate('a2');
+
+      myEntity40.a1 = {};
+
+      myEntity40.validate();
+    });
+  });
+
+  describe('#isValid', function () {
+    it('expect to run without error', function () {
+      var MyEntity50 = Entity.specify(
+        'MyEntity50',
+        {
+          a1: {
+            multiplicity: '1'
+          },
+          a2: {
+            multiplicity: '1'
+          }
+        }
+      );
+
+      var myEntity50 = new MyEntity50();
+
+      expect(myEntity50.isValid()).to.equal(false);
+
+      expect(myEntity50.isValid('a1')).to.equal(false);
+
+      expect(myEntity50.isValid('a2')).to.equal(false);
+
+      myEntity50.a1 = {};
+
+      expect(myEntity50.isValid('a1')).to.equal(true);
+
+      expect(myEntity50.isValid('a2')).to.equal(false);
+
+      myEntity50.a1 = '';
+      myEntity50.a2 = {};
+
+      expect(myEntity50.isValid('a1')).to.equal(false);
+
+      expect(myEntity50.isValid('a2')).to.equal(true);
+
+      myEntity50.a1 = {};
+
+      expect(myEntity50.isValid()).to.equal(true);
     });
   });
 });
