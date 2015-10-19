@@ -33,3 +33,4 @@ node_modules
 
 # Folders to ignore
 .idea/
+dist/docs/

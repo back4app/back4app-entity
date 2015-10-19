@@ -6,6 +6,8 @@ requirejs.config({
   packages: [
     {name: 'back4app-entity', main: 'index'},
     {name: 'back4app-entity/models', main: 'index'},
+    {name: 'back4app-entity/models/attributes', main: 'index'},
+    {name: 'back4app-entity/models/attributes/types', main: 'index'},
     {name: 'back4app-entity/utils', main: 'index'}
   ],
   paths: {

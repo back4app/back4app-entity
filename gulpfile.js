@@ -9,92 +9,19 @@ var stylish = require('gulp-jscs-stylish');
 var mocha = require('gulp-mocha');
 var shell = require('gulp-shell');
 var rename = require('gulp-rename');
+var path = require('path');
 var del = require('del');
 var exec = require('child_process').exec;
 
 /**
- * Task to run link checks
+ * The default task (called when you run `gulp` from cli)
  */
-gulp.task('lint', function () {
-  var noop = function () {};
-
-  return gulp.src(paths.lintCheckFiles)
-    .pipe(jshint())
-    .pipe(jscs())
-    .on('error', noop)
-    .pipe(stylish.combineWithHintResults())
-    .pipe(jshint.reporter('jshint-stylish'))
-    .pipe(jshint.reporter('fail'));
-});
+gulp.task('default', ['test']);
 
 /**
- * Task to run mocha tests
+ * Task to run complete test for deployment
  */
-gulp.task('mocha', function () {
-  return gulp.src(paths.mochaSrc, {read: false})
-    .pipe(mocha({
-      reporter: 'spec'
-    }));
-});
-
-/**
- * Task to create docs
- */
-gulp.task('docs', function () {
-  docs();
-});
-
-function docs() {
-  backdocs();
-  guideDocs();
-}
-
-/**
- * Task to create back docs
- */
-gulp.task('backdocs', function () {
-  return backdocs();
-});
-
-function backdocs() {
-  exec(
-    './node_modules/jsdoc/jsdoc.js ' +
-    '-d ' + paths.backDocsDist + ' ' +
-    '-r ' + paths.backDocsSrc + ' ' +
-    '--private',
-    function (err, stdout, stderr) {
-      console.log(stdout);
-      console.log(stderr);
-    }
-  );
-}
-
-/**
- * Task to create guide docs
- */
-gulp.task('guidedocs', function () {
-  return guideDocs();
-});
-
-function guideDocs() {
-  exec(
-    './node_modules/jsdoc/jsdoc.js ' +
-    '-u ' + paths.guideDocsSrc + ' ' +
-    '-d ' + paths.guideDocsDist + ' ' +
-    '-r ' + paths.guideDocsSrc,
-    function (err, stdout, stderr) {
-      console.log(stdout);
-      console.log(stderr);
-    }
-  );
-}
-
-/**
- * Task to clean dist folder
- */
-gulp.task('clean:dist', function () {
-  return del(['dist/lib/**/*']);
-});
+gulp.task('test', ['dist', 'test-js', 'docs']);
 
 /**
  * Task to generate dist build
@@ -138,4 +65,78 @@ gulp.task('dist', ['clean:dist'], function () {
           del([paths.build.tmpDir]);
         });
     });
+});
+
+/**
+ * Task to clean dist folder
+ */
+gulp.task('clean:dist', function () {
+  return del(['dist/lib/**/*']);
+});
+
+/**
+ * Task to run all linters and tests
+ */
+gulp.task('test-js', ['lint', 'mocha']);
+
+/**
+ * Task to run link checks
+ */
+gulp.task('lint', function () {
+  var noop = function () {};
+
+  return gulp.src(paths.lintCheckFiles)
+    .pipe(jshint())
+    .pipe(jscs())
+    .on('error', noop)
+    .pipe(stylish.combineWithHintResults())
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'));
+});
+
+/**
+ * Task to run mocha tests
+ */
+gulp.task('mocha', function () {
+  return gulp.src(paths.mochaSrc, {read: false})
+    .pipe(mocha({
+      reporter: 'spec'
+    }));
+});
+
+/**
+ * Task to create docs
+ */
+gulp.task('docs', ['docs:back', 'docs:guide']);
+
+/**
+ * Task to create back docs
+ */
+gulp.task('docs:back', function () {
+  exec(
+    './node_modules/jsdoc/jsdoc.js ' +
+    '-d ' + paths.backDocsDist + ' ' +
+    '-r ' + paths.backDocsSrc + ' ' +
+    '--private',
+    function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+    }
+  );
+});
+
+/**
+ * Task to create guide docs
+ */
+gulp.task('docs:guide', function () {
+  exec(
+    './node_modules/jsdoc/jsdoc.js ' +
+    '-u ' + paths.guideDocsSrc + ' ' +
+    '-d ' + paths.guideDocsDist + ' ' +
+    '-r ' + paths.guideDocsSrc,
+    function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+    }
+  );
 });

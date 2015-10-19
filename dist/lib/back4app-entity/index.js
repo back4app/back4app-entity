@@ -1,5 +1,4 @@
-define(function (require, exports, module) {var settings = require('./settings');
-var models = require('./models');
+define(function (require, exports, module) {var models = require('./models');
 
 /**
  * Contains all back{4}app's entity implementations.
@@ -7,7 +6,6 @@ var models = require('./models');
  */
 module.exports = {};
 
-module.exports.settings = settings;
 module.exports.models = models;
 
 });
