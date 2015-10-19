@@ -14,6 +14,11 @@ var del = require('del');
 var exec = require('child_process').exec;
 
 /**
+ * The default task (called when you run `gulp` from cli)
+ */
+gulp.task('default', ['test']);
+
+/**
  * Task to run complete test for deployment
  */
 gulp.task('test', ['dist', 'test-js', 'docs']);
