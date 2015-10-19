@@ -9,6 +9,7 @@ var stylish = require('gulp-jscs-stylish');
 var mocha = require('gulp-mocha');
 var shell = require('gulp-shell');
 var rename = require('gulp-rename');
+var path = require('path');
 var del = require('del');
 var exec = require('child_process').exec;
 
