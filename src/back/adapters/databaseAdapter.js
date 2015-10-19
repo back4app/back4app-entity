@@ -9,7 +9,7 @@ function DBAdapter() {
   dbAdapter.registerEntity = registerEntity;
 
   function registerEntity() {
-    throw "registerEntity must be implemented.";
+    throw 'registerEntity must be implemented.';
   }
 
   return dbAdapter;

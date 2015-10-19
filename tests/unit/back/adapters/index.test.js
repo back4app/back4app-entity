@@ -7,7 +7,8 @@ var adapters = require('../../../../').adapters;
 
 describe('index', function () {
 
-  it.skip('expect to create new schema (directly on mongoBD adapter)', function (done) {
+  it.skip('expect to create new schema (directly on mongoBD adapter)',
+    function (done) {
     var mongo =
       require('../../../../node_modules/@back4app/back4app-entity-mongodb');
     var Person = Entity.specify({
@@ -27,10 +28,10 @@ describe('index', function () {
     });
 
     adapters.init(mongo);
-    adapters.adapters[0].registerEntity(Person).then(function(model) {
-      new model({name: 'Johnny'});
-    }).then(function() {
-      adapters.adapters[0].getMongooseModel('Person').then( function(model) {
+    adapters.adapters[0].registerEntity(Person).then(function (Model) {
+      (new Model({name: 'Johnny'}));
+    }).then(function () {
+      adapters.adapters[0].getMongooseModel('Person').then(function (model) {
         expect(adapters.adapters[0].entitySchema).to.equal(model);
       });
       done();
