@@ -4,8 +4,7 @@
   "description": "back{4}app implementations for the plataform's entity layer",
   "main": "index.js",
   "scripts": {
-    "lint": "gulp lint",
-    "test": "gulp mocha"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
