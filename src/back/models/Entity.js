@@ -7,10 +7,12 @@ var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
+var uuid = require('node-uuid');
 
 module.exports = Entity;
 
 require('./index').Entity = Entity;
+
 
 /**
  * Base class for entities.
@@ -82,8 +84,7 @@ function Entity(attributeValues) {
     );
   }
 
-  var _id = _generateUUID();
-  console.log(_id);
+  var _id = uuid.v4().toString();
 
   Object.defineProperty(this, '_id', {
     get: function () {
@@ -131,18 +132,18 @@ function Entity(attributeValues) {
   }
 }
 
-function _generateUUID() {
-  var d = new Date().getTime();
-  var uuid;
-  uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.
-    replace(/[xy]/g, function (c) {
-      var r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
-  return uuid;
-
-};
+//function _generateUUID() {
+//  var d = new Date().getTime();
+//  var uuid;
+//  uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.
+//    replace(/[xy]/g, function (c) {
+//      var r = (d + Math.random() * 16) % 16 | 0;
+//      d = Math.floor(d / 16);
+//      return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+//    });
+//  return uuid;
+//
+//};
 
 /**
  * This is a read-only property to get the general Entity Class of the current

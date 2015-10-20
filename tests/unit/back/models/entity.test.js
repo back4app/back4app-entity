@@ -11,6 +11,7 @@ var Entity = models.Entity;
 var EntitySpecification = models.EntitySpecification;
 var attributes = models.attributes;
 var methods = models.methods;
+var mockery = require('mockery');
 
 describe('Entity', function () {
   var entity;
@@ -131,6 +132,31 @@ describe('Entity', function () {
         Entity.specify('MyEntity14', {}, function () {});
       }).to.throw(AssertionError);
     });
+
+    describe('._id', function () {
+      it('expect not be undefined', function () {
+        expect(c1._id).to.not.be.undefined;
+        expect(c11._id).to.not.be.undefined;
+        expect(c2._id).to.not.be.undefined;
+      });
+      it('expect to be valid', function () {
+        var c1_id = c1._id;
+        var c11_id = c11._id;
+        var c2_id = c2._id;
+
+        var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-'+
+          '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+
+        expect(RegExp(regex).test(c1_id)).to.be.true;
+        expect(RegExp(regex).test(c11_id)).to.be.true;
+        expect(RegExp(regex).test(c2_id)).to.be.true;
+      });
+      it('expect to generate different ids', function () {
+        expect(c1._id).to.not.equal(c11._id);
+        expect(c1._id).to.not.equal(c2._id);
+        expect(c2._id).to.not.equal(c11._id);
+      });
+    });
   });
 
   describe('.General', function () {
@@ -159,19 +185,6 @@ describe('Entity', function () {
 
       expect(Entity).to.have.property('General')
         .that.equals(null);
-    });
-  });
-
-  describe('._id', function () {
-    it('expect not be undefined', function () {
-
-
-    });
-    it('expect to be valid', function () {
-
-    });
-    it('expect to generate different ids', function () {
-
     });
   });
 
@@ -575,6 +588,31 @@ describe('Entity', function () {
     });
 
     it('expect to store data correctly', function () {
+      //enable mockery
+      mockery.enable({
+        useCleanCache: true,
+        warnOnUnregistered: false
+      });
+
+      //mocking v4() node-uuid function
+      var uuidMock = {
+        v4: function () {
+          return '00000000-0000-4000-a000-000000000000';
+        }
+      };
+
+      //register mock on node-uuid and require node-uuid
+      mockery.registerMock('node-uuid', uuidMock);
+
+      //new require to use the mock
+      C1 = require('./C1');
+      C11 = require('./C11');
+      C2 = require('./C2');
+
+      c1 = new C1();
+      c11 = new C11();
+      c2 = new C2();
+
       expect(c1).to.have.property('c1A1').that.equals(false);
       expect(c1).to.have.property('c1A2');
       expect(c1).to.have.property('c1A3').that.deep.equals([0]);
@@ -603,6 +641,10 @@ describe('Entity', function () {
         default: 'thisIsMyDefault'
       });
 
+      console.log('uu='+c1._id);
+      console.log('uu='+c11._id);
+      console.log('uu='+c2._id);
+
       var newC11 = new C11({
         c1A2: new Date(1982, 11, 23),
         c1A4: [{a: 'a'}, {b: 'b'}],
@@ -626,6 +668,22 @@ describe('Entity', function () {
       expect(newC11).to.have.property('c1A9').that.deep.equals([new C2()]);
       expect(newC11).to.have.property('c1A10').that.deep.equals(new C2());
       expect(newC11).to.have.property('c11A1').that.deep.equals({z: 'z'});
+
+      //disable mock on node-uuid
+      mockery.deregisterMock('node-uuid');
+
+      //disable mockery
+      mockery.disable();
+
+      //restoring old require without mock
+      C1 = require('./C1');
+      C11 = require('./C11');
+      C2 = require('./C2');
+
+      c1 = new C1();
+      c11 = new C11();
+      c2 = new C2();
+
     });
 
     it('expect methods to run correctly', function () {
@@ -646,7 +704,6 @@ describe('Entity', function () {
         'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10c11A1c1A1c1A2c1A3c1A4c1A5' +
         'c1A6c1A7c1A8c1A9c1A10'
       );
-
       expect(c2.constructor()).to.equal('constructor');
     });
   });
