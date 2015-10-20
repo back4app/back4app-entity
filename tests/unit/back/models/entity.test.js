@@ -135,22 +135,27 @@ describe('Entity', function () {
 
     describe('._id', function () {
       it('expect not be undefined', function () {
-        expect(c1._id).to.not.be.undefined;
-        expect(c11._id).to.not.be.undefined;
-        expect(c2._id).to.not.be.undefined;
+        expect(c1._id).to.not.equal(undefined);
+        expect(c11._id).to.not.equal(undefined);
+        expect(c2._id).to.not.equal(undefined);
       });
+
       it('expect to be valid', function () {
-        var c1_id = c1._id;
-        var c11_id = c11._id;
-        var c2_id = c2._id;
+        var c1Id = c1._id;
+        var c11Id = c11._id;
+        var c2Id = c2._id;
 
-        var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-'+
-          '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+        function isValid(id) {
+          var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
+            '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+          return new RegExp(regex).test(id);
+        }
 
-        expect(RegExp(regex).test(c1_id)).to.be.true;
-        expect(RegExp(regex).test(c11_id)).to.be.true;
-        expect(RegExp(regex).test(c2_id)).to.be.true;
+        expect(isValid(c1Id)).to.equal(true);
+        expect(isValid(c11Id)).to.equal(true);
+        expect(isValid(c2Id)).to.equal(true);
       });
+
       it('expect to generate different ids', function () {
         expect(c1._id).to.not.equal(c11._id);
         expect(c1._id).to.not.equal(c2._id);
@@ -640,10 +645,6 @@ describe('Entity', function () {
       expect(c2).to.have.property('c2A2').that.deep.equals({
         default: 'thisIsMyDefault'
       });
-
-      console.log('uu='+c1._id);
-      console.log('uu='+c11._id);
-      console.log('uu='+c2._id);
 
       var newC11 = new C11({
         c1A2: new Date(1982, 11, 23),
