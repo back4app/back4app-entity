@@ -55,6 +55,8 @@ function ObjectAttribute() {
 
 classes.generalize(Attribute, ObjectAttribute);
 
+ObjectAttribute.typeName = 'Object';
+
 ObjectAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {

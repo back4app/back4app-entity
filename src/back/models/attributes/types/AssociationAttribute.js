@@ -152,6 +152,8 @@ function AssociationAttribute() {
 
 classes.generalize(Attribute, AssociationAttribute);
 
+AssociationAttribute.typeName = 'Association';
+
 AssociationAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {

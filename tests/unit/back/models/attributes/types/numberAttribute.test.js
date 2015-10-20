@@ -136,6 +136,11 @@ describe('NumberAttribute', function () {
         });
       }).to.throw(AssertionError);
     });
+
+    it('expect to find correct typeName', function () {
+      expect(NumberAttribute).to.have.property('typeName')
+        .that.equals('Number');
+    });
   });
 
   context('functional tests', function () {
