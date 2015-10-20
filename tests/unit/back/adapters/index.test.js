@@ -2,42 +2,48 @@
 
 var expect = require('chai').expect;
 var Entity = require('../../../../').models.Entity;
-var adapters = require('../../../../').adapters;
 
 
 describe('index', function () {
 
   it.skip('expect to create new schema (directly on mongoBD adapter)',
     function (done) {
-    var mongo =
-      require('../../../../node_modules/@back4app/back4app-entity-mongodb');
-    var Person = Entity.specify({
-      name: 'Person',
-      attributes: {
-        name: {
-          type: 'String',
-          multiplicity: '1',
-          default: ''
-        }
-      },
-      methods: {
-        greeting: function greeting() {
-          return 'I am ' + this.name;
-        }
-      }
-    });
+      //var entity = require('@back4app/back4app-entity');
+      var entity = require('../../../../');
+      var MongoAdapter = require('@back4app/back4app-entity-mongodb');
 
-    adapters.init(mongo);
-    adapters.adapters[0].registerEntity(Person).then(function (Model) {
-      return new Model({name: 'Johnny'});
-    }).then(function () {
-      adapters.adapters[0].getMongooseModel('Person').then(function (model) {
-        expect(adapters.adapters[0].entitySchema).to.equal(model);
+      entity.settings.ADAPTERS = {
+        default: new MongoAdapter('localhost')
+      };
+
+      var Person = Entity.specify({
+        name: 'Person',
+        attributes: {
+          name: {
+            type: 'String',
+            multiplicity: '1',
+            default: ''
+          }
+        },
+        methods: {
+          greeting: function greeting() {
+            return 'I am ' + this.name;
+          }
+        }
       });
-      done();
-    });
 
-  });
+      entity.settings.ADAPTERS.default.registerEntity(Person)
+        .then(function (Model) {
+          return new Model({name: 'Johnny'});
+        }).then(function () {
+          entity.settings.ADAPTERS.default.getMongooseModel('Person')
+            .then(function (model) {
+              expect(entity.settings.ADAPTERS.default.entitySchema).to.equal(model);
+            });
+          done();
+        });
+
+    });
 
 });
 
