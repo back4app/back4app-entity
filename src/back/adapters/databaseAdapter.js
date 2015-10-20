@@ -16,12 +16,12 @@ function DBAdapter() {
    * Interface-like method, that should be implemented.
    * @name module:back4app/entity/adapters.DBAdapter~registerEntity
    * @function
-   * @param entity The entity that will be registered as an schema, model or table.
+   * @param entity The entity that will be registered as an schema,
+   * model or table.
    * @example
    * adapter.register(Person);
    */
-  function registerEntity(entity) {
-    entity;
+  function registerEntity() {
     throw 'registerEntity must be implemented.';
   }
 }

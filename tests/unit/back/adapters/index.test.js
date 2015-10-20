@@ -29,7 +29,7 @@ describe('index', function () {
 
     adapters.init(mongo);
     adapters.adapters[0].registerEntity(Person).then(function (Model) {
-      (new Model({name: 'Johnny'}));
+      return new Model({name: 'Johnny'});
     }).then(function () {
       adapters.adapters[0].getMongooseModel('Person').then(function (model) {
         expect(adapters.adapters[0].entitySchema).to.equal(model);
