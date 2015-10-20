@@ -1,13 +1,15 @@
 'use strict';
 
-//var util = require('util');
-//var expect = require('chai').expect;
-
 module.exports = new Adapters();
 
+/**
+ * Handler for multiple adapters.
+ * @constructor
+ * @memberof module:back4app/entity/adapters
+ * @example
+ * module.exports = new Adapters();
+ */
 function Adapters() {
-  //var adapters = {};
-  //adapters.Adapters = null;
   var handler = this;
 
   this.defaultAdapter = null;
@@ -17,10 +19,15 @@ function Adapters() {
   this.config = config;
   this.registerAdapters = registerAdapters;
   this.registerEntity = registerEntity;
-  //this.save;
-  //this.update;
-  //this.delete;
 
+  /**
+   * Inserts the basic configuration for the handler.
+   * @name module:back4app/entity/adapters.Adapters~init
+   * @function
+   * @param adapters Array of adapters to be registered.
+   * @example
+   * adapters.init([mongoAdapter, anotherAdapter]);
+   */
   function init(adapters) {
     if (adapters) {
       var conf = {};
@@ -33,30 +40,47 @@ function Adapters() {
     }
   }
 
+  /**
+   * Defines the handler configuration, using the passed config object.
+   * @name module:back4app/entity/adapters.Adapters~config
+   * @function
+   * @param configObj Object that holds the config definitions for
+   * the handler, such as the adapters list.
+   * @example
+   * adapters.config({
+   *   adapters: [mongoAdapter, anotherAdapter]
+   * });
+   */
   function config(configObj) {
     if (configObj instanceof Object) {
       registerAdapters(configObj.adapters);
     }
   }
 
+  /**
+   * Defines the adapters configuration, which shall be used by default.
+   * @name module:back4app/entity/adapters.Adapters~registerAdapters
+   * @function
+   * @param adapters Array of adapters to be registered, used by default.
+   * @example
+   * adapters.registerAdapters([mongoAdapter, anotherAdapter]);
+   */
   function registerAdapters(adapters) {
     handler.adapters = adapters;
   }
 
+  /**
+   * Runs "registerEntity" method on every registered adapter .
+   * @name module:back4app/entity/adapters.Adapters~registerEntity
+   * @function
+   * @param entity Entity that shall be registered in all adapters.
+   * @example
+   * adapters.registerEntity(Person);
+   */
   function registerEntity(entity) {
     for (var index in handler.adapters) {
       var adapter = handler.adapters[index];
       adapter.registerEntity(entity);
     }
   }
-
-  /*function doSomething(entity, optionalArray) {
-    if (optionalArray) {
-      optionalArray.useAdaptersListedOnThisArray();
-    } else {
-      this.defaultAdapter.doSomething(entity);
-    }
-  }*/
-
-  //return adapters;
 }

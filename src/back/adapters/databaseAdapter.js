@@ -2,15 +2,26 @@
 
 module.exports = DBAdapter;
 
+/**
+ * Base class for database adapters.
+ * @constructor
+ * @memberof module:back4app/entity/adapters
+ * @example
+ * var entity = new Entity();
+ */
 function DBAdapter() {
-  var dbAdapter = {};
-  dbAdapter.DBAdapter = null;
+  this.registerEntity = registerEntity;
 
-  dbAdapter.registerEntity = registerEntity;
-
-  function registerEntity() {
+  /**
+   * Interface-like method, that should be implemented.
+   * @name module:back4app/entity/adapters.DBAdapter~registerEntity
+   * @function
+   * @param entity The entity that will be registered as an schema, model or table.
+   * @example
+   * adapter.register(Person);
+   */
+  function registerEntity(entity) {
+    entity;
     throw 'registerEntity must be implemented.';
   }
-
-  return dbAdapter;
 }
