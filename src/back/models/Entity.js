@@ -7,6 +7,7 @@ var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
+var settings = require('../settings');
 
 module.exports = Entity;
 
@@ -34,6 +35,27 @@ function Entity(attributeValues) {
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     this.Entity = null;
   }
+  /**
+   * This is a read-only property to get the adapter of an
+   * instance. This is just an alias to this.Entity.adapter.
+   * @type {!adapters/Adapter}
+   * @readonly
+   */
+  this.adapter = null;
+
+  Object.defineProperty(this, 'adapter', {
+    get: function () {
+      return this.Entity.adapter;
+    },
+    set: function () {
+      throw new Error(
+        'Adapter property of an Entity instance cannot be changed'
+      );
+    },
+    enumerable: false,
+    configurable: true
+  });
+
   /**
    * This is a read-only property to get the general Entity Class of an
    * instance. This is just an alias to this.Entity.General.
@@ -527,6 +549,10 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       _specificEntitySpecification.Entity = SpecificEntity;
     }
 
+    try {
+      _getAdapter(SpecificEntity).registerEntity(SpecificEntity);
+    } catch (e) {}
+
     return SpecificEntity;
   };
 };
@@ -768,6 +794,29 @@ var _getNewFunction = function (CurrentEntity) {
  * var c1 = c1NewFunction();
  */
 Entity.new = _getNewFunction(Entity);
+
+/**
+ * Private function used to get adapter registered to this Entity. Returns
+ * the default, if not found.
+ * @name module:back4app/entity/models.Entity~_getAdapter
+ * @function
+ * @param {!class} CurrentEntity The current entity class.
+ * @returns {!models/Adapter} The new function.
+ * @private
+ * @example
+ * _getAdapter(Entity).registerEntity(Entity);;
+ */
+var _getAdapter = function (CurrentEntity) {
+  if(CurrentEntity.adapter && settings.ADAPTERS[CurrentEntity.adapter]){
+    return settings.ADAPTERS[CurrentEntity.adapter];
+  } else {
+    if(settings.ADAPTERS.default) {
+      return settings.ADAPTERS.default;
+    } else {
+      throw 'No valid Adapter on settings.ADAPTERS';
+    }
+  }
+};
 
 /**
  * Validates an entity and throws a

@@ -1,9 +1,9 @@
 'use strict';
 
-var Adapters = require('./adapters');
-var databaseAdapter = require('./databaseAdapter');
+var AdapterHandler = require('./adapterHandler');
+var Adapter = require('./Adapter');
 //var expect = require('chai').expect;
 
-module.exports = Adapters;
-module.exports.databaseAdapter = databaseAdapter;
+module.exports = AdapterHandler;
+module.exports.Adapter = Adapter;
 
