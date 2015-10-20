@@ -807,10 +807,10 @@ Entity.new = _getNewFunction(Entity);
  * _getAdapter(Entity).registerEntity(Entity);;
  */
 var _getAdapter = function (CurrentEntity) {
-  if(CurrentEntity.adapter && settings.ADAPTERS[CurrentEntity.adapter]){
+  if (CurrentEntity.adapter && settings.ADAPTERS[CurrentEntity.adapter]) {
     return settings.ADAPTERS[CurrentEntity.adapter];
   } else {
-    if(settings.ADAPTERS.default) {
+    if (settings.ADAPTERS.default) {
       return settings.ADAPTERS.default;
     } else {
       throw 'No valid Adapter on settings.ADAPTERS';

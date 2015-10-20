@@ -38,7 +38,8 @@ describe('index', function () {
         }).then(function () {
           entity.settings.ADAPTERS.default.getMongooseModel('Person')
             .then(function (model) {
-              expect(entity.settings.ADAPTERS.default.entitySchema).to.equal(model);
+              expect(entity.settings.ADAPTERS.default.entitySchema)
+                .to.equal(model);
             });
           done();
         });

@@ -5,7 +5,8 @@
 module.exports = {};
 
 /**
- * Constant with the path to the adapters dictionary. It will be used to find the adapters
+ * Constant with the path to the adapters dictionary. It will be
+ * used to find the adapters
  * always that on of them is referenced in the code.
  * @type {!string}
  * @example

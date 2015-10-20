@@ -1,6 +1,6 @@
 var models = require('./models');
 var adapters = require('./adapters');
-var settings = require('./settings')
+var settings = require('./settings');
 /**
  * Contains all back{4}app's entity implementations.
  * @module back4app/entity
