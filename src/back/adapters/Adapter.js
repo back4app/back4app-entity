@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = DBAdapter;
+module.exports = Adapter;
 
 /**
  * Base class for database adapters.
@@ -9,7 +9,7 @@ module.exports = DBAdapter;
  * @example
  * var entity = new Entity();
  */
-function DBAdapter() {
+function Adapter() {
   this.registerEntity = registerEntity;
 
   /**

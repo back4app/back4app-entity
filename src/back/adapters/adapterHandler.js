@@ -1,6 +1,8 @@
 'use strict';
 
-module.exports = new Adapters();
+var settings = require('../').settings;
+
+module.exports = new AdapterHandler();
 
 /**
  * Handler for multiple adapters.
@@ -9,11 +11,11 @@ module.exports = new Adapters();
  * @example
  * module.exports = new Adapters();
  */
-function Adapters() {
+function AdapterHandler() {
   var handler = this;
 
   this.defaultAdapter = null;
-  this.adapters = [];
+  //this.adapters = [];
 
   this.init = init;
   this.config = config;
@@ -66,7 +68,7 @@ function Adapters() {
    * adapters.registerAdapters([mongoAdapter, anotherAdapter]);
    */
   function registerAdapters(adapters) {
-    handler.adapters = adapters;
+    settings.ADAPTERS = adapters;
   }
 
   /**
