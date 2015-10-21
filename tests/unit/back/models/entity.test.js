@@ -161,6 +161,26 @@ describe('Entity', function () {
         expect(c1.id).to.not.equal(c2.id);
         expect(c2.id).to.not.equal(c11.id);
       });
+
+      it('expect to be given in the constructor', function () {
+        expect(new Entity({
+          id: '00000000-0000-4000-a000-000000000000'
+        }))
+          .to.have.property('id')
+          .that.equals('00000000-0000-4000-a000-000000000000');
+      });
+
+      it('expect to validate if given id is valid', function () {
+        expect(function () {
+          entity = new Entity({id: 'itisnotvalid'});
+        }).to.throw(Error);
+      });
+
+      it('expect to be not writable', function () {
+        expect(function () {
+          c1.id = '00000000-0000-4000-a000-000000000000';
+        }).to.throw(Error);
+      });
     });
   });
 
@@ -243,7 +263,8 @@ describe('Entity', function () {
           'c1A7',
           'c1A8',
           'c1A9',
-          'c1A10'
+          'c1A10',
+          'id'
         ]);
       }
     );
@@ -702,8 +723,8 @@ describe('Entity', function () {
       expect(c11.c1M2(1, 2)).to.equal(3);
       expect(c11.c1M2('a', 'b')).to.equal('ab');
       expect(c11.c11M()).to.equal(
-        'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10c11A1c1A1c1A2c1A3c1A4c1A5' +
-        'c1A6c1A7c1A8c1A9c1A10'
+        'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10idc11A1c1A1c1A2c1A3c1A4c1A5' +
+        'c1A6c1A7c1A8c1A9c1A10id'
       );
       expect(c2.constructor()).to.equal('constructor');
     });
