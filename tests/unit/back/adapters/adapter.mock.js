@@ -1,6 +1,6 @@
 'use strict';
 
-var Adapter = require('../../../../src/back/adapters').Adapter;
+var Adapter = require('../../../../src/back').Adapter;
 
 module.exports = MockAdapter;
 
