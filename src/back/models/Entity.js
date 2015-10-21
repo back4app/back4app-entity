@@ -792,29 +792,6 @@ var _getNewFunction = function (CurrentEntity) {
 Entity.new = _getNewFunction(Entity);
 
 /**
- * Private function used to get adapter registered to this Entity. Returns
- * the default, if not found.
- * @name module:back4app/entity/models.Entity~_getAdapter
- * @function
- * @param {!class} CurrentEntity The current entity class.
- * @returns {!models/Adapter} The new function.
- * @private
- * @example
- * _getAdapter(Entity).registerEntity(Entity);;
- */
-var _getAdapter = function (CurrentEntity) {
-  if (CurrentEntity.adapter && settings.ADAPTERS[CurrentEntity.adapter]) {
-    return settings.ADAPTERS[CurrentEntity.adapter];
-  } else {
-    if (settings.ADAPTERS.default) {
-      return settings.ADAPTERS.default;
-    } else {
-      throw new errors.AdapterNotFoundError(CurrentEntity.adapter || 'default');
-    }
-  }
-};
-
-/**
  * Validates an entity and throws a
  * {@link module:back4app/entity/models/errors.ValidationError} if it is not
  * validated.
