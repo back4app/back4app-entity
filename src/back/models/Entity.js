@@ -549,9 +549,10 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       _specificEntitySpecification.Entity = SpecificEntity;
     }
 
-    try {
-      _getAdapter(SpecificEntity).registerEntity(SpecificEntity);
-    } catch (e) {}
+    var adapter = _getAdapter(SpecificEntity);
+    if (adapter) {
+      adapter.registerEntity(SpecificEntity);
+    }
 
     return SpecificEntity;
   };
@@ -813,7 +814,7 @@ var _getAdapter = function (CurrentEntity) {
     if (settings.ADAPTERS.default) {
       return settings.ADAPTERS.default;
     } else {
-      throw 'No valid Adapter on settings.ADAPTERS';
+      throw new errors.AdapterNotFoundError(CurrentEntity.adapter || 'default');
     }
   }
 };

@@ -12,6 +12,8 @@ var rename = require('gulp-rename');
 var path = require('path');
 var del = require('del');
 var exec = require('child_process').exec;
+var settings = require('./').settings;
+var MockAdapter = require('./tests/unit/back/adapters/adapter.mock');
 
 /**
  * The default task (called when you run `gulp` from cli)
@@ -98,6 +100,7 @@ gulp.task('lint', function () {
  * Task to run mocha tests
  */
 gulp.task('mocha', function () {
+  settings.ADAPTERS.default = new MockAdapter();
   return gulp.src(paths.mochaSrc, {read: false})
     .pipe(mocha({
       reporter: 'spec'
