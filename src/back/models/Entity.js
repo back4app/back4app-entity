@@ -47,6 +47,17 @@ function Entity(attributeValues) {
    * console.log(myEntity.General == Entity); // Logs "true"
    */
   this.General = null;
+  /**
+   * This is a read-only property to get the id of a new entity
+   * instance. It is generated in according to UUID pattern type 4.
+   * @type {!String}
+   * @readonly
+   * @example
+   * var MyEntity = Entity.specify('MyEntity');
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.id); // Logs a string id
+   */
+  this.id = null;
 
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     Object.defineProperty(this, 'Entity', {
@@ -70,6 +81,15 @@ function Entity(attributeValues) {
     configurable: true
   });
 
+  var id = uuid.v4();
+
+  Object.defineProperty(this, 'id', {
+    value: id,
+    writable: false,
+    enumerable: true,
+    configurable: false
+  });
+
   expect(arguments).to.have.length.below(
     2,
     'Invalid arguments length when creating "' +
@@ -83,33 +103,6 @@ function Entity(attributeValues) {
       this.Entity.specification.name + '" (it has to be an object)'
     );
   }
-
-  /**
-   * This is a read-only property to get the id of a new entity
-   * instance. It is generated in according to UUID pattern type 4.
-   * @type {!String}
-   * @readonly
-   * @example
-   * var MyEntity = Entity.specify('MyEntity');
-   * var myEntity = new MyEntity();
-   * console.log(myEntity.id); // Logs a string id
-   */
-
-  var id = uuid.v4();
-
-  Object.defineProperty(this, 'id', {
-    get: function () {
-      return id;
-    },
-    set: function () {
-      throw new Error(
-        'id property of an Entity instance cannot be changed'
-      );
-    },
-    enumerable: true,
-    configurable: false
-  });
-
 
   var attributes = this.Entity.attributes;
 
