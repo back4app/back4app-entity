@@ -39,9 +39,11 @@
     "mocha": "^2.3.3",
     "path-browserify": "0.0.0",
     "requirejs": "^2.1.20",
-    "util-browser": "0.0.2"
+    "util-browser": "0.0.2",
+    "mockery": "^1.4.0"
   },
   "dependencies": {
-    "chai": "^3.3.0"
+    "chai": "^3.3.0",
+    "node-uuid": "^1.4.3"
   }
 }

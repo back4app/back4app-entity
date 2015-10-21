@@ -7,10 +7,12 @@ var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
+var uuid = require('node-uuid');
 
 module.exports = Entity;
 
 require('./index').Entity = Entity;
+
 
 /**
  * Base class for entities.
@@ -66,6 +68,17 @@ function Entity(attributeValues) {
    * console.log(myEntity.General == Entity); // Logs "true"
    */
   this.General = null;
+  /**
+   * This is a read-only property to get the id of a new entity
+   * instance. It is generated in according to UUID pattern type 4.
+   * @type {!String}
+   * @readonly
+   * @example
+   * var MyEntity = Entity.specify('MyEntity');
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.id); // Logs a string id
+   */
+  this.id = null;
 
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     Object.defineProperty(this, 'Entity', {
@@ -124,7 +137,7 @@ function Entity(attributeValues) {
       value: attributeValue,
       enumerable: true,
       writable: true,
-      configurable: false
+      configurable: attribute === 'id'
     });
   }
 
@@ -133,6 +146,21 @@ function Entity(attributeValues) {
       this[attribute] = attributes[attribute].getDefaultValue(this);
     }
   }
+
+  var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
+    '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+  expect(new RegExp(regex).test(this.id)).to.equal(
+    true,
+    'Invalid property "id" when creating a new "' +
+    this.Entity.specification.name + '" (it has to be a valid uuid)'
+  );
+
+  Object.defineProperty(this, 'id', {
+    value: this.id,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
 }
 
 /**
@@ -216,6 +244,7 @@ Entity.new = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 
+
 Object.defineProperty(Entity, 'General', {
   value: null,
   enumerable: true,
@@ -223,7 +252,17 @@ Object.defineProperty(Entity, 'General', {
   configurable: false
 });
 
-var _entitySpecification = new EntitySpecification('Entity');
+var _entityAttributes = new AttributeDictionary({
+  id: {
+    type: 'String',
+    default: uuid.v4
+  }
+});
+
+var _entitySpecification = new EntitySpecification(
+  'Entity',
+  _entityAttributes
+);
 
 Object.defineProperty(Entity, 'specification', {
   value: _entitySpecification,
@@ -235,7 +274,7 @@ Object.defineProperty(Entity, 'specification', {
 _entitySpecification.Entity = Entity;
 
 Object.defineProperty(Entity, 'attributes', {
-  value: {},
+  value: _entityAttributes,
   enumerable: true,
   writable: false,
   configurable: false
@@ -337,6 +376,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     );
 
     var SpecificEntity = function (attributeValues) {
+
       if (!this.hasOwnProperty('Entity') || !this.Entity) {
         Object.defineProperty(this, 'Entity', {
           value: SpecificEntity,
@@ -863,3 +903,4 @@ function isValid(attribute) {
   }
   return true;
 }
+
