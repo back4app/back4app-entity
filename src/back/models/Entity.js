@@ -81,15 +81,6 @@ function Entity(attributeValues) {
     configurable: true
   });
 
-  var id = uuid.v4();
-
-  Object.defineProperty(this, 'id', {
-    value: id,
-    writable: false,
-    enumerable: true,
-    configurable: false
-  });
-
   expect(arguments).to.have.length.below(
     2,
     'Invalid arguments length when creating "' +
@@ -125,7 +116,7 @@ function Entity(attributeValues) {
       value: attributeValue,
       enumerable: true,
       writable: true,
-      configurable: false
+      configurable: attribute === 'id'
     });
   }
 
@@ -134,6 +125,21 @@ function Entity(attributeValues) {
       this[attribute] = attributes[attribute].getDefaultValue(this);
     }
   }
+
+  var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
+    '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+  expect(new RegExp(regex).test(this.id)).to.equal(
+    true,
+    'Invalid property "id" when creating a new "' +
+    this.Entity.specification.name + '" (it has to be a valid uuid)'
+  );
+
+  Object.defineProperty(this, 'id', {
+    value: this.id,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
 }
 
 /**
@@ -225,7 +231,17 @@ Object.defineProperty(Entity, 'General', {
   configurable: false
 });
 
-var _entitySpecification = new EntitySpecification('Entity');
+var _entityAttributes = new AttributeDictionary({
+  id: {
+    type: 'String',
+    default: uuid.v4
+  }
+});
+
+var _entitySpecification = new EntitySpecification(
+  'Entity',
+  _entityAttributes
+);
 
 Object.defineProperty(Entity, 'specification', {
   value: _entitySpecification,
@@ -237,7 +253,7 @@ Object.defineProperty(Entity, 'specification', {
 _entitySpecification.Entity = Entity;
 
 Object.defineProperty(Entity, 'attributes', {
-  value: {},
+  value: _entityAttributes,
   enumerable: true,
   writable: false,
   configurable: false
