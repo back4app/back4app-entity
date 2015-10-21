@@ -84,15 +84,26 @@ function Entity(attributeValues) {
     );
   }
 
-  var _id = uuid.v4();
+  /**
+   * This is a read-only property to get the id of a new entity
+   * instance. It is generated in according to UUID pattern type 4.
+   * @type {!String}
+   * @readonly
+   * @example
+   * var MyEntity = Entity.specify('MyEntity');
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.id); // Logs a string id
+   */
 
-  Object.defineProperty(this, '_id', {
+  var id = uuid.v4();
+
+  Object.defineProperty(this, 'id', {
     get: function () {
-      return _id;
+      return id;
     },
     set: function () {
       throw new Error(
-        '_id property of an Entity instance cannot be changed'
+        'id property of an Entity instance cannot be changed'
       );
     },
     enumerable: true,
@@ -335,8 +346,6 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     );
 
     var SpecificEntity = function (attributeValues) {
-
-      //console.log('running ' + CurrentEntity);
 
       if (!this.hasOwnProperty('Entity') || !this.Entity) {
         Object.defineProperty(this, 'Entity', {

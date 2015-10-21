@@ -133,17 +133,17 @@ describe('Entity', function () {
       }).to.throw(AssertionError);
     });
 
-    describe('._id', function () {
+    describe('.id', function () {
       it('expect not be undefined', function () {
-        expect(c1._id).to.not.equal(undefined);
-        expect(c11._id).to.not.equal(undefined);
-        expect(c2._id).to.not.equal(undefined);
+        expect(c1.id).to.not.equal(undefined);
+        expect(c11.id).to.not.equal(undefined);
+        expect(c2.id).to.not.equal(undefined);
       });
 
       it('expect to be valid', function () {
-        var c1Id = c1._id;
-        var c11Id = c11._id;
-        var c2Id = c2._id;
+        var c1Id = c1.id;
+        var c11Id = c11.id;
+        var c2Id = c2.id;
 
         function isValid(id) {
           var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
@@ -157,9 +157,9 @@ describe('Entity', function () {
       });
 
       it('expect to generate different ids', function () {
-        expect(c1._id).to.not.equal(c11._id);
-        expect(c1._id).to.not.equal(c2._id);
-        expect(c2._id).to.not.equal(c11._id);
+        expect(c1.id).to.not.equal(c11.id);
+        expect(c1.id).to.not.equal(c2.id);
+        expect(c2.id).to.not.equal(c11.id);
       });
     });
   });
