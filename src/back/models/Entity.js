@@ -7,7 +7,6 @@ var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
-var settings = require('../settings');
 
 module.exports = Entity;
 
