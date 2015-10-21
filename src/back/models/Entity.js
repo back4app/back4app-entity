@@ -7,10 +7,12 @@ var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
+var uuid = require('node-uuid');
 
 module.exports = Entity;
 
 require('./index').Entity = Entity;
+
 
 /**
  * Base class for entities.
@@ -45,6 +47,17 @@ function Entity(attributeValues) {
    * console.log(myEntity.General == Entity); // Logs "true"
    */
   this.General = null;
+  /**
+   * This is a read-only property to get the id of a new entity
+   * instance. It is generated in according to UUID pattern type 4.
+   * @type {!String}
+   * @readonly
+   * @example
+   * var MyEntity = Entity.specify('MyEntity');
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.id); // Logs a string id
+   */
+  this.id = null;
 
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     Object.defineProperty(this, 'Entity', {
@@ -66,6 +79,15 @@ function Entity(attributeValues) {
     },
     enumerable: false,
     configurable: true
+  });
+
+  var id = uuid.v4();
+
+  Object.defineProperty(this, 'id', {
+    value: id,
+    writable: false,
+    enumerable: true,
+    configurable: false
   });
 
   expect(arguments).to.have.length.below(
@@ -195,6 +217,7 @@ Entity.new = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 
+
 Object.defineProperty(Entity, 'General', {
   value: null,
   enumerable: true,
@@ -316,6 +339,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     );
 
     var SpecificEntity = function (attributeValues) {
+
       if (!this.hasOwnProperty('Entity') || !this.Entity) {
         Object.defineProperty(this, 'Entity', {
           value: SpecificEntity,
@@ -842,3 +866,4 @@ function isValid(attribute) {
   }
   return true;
 }
+
