@@ -549,11 +549,6 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       _specificEntitySpecification.Entity = SpecificEntity;
     }
 
-    var adapter = _getAdapter(SpecificEntity);
-    if (adapter) {
-      adapter.registerEntity(SpecificEntity);
-    }
-
     return SpecificEntity;
   };
 };
