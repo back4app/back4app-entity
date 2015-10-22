@@ -10,7 +10,7 @@ var expect = require('chai').expect;
 /**
  * Contains Error Classes used to be thrown when the models API is not used
  * correctly.
- * @module back4app/entity/models/errors
+ * @module back4app-entity/models/errors
  */
 module.exports = {};
 
@@ -26,7 +26,7 @@ module.exports.AdapterNotFoundError = AdapterNotFoundError;
  * @extends Error
  * @param {?string} [entity] The entity name to be displayed.
  * @param {?Error} [innerError] The inner error.
- * @memberof module:back4app/entity/models/errors
+ * @memberof module:back4app-entity/models/errors
  * @example
  * try {
  *   var myEntity = require('./MyEntity');
@@ -85,7 +85,7 @@ util.inherits(EntityNotFoundError, Error);
  * @extends Error
  * @param {?string} [type] The attribute type name to be displayed.
  * @param {?Error} [innerError] The inner error.
- * @memberof module:back4app/entity/models/errors
+ * @memberof module:back4app-entity/models/errors
  * @example
  * try {
  *   var TypedAttribute = types.get('MyCustomAttribute');
@@ -149,7 +149,7 @@ util.inherits(AttributeTypeNotFoundError, Error);
  * @param {?(string|number)} [position] The position in the attribute that is
  * not valid.
  * @param {?Error} [innerError] The inner error.
- * @memberof module:back4app/entity/models/errors
+ * @memberof module:back4app-entity/models/errors
  * @example
  * try
  * {
@@ -265,7 +265,7 @@ util.inherits(ValidationError, Error);
  * @extends Error
  * @param {?string} [adapterName] The adapter name to be displayed.
  * @param {?Error} [innerError] The inner error.
- * @memberof module:back4app/entity/models/errors
+ * @memberof module:back4app-entity/models/errors
  * @example
  * if (settings.ADAPTERS.default) {
  *   return settings.ADAPTERS.default;

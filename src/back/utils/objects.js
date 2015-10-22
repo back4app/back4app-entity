@@ -8,7 +8,7 @@ var expect = require('chai').expect;
 
 /**
  * Contains utilities functions to be used with objects around the project.
- * @module back4app/entity/utils/objects
+ * @module back4app-entity/utils/objects
  */
 module.exports = {};
 

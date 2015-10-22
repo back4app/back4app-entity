@@ -8,7 +8,7 @@ var expect = require('chai').expect;
 
 /**
  * Contains base classes for entity methods modelling.
- * @module back4app/entity/models/methods
+ * @module back4app-entity/models/methods
  */
 module.exports = {};
 
@@ -18,7 +18,7 @@ module.exports.MethodDictionary = MethodDictionary;
  * Dictionary of Entity Methods. An instance of MethodDictionary is not
  * extensible.
  * @constructor
- * @memberof module:back4app/entity/models/methods
+ * @memberof module:back4app-entity/models/methods
  * @param {?Object.<!string, !function>} [methods] The methods to be added in
  * the dictionary. They have to be given as a dictionary of functions.
  * @example
@@ -60,9 +60,9 @@ MethodDictionary.concat = concat;
 
 /**
  * Adds a new method to the dictionary.
- * @name module:back4app/entity/models/methods~_addMethod
+ * @name module:back4app-entity/models/methods~_addMethod
  * @function
- * @param {!module:back4app/entity/models/methods.MethodDictionary}
+ * @param {!module:back4app-entity/models/methods.MethodDictionary}
  * methodDictionary This is the MethodDictionary instance to which the method
  * will be added.
  * @param {!function} func This is the method's function to be added.
@@ -93,13 +93,13 @@ function _addMethod(methodDictionary, func, name) {
 /**
  * Concatenates a MethodDictionary instance with a new method and returns a new
  * MethodDictionary.
- * @name module:back4app/entity/models/methods.MethodDictionary.concat
+ * @name module:back4app-entity/models/methods.MethodDictionary.concat
  * @function
- * @param {!module:back4app/entity/models/methods.MethodDictionary}
+ * @param {!module:back4app-entity/models/methods.MethodDictionary}
  * methodDictionary The MethodDictionary to be concatenated.
  * @param {!function} func The method's function to be concatenated.
  * @param {!string} name The method's name to be concatenated.
- * @returns {module:back4app/entity/models/methods.MethodDictionary} The
+ * @returns {module:back4app-entity/models/methods.MethodDictionary} The
  * new concatenated MethodDictionary.
  * @example
  * var concatenatedMethodDictionary = MethodDictionary.concat(

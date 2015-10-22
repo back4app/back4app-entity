@@ -12,13 +12,13 @@ module.exports = AttributeDictionary;
 /**
  * Dictionary of Entity Attributes.
  * @constructor
- * @memberof module:back4app/entity/models/attributes
- * @param {?(module:back4app/entity/models/attributes.Attribute[]|
- * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
+ * @memberof module:back4app-entity/models/attributes
+ * @param {?(module:back4app-entity/models/attributes.Attribute[]|
+ * Object.<!string, !(module:back4app-entity/models/attributes.Attribute|
  * Object)>)}
  * [attributes] The attributes to be added in the dictionary. They can be given
  * as an Array or a Dictionary of
- * {@link module:back4app/entity/models/attributes.Attribute}.
+ * {@link module:back4app-entity/models/attributes.Attribute}.
  * @example
  * var attributeDictionary = new AttributeDictionary();
  * @example
@@ -65,14 +65,14 @@ AttributeDictionary.concat = concat;
 /**
  * Adds a new attribute to the dictionary.
  * @name
- * module:back4app/entity/models/attributes.AttributeDictionary~_addAttribute
+ * module:back4app-entity/models/attributes.AttributeDictionary~_addAttribute
  * @function
- * @param {!module:back4app/entity/models/attributes.AttributeDictionary}
+ * @param {!module:back4app-entity/models/attributes.AttributeDictionary}
  * attributeDictionary It is the attribute dictionary to which the attribute
  * will be added.
- * @param {!module:back4app/entity/models/attributes.Attribute} attribute This
+ * @param {!module:back4app-entity/models/attributes.Attribute} attribute This
  * is the attribute to be added. It can be passed as a
- * {@link module:back4app/entity/models/attributes.Attribute} instance.
+ * {@link module:back4app-entity/models/attributes.Attribute} instance.
  * @param {?string} [name] This is the name of the attribute.
  * @private
  * @example
@@ -86,14 +86,14 @@ AttributeDictionary.concat = concat;
 /**
  * Adds a new attribute to the dictionary.
  * @name
- * module:back4app/entity/models/attributes.AttributeDictionary~_addAttribute
+ * module:back4app-entity/models/attributes.AttributeDictionary~_addAttribute
  * @function
- * @param {!module:back4app/entity/models/attributes.AttributeDictionary}
+ * @param {!module:back4app-entity/models/attributes.AttributeDictionary}
  * attributeDictionary It is the attribute dictionary to which the attribute
  * will be added.
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object, as specified in
- * {@link module:back4app/entity/models/attributes.Attribute}.
+ * {@link module:back4app-entity/models/attributes.Attribute}.
  * @param {!string} [attribute.name] It is the name of the attribute. It is
  * optional if it is passed as an argument in the function.
  * @param {!string} [attribute.type='Object'] It is the type of the attribute.
@@ -169,13 +169,13 @@ function _addAttribute() {
 /**
  * Concatenates an AttributeDictionary instance with an Attribute instance and
  * returns a new AttributeDictionary.
- * @name module:back4app/entity/models/attributes.AttributeDictionary.concat
+ * @name module:back4app-entity/models/attributes.AttributeDictionary.concat
  * @function
- * @param {!module:back4app/entity/models/attributes.AttributeDictionary}
+ * @param {!module:back4app-entity/models/attributes.AttributeDictionary}
  * attributeDictionary The AttributeDictionary to be concatenated.
- * @param {!module:back4app/entity/models/attributes.Attribute} attribute
+ * @param {!module:back4app-entity/models/attributes.Attribute} attribute
  * The Attribute to be concatenated.
- * @returns {module:back4app/entity/models/attributes.AttributeDictionary} The
+ * @returns {module:back4app-entity/models/attributes.AttributeDictionary} The
  * new concatenated AttributeDictionary.
  * @example
  * var concatenatedAttributeDictionary = AttributeDictionary.concat(

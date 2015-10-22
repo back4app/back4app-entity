@@ -15,27 +15,27 @@ module.exports = EntitySpecification;
 /**
  * Class to specify an Entity.
  * @constructor
- * @memberof module:back4app/entity/models
+ * @memberof module:back4app-entity/models
  * @name EntitySpecification
  * @param {!string} name The new entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeDictionary|
- * module:back4app/entity/models/attributes.Attribute[]|
- * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
+ * {?(module:back4app-entity/models/attributes.AttributeDictionary|
+ * module:back4app-entity/models/attributes.Attribute[]|
+ * Object.<!string, !(module:back4app-entity/models/attributes.Attribute|
  * Object)>)}
  * attributes The new entity specification attributes. It can be given as an
  * instance of
- * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
+ * {@link module:back4app-entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
+ * {@link module:back4app-entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodDictionary|
+ * {?(module:back4app-entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
  * methods The new entity specification methods. It can be given as an instance
  * of
- * {@link module:back4app/entity/models/methods.MethodDictionary} or an
+ * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/methods.MethodDictionary}.
+ * {@link module:back4app-entity/models/methods.MethodDictionary}.
  * @example
  * var entitySpecification = new EntitySpecification(
  *   'MyEntity',
@@ -52,28 +52,28 @@ module.exports = EntitySpecification;
 /**
  * Class to specify an Entity.
  * @constructor
- * @memberof module:back4app/entity/models
+ * @memberof module:back4app-entity/models
  * @name EntitySpecification
  * @param {!Object} specification The new Entity specification.
  * @param {!string} specification.name The new Entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeDictionary|
- * module:back4app/entity/models/attributes.Attribute[]|
- * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
+ * {?(module:back4app-entity/models/attributes.AttributeDictionary|
+ * module:back4app-entity/models/attributes.Attribute[]|
+ * Object.<!string, !(module:back4app-entity/models/attributes.Attribute|
  * Object)>)}
  * specification.attributes The new entity specification attributes. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
+ * {@link module:back4app-entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
+ * {@link module:back4app-entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodDictionary|
+ * {?(module:back4app-entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
  * specification.methods The new entity specification methods. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/methods.MethodDictionary} or an
+ * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/methods.MethodDictionary}.
+ * {@link module:back4app-entity/models/methods.MethodDictionary}.
  * @example
  * var entitySpecification = new EntitySpecification({
  *   name: 'MyEntity',
@@ -91,8 +91,8 @@ function EntitySpecification() {
   /**
    * Entity whose the current EntitySpecification instance belongs. Once this
    * property is assigned, it can not be assigned anymore.
-   * @name module:back4app/entity/models/EntitySpecification#Entity
-   * @type {!module:back4app/entity/models/Entity}
+   * @name module:back4app-entity/models/EntitySpecification#Entity
+   * @type {!module:back4app-entity/models/Entity}
    * @example
    * var myEntitySpecification = new EntitySpecification('MyEntity');
    * var MyEntity = Entity.specify(myEntitySpecification);
@@ -101,7 +101,7 @@ function EntitySpecification() {
   this.Entity = null;
   /**
    * The name of the entity.
-   * @name module:back4app/entity/models/EntitySpecification#name
+   * @name module:back4app-entity/models/EntitySpecification#name
    * @type {!string}
    * @readonly
    * @example
@@ -111,8 +111,8 @@ function EntitySpecification() {
   this.name = null;
   /**
    * Dictionary of specific attributes of an entity.
-   * @name module:back4app/entity/models.EntitySpecification#attributes
-   * @type {!module:back4app/entity/models/attributes.AttributeDictionary}
+   * @name module:back4app-entity/models.EntitySpecification#attributes
+   * @type {!module:back4app-entity/models/attributes.AttributeDictionary}
    * @readonly
    * @example
    * var entitySpecification = new EntitySpecification({
@@ -133,8 +133,8 @@ function EntitySpecification() {
   this.attributes = null;
   /**
    * Dictionary of specific methods of an entity.
-   * @name module:back4app/entity/models.EntitySpecification#methods
-   * @type {!module:back4app/entity/models/methods.MethodDictionary}
+   * @name module:back4app-entity/models.EntitySpecification#methods
+   * @type {!module:back4app-entity/models/methods.MethodDictionary}
    * @readonly
    * @example
    * var entitySpecification = new EntitySpecification({
@@ -357,7 +357,7 @@ function EntitySpecification() {
   /**
    * Loads the attributes and methods of the Entity that is associated with the
    * current specification.
-   * @name module:back4app/entity/models.EntitySpecification~_loadEntityMembers
+   * @name module:back4app-entity/models.EntitySpecification~_loadEntityMembers
    * @function
    * @private
    * @example
@@ -379,9 +379,9 @@ function EntitySpecification() {
    * Loads an attribute of the Entity that is associated with the current
    * specification.
    * @name
-   * module:back4app/entity/models.EntitySpecification~_loadEntityAttribute
+   * module:back4app-entity/models.EntitySpecification~_loadEntityAttribute
    * @function
-   * @param {!module:back4app/entity/models/attributes.Attribute} attribute The
+   * @param {!module:back4app-entity/models/attributes.Attribute} attribute The
    * attribute to be loaded.
    * @private
    * @example
@@ -433,7 +433,7 @@ function EntitySpecification() {
    * Loads a method of the Entity that is associated with the current
    * specification.
    * @name
-   * module:back4app/entity/models.EntitySpecification~_loadEntityMethod
+   * module:back4app-entity/models.EntitySpecification~_loadEntityMethod
    * @function
    * @param {!function} func The method's function to be loaded.
    * @param {!string} name The method's name to be loaded.
@@ -473,11 +473,11 @@ function EntitySpecification() {
 
   /**
    * Adds a new attribute to the attributes in the specification.
-   * @name module:back4app/entity/models.EntitySpecification#addAttribute
+   * @name module:back4app-entity/models.EntitySpecification#addAttribute
    * @function
-   * @param {!module:back4app/entity/models/attributes.Attribute} attribute This
+   * @param {!module:back4app-entity/models/attributes.Attribute} attribute This
    * is the attribute to be added. It can be passed as a
-   * {@link module:back4app/entity/models/attributes.Attribute} instance.
+   * {@link module:back4app-entity/models/attributes.Attribute} instance.
    * @param {?string} [name] This is the name of the attribute.
    * @example
    * entitySpecification.addAttribute(
@@ -487,11 +487,11 @@ function EntitySpecification() {
    */
   /**
    * Adds a new attribute to the attributes in the specification
-   * @name module:back4app/entity/models.EntitySpecification#addAttribute
+   * @name module:back4app-entity/models.EntitySpecification#addAttribute
    * @function
    * @param {!Object} attribute This is the attribute to be added. It can be
    * passed as an Object, as specified in
-   * {@link module:back4app/entity/models/attributes.Attribute}.
+   * {@link module:back4app-entity/models/attributes.Attribute}.
    * @param {!string} [attribute.name] It is the name of the attribute. It is
    * optional if it is passed as an argument in the function.
    * @param {!string} [attribute.type='Object'] It is the type of the attribute.
@@ -513,7 +513,7 @@ function EntitySpecification() {
    */
   /**
    * Adds a new attribute to the attributes in the specification.
-   * @name module:back4app/entity/models.EntitySpecification#addAttribute
+   * @name module:back4app-entity/models.EntitySpecification#addAttribute
    * @function
    * @param {!string} name It is the name of the attribute.
    * @param {!string} [type='Object'] It is the type of the attribute. It is
@@ -554,7 +554,7 @@ function EntitySpecification() {
 
   /**
    * Adds a new method to the methods in the specification.
-   * @name module:back4app/entity/models.EntitySpecification#addMethod
+   * @name module:back4app-entity/models.EntitySpecification#addMethod
    * @function
    * @param {!function} func This is the method's function to be added.
    * @param {!string} name This is the name of the method.
