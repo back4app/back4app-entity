@@ -1,5 +1,5 @@
-var models = require('./models');
 var settings = require('./settings');
+var models = require('./models');
 var adapters = require('./adapters');
 
 /**
@@ -8,6 +8,6 @@ var adapters = require('./adapters');
  */
 module.exports = {};
 
-module.exports.models = models;
 module.exports.settings = settings;
+module.exports.models = models;
 module.exports.adapters = adapters;
