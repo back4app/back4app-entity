@@ -7,6 +7,6 @@ module.exports = Adapter;
  * @constructor
  * @memberof module:back4app/entity/adapters
  * @example
- * var entity = new Entity();
+ * var myAdapter = new MyAdapter(myConfig);
  */
 function Adapter() {}
