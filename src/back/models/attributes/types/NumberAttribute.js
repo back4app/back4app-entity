@@ -12,10 +12,10 @@ module.exports = NumberAttribute;
 
 /**
  * Implementation of an Entity Attribute to store number data.
- * @memberof module:back4app/entity/models/attributes/types
+ * @memberof module:back4app-entity/models/attributes/types
  * @name NumberAttribute
  * @constructor
- * @extends module:back4app/entity/models/attributes.Attribute
+ * @extends module:back4app-entity/models/attributes.Attribute
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object.
  * @param {!string} attribute.name It is the name of the attribute.
@@ -33,10 +33,10 @@ module.exports = NumberAttribute;
  */
 /**
  * Implementation of an Entity Attribute to store number data.
- * @memberof module:back4app/entity/models/attributes/types
+ * @memberof module:back4app-entity/models/attributes/types
  * @name NumberAttribute
  * @constructor
- * @extends module:back4app/entity/models/attributes.Attribute
+ * @extends module:back4app-entity/models/attributes.Attribute
  * @param {!string} name It is the name of the attribute.
  * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
  * It is optional and if not passed it will assume '1' as the default value.

@@ -7,7 +7,7 @@ var objects = require('./objects');
 
 /**
  * Contains utilities functions to be used around the project.
- * @module back4app/entity/utils
+ * @module back4app-entity/utils
  */
 module.exports = {};
 

@@ -8,7 +8,7 @@ module.exports = Adapter;
 /**
  * Base class for database adapters. It cannot be directly initialized.
  * @constructor
- * @memberof module:back4app/entity/adapters
+ * @memberof module:back4app-entity/adapters
  * @example
  * var myAdapter = new MyAdapter(myConfig);
  */
