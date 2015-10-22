@@ -15,6 +15,8 @@ var methods = models.methods;
 var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
 
+require('../../settings');
+
 describe('Entity', function () {
   var entity;
 

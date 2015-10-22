@@ -2,6 +2,8 @@
 
 var Entity = require('../../../../').models.Entity;
 
+require('../../settings');
+
 module.exports = Entity.specify({
   name: 'C1',
   attributes: {

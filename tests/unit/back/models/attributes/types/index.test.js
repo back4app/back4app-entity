@@ -33,6 +33,8 @@ var StringAttribute = require(
   '../../../../../../src/back/models/attributes/types/StringAttribute'
 );
 
+require('../../../../settings');
+
 describe('attributesTypesIndex', function () {
   it(
     'expect to export AssociationAttribute in the AssociationAttribute ' +

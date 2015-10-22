@@ -8,6 +8,8 @@ var Entity = require('../../../../').models.Entity;
 var ObjectAttribute = require('../../../../')
   .models.attributes.types.ObjectAttribute;
 
+require('../../settings');
+
 var C2 = module.exports = Entity.specify(
   'C2',
   [

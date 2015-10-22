@@ -15,6 +15,8 @@ var attributes = models.attributes;
 var attributeTypes = attributes.types;
 var methods = models.methods;
 
+require('../../settings');
+
 describe('EntitySpecification', function () {
   var entitySpecification;
 

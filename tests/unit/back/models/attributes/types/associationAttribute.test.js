@@ -15,6 +15,8 @@ var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var AssociationAttribute = attributes.types.AssociationAttribute;
 
+require('../../../../settings');
+
 describe('AssociationAttribute', function () {
   var MyEntity30 = Entity.specify('MyEntity30');
   var associationAttribute;

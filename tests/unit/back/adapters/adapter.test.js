@@ -11,6 +11,8 @@ var classes = require('../../../../src/back/utils').classes;
 var adapters = require('../../../../').adapters;
 var Adapter = adapters.Adapter;
 
+require('../../settings');
+
 describe('Adapter', function () {
   var adapter;
 

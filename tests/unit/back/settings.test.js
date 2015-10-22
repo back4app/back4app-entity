@@ -7,6 +7,8 @@
 var expect = require('chai').expect;
 var settings = require('../../../src/back/settings');
 
+require('../settings');
+
 describe('settings', function () {
   it(
     'expect to export ADAPTERS in the ADAPTERS property and be an' +

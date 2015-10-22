@@ -6,6 +6,8 @@
 
 var C1 = require('./C1');
 
+require('../../settings');
+
 module.exports = C1.specify({
   name: 'C11',
   attributes: {

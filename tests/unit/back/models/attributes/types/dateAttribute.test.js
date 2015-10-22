@@ -14,6 +14,8 @@ var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var DateAttribute = attributes.types.DateAttribute;
 
+require('../../../../settings');
+
 describe('DateAttribute', function () {
   var dateAttribute;
 

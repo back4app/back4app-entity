@@ -7,6 +7,8 @@ var settings = require('../../../src/back/settings');
 var adapters = require('../../../src/back/adapters');
 var models = require('../../../src/back/models');
 
+require('../settings');
+
 describe('backIndex', function () {
   it('expect to export utils in the utils property', function () {
     expect(backIndex).to.have.property('utils')

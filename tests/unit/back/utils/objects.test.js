@@ -9,6 +9,8 @@ var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var objects = require('../../../../src/back/utils').objects;
 
+require('../../settings');
+
 describe('objects', function () {
   describe('~copy', function () {
     context('interface tests', function () {

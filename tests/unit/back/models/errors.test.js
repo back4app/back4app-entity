@@ -9,6 +9,8 @@ var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var errors = require('../../../../').models.errors;
 
+require('../../settings');
+
 describe('errors', function () {
   it(
     'expect to export EntityNotFoundError in the EntityNotFoundError property',
