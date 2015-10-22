@@ -13,7 +13,7 @@ var path = require('path');
 var del = require('del');
 var exec = require('child_process').exec;
 var settings = require('./').settings;
-var MockAdapter = require('./tests/unit/back/adapters/adapter.mock');
+var MockAdapter = require('./tests/unit/back/adapters/MockAdapter');
 
 /**
  * The default task (called when you run `gulp` from cli)
@@ -97,10 +97,16 @@ gulp.task('lint', function () {
 });
 
 /**
+ * Task to set MockAdapter
+ */
+gulp.task('mockadapter', function () {
+  settings.ADAPTERS.default = new MockAdapter();
+});
+
+/**
  * Task to run mocha tests
  */
-gulp.task('mocha', function () {
-  settings.ADAPTERS.default = new MockAdapter();
+gulp.task('mocha', ['mockadapter'], function () {
   return gulp.src(paths.mochaSrc, {read: false})
     .pipe(mocha({
       reporter: 'spec'

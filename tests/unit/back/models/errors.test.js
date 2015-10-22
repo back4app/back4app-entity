@@ -328,4 +328,74 @@ describe('errors', function () {
         .that.contains(error.stack);
     });
   });
+
+  describe('AdapterNotFoundError', function () {
+    var adapterNotFoundError;
+
+    it('expect to work with right parameters', function () {
+      adapterNotFoundError = new errors.AdapterNotFoundError();
+      adapterNotFoundError = new errors.AdapterNotFoundError('MyAdapter');
+      adapterNotFoundError = new errors.AdapterNotFoundError(
+        null,
+        new Error()
+      );
+      adapterNotFoundError = new errors.AdapterNotFoundError(
+        'MyAdapter',
+        new Error()
+      );
+    });
+
+    it('expect have properties storing right values', function () {
+      expect(adapterNotFoundError).to.have.property('adapterName')
+        .that.equals('MyAdapter');
+
+      expect(adapterNotFoundError).to.have.property('innerError')
+        .that.deep.equals(new Error());
+    });
+
+    it('expect to not work with wrong parameters', function () {
+      expect(function () {
+        adapterNotFoundError = new errors.AdapterNotFoundError({});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        adapterNotFoundError = new errors.AdapterNotFoundError(null, {});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        adapterNotFoundError = new errors.AdapterNotFoundError({}, {});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        adapterNotFoundError = new errors.AdapterNotFoundError(
+          'MyAdapter',
+          new Error(),
+          null
+        );
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to be an Error', function () {
+      expect(new errors.AdapterNotFoundError()).to.be.an.instanceof(Error);
+    });
+
+    it('expect to have the right name', function () {
+      expect(new errors.AdapterNotFoundError()).to.have.property('name')
+        .that.equals('AdapterNotFoundError');
+    });
+
+    it('expect to have the right message', function () {
+      expect(new errors.AdapterNotFoundError('MyAdapter'))
+        .to.have.property('message')
+        .that.equals('Cannot find Adapter "MyAdapter"');
+    });
+
+    it('expect to concatenate the stack of the inner error', function () {
+      var error = new Error();
+      adapterNotFoundError = new errors.AdapterNotFoundError(null, error);
+      expect(adapterNotFoundError)
+        .to.have.property('stack')
+        .that.contains(error.stack);
+    });
+  });
 });

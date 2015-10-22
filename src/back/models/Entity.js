@@ -235,32 +235,15 @@ Entity.new = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 
-var _adapter = null;
-Object.defineProperty(this, 'adapter', {
-  get: function () {
-    if (!_adapter) {
-      try {
-        expect(settings).to.have.hasOwnProperty('ADAPTERS');
-        expect(settings.ADAPTERS).to.have.ownProperty('default');
-        expect(settings.ADAPTERS.default).to.be.an.instanceOf(Adapter);
-        _adapter = settings.ADAPTERS.default;
-      } catch (e) {
-        if (e instanceof AssertionError) {
-          throw new errors.AdapterNotFoundError('default', e);
-        } else {
-          throw e;
-        }
-      }
-    }
-    return _adapter;
-  },
+Object.defineProperty(Entity, 'adapter', {
+  get: _getAdapter,
   set: function () {
     throw new Error(
-      'Adapter property of an Entity instance cannot be changed'
+      'Adapter property of an Entity class cannot be changed'
     );
   },
   enumerable: false,
-  configurable: true
+  configurable: false
 });
 
 Object.defineProperty(Entity, 'General', {
@@ -346,6 +329,35 @@ Object.defineProperty(Entity, 'specializations', {
 });
 
 /**
+ * Gets the adapter to be used by the Entity class.
+ * @name module:back4app/entity/models.Entity~_getAdapter
+ * @function
+ * @returns {module:back4app/entity/adapters.Adapter}
+ * @throws {module:back4app/entity/models/errors.AdapterNotFoundError}
+ * @private
+ * @example
+ * var defaultAdapter = _getAdapter();
+ */
+var _adapter = null;
+function _getAdapter() {
+  if (!_adapter) {
+    try {
+      expect(settings).to.have.ownProperty('ADAPTERS');
+      expect(settings.ADAPTERS).to.have.ownProperty('default');
+      expect(settings.ADAPTERS.default).to.be.an.instanceOf(Adapter);
+      _adapter = settings.ADAPTERS.default;
+    } catch (e) {
+      if (e instanceof AssertionError) {
+        throw new errors.AdapterNotFoundError('default', e);
+      } else {
+        throw e;
+      }
+    }
+  }
+  return _adapter;
+}
+
+/**
  * Visits all specializations of a list of entities.
  * @name module:back4app/entity/models.Entity~_visitSpecializations
  * @function
@@ -408,6 +420,17 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     };
 
     classes.generalize(CurrentEntity, SpecificEntity);
+
+    Object.defineProperty(SpecificEntity, 'adapter', {
+      get: _getAdapter,
+      set: function () {
+        throw new Error(
+          'Adapter property of an Entity class cannot be changed'
+        );
+      },
+      enumerable: false,
+      configurable: false
+    });
 
     Object.defineProperty(SpecificEntity, 'General', {
       value: CurrentEntity,
