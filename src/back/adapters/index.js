@@ -1,7 +1,12 @@
 'use strict';
 
 var Adapter = require('./Adapter');
-//var expect = require('chai').expect;
+
+/**
+ * Contains base classes for entities adapters.
+ * @module back4app/entity/adapters
+ */
+module.exports = {};
 
 module.exports.Adapter = Adapter;
 
