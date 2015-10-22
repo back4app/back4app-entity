@@ -9,6 +9,8 @@ var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var methods = require('../../../../').models.methods;
 
+require('../../settings');
+
 describe('methods', function () {
   it(
     'expect to export MethodDictionary in the MethodDictionary property',

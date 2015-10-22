@@ -12,6 +12,8 @@ var AttributeDictionary = require(
 );
 var types = require('../../../../../src/back/models/attributes/types');
 
+require('../../../settings');
+
 describe('attributesIndex', function () {
   it('expect to export Attribute in the Attribute property', function () {
     expect(attributesIndex).to.have.property('Attribute')

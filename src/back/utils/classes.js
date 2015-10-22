@@ -8,8 +8,7 @@ var util = require('util');
 var expect = require('chai').expect;
 
 /**
- * Contains utilities functions to be used with classes around the project. This
- * module is not exported to be used outside this project.
+ * Contains utilities functions to be used with classes around the project.
  * @module back4app/entity/utils/classes
  */
 module.exports = {};
@@ -18,8 +17,7 @@ module.exports.generalize = generalize;
 module.exports.isGeneral = isGeneral;
 
 /**
- * Makes the GeneralClass to generalize the SpecificClass. This function is not
- * exported to be used outside this project.
+ * Makes the GeneralClass to generalize the SpecificClass.
  * @param {!Class} GeneralClass The general class to generalize the
  * SpecificClass.
  * @param {!Class} SpecificClass The specific class to be generalized by the
@@ -60,8 +58,7 @@ function generalize(GeneralClass, SpecificClass) {
 }
 
 /**
- * Checks if the GeneralClass generalizes the SpecificClass. This function is
- * not exported to be used outside this project.
+ * Checks if the GeneralClass generalizes the SpecificClass.
  * @param {!Class} GeneralClass The general class to check.
  * @param {!Class} SpecificClass The specific class to check.
  * @example

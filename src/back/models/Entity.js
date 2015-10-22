@@ -1,8 +1,12 @@
 'use strict';
 
-var expect = require('chai').expect;
+var chai = require('chai');
+var expect = chai.expect;
+var AssertionError = chai.AssertionError;
+var settings = require('../settings');
 var classes = require('../utils/classes');
 var objects = require('../utils/objects');
+var Adapter = require('../adapters/Adapter');
 var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
@@ -143,6 +147,14 @@ function Entity(attributeValues) {
 }
 
 /**
+ * This is a read-only property to get the adapter of an Entity class.
+ * @type {!module:back4app/entity/adapters.Adapter}
+ * @readonly
+ * @example
+ * var myDefaultAdapter = Entity.adapter;
+ */
+Entity.adapter = null;
+/**
  * This is a read-only property to get the general Entity Class of the current
  * Entity Class.
  * @type {?Class}
@@ -223,6 +235,16 @@ Entity.new = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 
+Object.defineProperty(Entity, 'adapter', {
+  get: _getAdapter,
+  set: function () {
+    throw new Error(
+      'Adapter property of an Entity class cannot be changed'
+    );
+  },
+  enumerable: false,
+  configurable: false
+});
 
 Object.defineProperty(Entity, 'General', {
   value: null,
@@ -307,6 +329,35 @@ Object.defineProperty(Entity, 'specializations', {
 });
 
 /**
+ * Gets the adapter to be used by the Entity class.
+ * @name module:back4app/entity/models.Entity~_getAdapter
+ * @function
+ * @returns {module:back4app/entity/adapters.Adapter}
+ * @throws {module:back4app/entity/models/errors.AdapterNotFoundError}
+ * @private
+ * @example
+ * var defaultAdapter = _getAdapter();
+ */
+var _adapter = null;
+function _getAdapter() {
+  if (!_adapter) {
+    try {
+      expect(settings).to.have.ownProperty('ADAPTERS');
+      expect(settings.ADAPTERS).to.have.ownProperty('default');
+      expect(settings.ADAPTERS.default).to.be.an.instanceOf(Adapter);
+      _adapter = settings.ADAPTERS.default;
+    } catch (e) {
+      if (e instanceof AssertionError) {
+        throw new errors.AdapterNotFoundError('default', e);
+      } else {
+        throw e;
+      }
+    }
+  }
+  return _adapter;
+}
+
+/**
  * Visits all specializations of a list of entities.
  * @name module:back4app/entity/models.Entity~_visitSpecializations
  * @function
@@ -369,6 +420,17 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     };
 
     classes.generalize(CurrentEntity, SpecificEntity);
+
+    Object.defineProperty(SpecificEntity, 'adapter', {
+      get: _getAdapter,
+      set: function () {
+        throw new Error(
+          'Adapter property of an Entity class cannot be changed'
+        );
+      },
+      enumerable: false,
+      configurable: false
+    });
 
     Object.defineProperty(SpecificEntity, 'General', {
       value: CurrentEntity,

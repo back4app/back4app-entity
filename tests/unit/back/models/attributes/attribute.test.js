@@ -22,6 +22,8 @@ var StringAttribute = attributes.types.StringAttribute;
 var C1 = require('../C1');
 var C2 = require('../C2');
 
+require('../../../settings');
+
 describe('Attribute', function () {
   var attribute;
 

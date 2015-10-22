@@ -14,6 +14,8 @@ var attributes = require('../../../../src/back/models/attributes');
 var methods = require('../../../../src/back/models/methods');
 var errors = require('../../../../src/back/models/errors');
 
+require('../../settings');
+
 describe('modelsIndex', function () {
   it('expect to export Entity in the Entity property', function () {
     expect(modelsIndex).to.have.property('Entity')

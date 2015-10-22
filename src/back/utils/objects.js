@@ -7,8 +7,7 @@
 var expect = require('chai').expect;
 
 /**
- * Contains utilities functions to be used with objects around the project. This
- * module is not exported to be used outside this project.
+ * Contains utilities functions to be used with objects around the project.
  * @module back4app/entity/utils/objects
  */
 module.exports = {};
@@ -16,8 +15,7 @@ module.exports = {};
 module.exports.copy = copy;
 
 /**
- * Makes a copy of a given object. This function is not exported to be used
- * outside this project.
+ * Makes a copy of a given object.
  * @param {!Object} o The object to be copied.
  * @returns {Object} The new copy of the given object.
  * @example

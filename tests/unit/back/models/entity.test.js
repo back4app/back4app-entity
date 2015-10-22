@@ -3,6 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var settings = require('../../../../src/back').settings;
 var classes = require('../../../../src/back/utils').classes;
 var models = require('../../../../src/back/models');
 var EntityNotFoundError = models.errors.EntityNotFoundError;
@@ -11,7 +12,10 @@ var Entity = models.Entity;
 var EntitySpecification = models.EntitySpecification;
 var attributes = models.attributes;
 var methods = models.methods;
+var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
+
+require('../../settings');
 
 describe('Entity', function () {
   var entity;
@@ -181,6 +185,35 @@ describe('Entity', function () {
           c1.id = '00000000-0000-4000-a000-000000000000';
         }).to.throw(Error);
       });
+    });
+  });
+
+  describe('.adapter', function () {
+    it(
+      'expect to exist as a static property and contain the right adapter',
+      function () {
+        expect(Entity).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+        expect(C1).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+        expect(C11).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+        expect(C2).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+      }
+    );
+
+    it('expect to not be changed or deleted', function () {
+      expect(function () {
+        delete Entity.adapter;
+      }).to.throw(Error);
+
+      expect(function () {
+        Entity.adapter = new MockAdapter();
+      }).to.throw(Error);
+
+      expect(Entity).to.have.property('adapter')
+        .that.be.an.instanceOf(MockAdapter);
     });
   });
 

@@ -14,6 +14,8 @@ var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var BooleanAttribute = attributes.types.BooleanAttribute;
 
+require('../../../../settings');
+
 describe('BooleanAttribute', function () {
   var booleanAttribute;
 
