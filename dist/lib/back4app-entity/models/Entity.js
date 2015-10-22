@@ -1,8 +1,12 @@
 define(function (require, exports, module) {'use strict';
 
-var expect = require('chai').expect;
+var chai = require('chai');
+var expect = chai.expect;
+var AssertionError = chai.AssertionError;
+var settings = require('../settings');
 var classes = require('../utils/classes');
 var objects = require('../utils/objects');
+var Adapter = require('../adapters/Adapter');
 var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
@@ -47,6 +51,17 @@ function Entity(attributeValues) {
    * console.log(myEntity.General == Entity); // Logs "true"
    */
   this.General = null;
+  /**
+   * This is a read-only property to get the id of a new entity
+   * instance. It is generated in according to UUID pattern type 4.
+   * @type {!String}
+   * @readonly
+   * @example
+   * var MyEntity = Entity.specify('MyEntity');
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.id); // Logs a string id
+   */
+  this.id = null;
 
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     Object.defineProperty(this, 'Entity', {
@@ -84,22 +99,6 @@ function Entity(attributeValues) {
     );
   }
 
-  var _id = uuid.v4();
-
-  Object.defineProperty(this, '_id', {
-    get: function () {
-      return _id;
-    },
-    set: function () {
-      throw new Error(
-        '_id property of an Entity instance cannot be changed'
-      );
-    },
-    enumerable: true,
-    configurable: false
-  });
-
-
   var attributes = this.Entity.attributes;
 
   for (var attribute in attributeValues) {
@@ -121,7 +120,7 @@ function Entity(attributeValues) {
       value: attributeValue,
       enumerable: true,
       writable: true,
-      configurable: false
+      configurable: attribute === 'id'
     });
   }
 
@@ -130,8 +129,31 @@ function Entity(attributeValues) {
       this[attribute] = attributes[attribute].getDefaultValue(this);
     }
   }
+
+  var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
+    '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+  expect(new RegExp(regex).test(this.id)).to.equal(
+    true,
+    'Invalid property "id" when creating a new "' +
+    this.Entity.specification.name + '" (it has to be a valid uuid)'
+  );
+
+  Object.defineProperty(this, 'id', {
+    value: this.id,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
 }
 
+/**
+ * This is a read-only property to get the adapter of an Entity class.
+ * @type {!module:back4app/entity/adapters.Adapter}
+ * @readonly
+ * @example
+ * var myDefaultAdapter = Entity.adapter;
+ */
+Entity.adapter = null;
 /**
  * This is a read-only property to get the general Entity Class of the current
  * Entity Class.
@@ -213,6 +235,16 @@ Entity.new = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 
+Object.defineProperty(Entity, 'adapter', {
+  get: _getAdapter,
+  set: function () {
+    throw new Error(
+      'Adapter property of an Entity class cannot be changed'
+    );
+  },
+  enumerable: false,
+  configurable: false
+});
 
 Object.defineProperty(Entity, 'General', {
   value: null,
@@ -221,7 +253,17 @@ Object.defineProperty(Entity, 'General', {
   configurable: false
 });
 
-var _entitySpecification = new EntitySpecification('Entity');
+var _entityAttributes = new AttributeDictionary({
+  id: {
+    type: 'String',
+    default: uuid.v4
+  }
+});
+
+var _entitySpecification = new EntitySpecification(
+  'Entity',
+  _entityAttributes
+);
 
 Object.defineProperty(Entity, 'specification', {
   value: _entitySpecification,
@@ -233,7 +275,7 @@ Object.defineProperty(Entity, 'specification', {
 _entitySpecification.Entity = Entity;
 
 Object.defineProperty(Entity, 'attributes', {
-  value: {},
+  value: _entityAttributes,
   enumerable: true,
   writable: false,
   configurable: false
@@ -287,6 +329,35 @@ Object.defineProperty(Entity, 'specializations', {
 });
 
 /**
+ * Gets the adapter to be used by the Entity class.
+ * @name module:back4app/entity/models.Entity~_getAdapter
+ * @function
+ * @returns {module:back4app/entity/adapters.Adapter}
+ * @throws {module:back4app/entity/models/errors.AdapterNotFoundError}
+ * @private
+ * @example
+ * var defaultAdapter = _getAdapter();
+ */
+var _adapter = null;
+function _getAdapter() {
+  if (!_adapter) {
+    try {
+      expect(settings).to.have.ownProperty('ADAPTERS');
+      expect(settings.ADAPTERS).to.have.ownProperty('default');
+      expect(settings.ADAPTERS.default).to.be.an.instanceOf(Adapter);
+      _adapter = settings.ADAPTERS.default;
+    } catch (e) {
+      if (e instanceof AssertionError) {
+        throw new errors.AdapterNotFoundError('default', e);
+      } else {
+        throw e;
+      }
+    }
+  }
+  return _adapter;
+}
+
+/**
  * Visits all specializations of a list of entities.
  * @name module:back4app/entity/models.Entity~_visitSpecializations
  * @function
@@ -336,8 +407,6 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
     var SpecificEntity = function (attributeValues) {
 
-      //console.log('running ' + CurrentEntity);
-
       if (!this.hasOwnProperty('Entity') || !this.Entity) {
         Object.defineProperty(this, 'Entity', {
           value: SpecificEntity,
@@ -351,6 +420,17 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     };
 
     classes.generalize(CurrentEntity, SpecificEntity);
+
+    Object.defineProperty(SpecificEntity, 'adapter', {
+      get: _getAdapter,
+      set: function () {
+        throw new Error(
+          'Adapter property of an Entity class cannot be changed'
+        );
+      },
+      enumerable: false,
+      configurable: false
+    });
 
     Object.defineProperty(SpecificEntity, 'General', {
       value: CurrentEntity,
