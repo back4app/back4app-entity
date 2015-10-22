@@ -1,8 +1,12 @@
 'use strict';
 
-var expect = require('chai').expect;
+var chai = require('chai');
+var expect = chai.expect;
+var AssertionError = chai.AssertionError;
+var settings = require('../settings');
 var classes = require('../utils/classes');
 var objects = require('../utils/objects');
+var Adapter = require('../adapters/Adapter');
 var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
@@ -36,27 +40,6 @@ function Entity(attributeValues) {
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     this.Entity = null;
   }
-  /**
-   * This is a read-only property to get the adapter of an
-   * instance. This is just an alias to this.Entity.adapter.
-   * @type {!adapters/Adapter}
-   * @readonly
-   */
-  this.adapter = null;
-
-  Object.defineProperty(this, 'adapter', {
-    get: function () {
-      return this.Entity.adapter;
-    },
-    set: function () {
-      throw new Error(
-        'Adapter property of an Entity instance cannot be changed'
-      );
-    },
-    enumerable: false,
-    configurable: true
-  });
-
   /**
    * This is a read-only property to get the general Entity Class of an
    * instance. This is just an alias to this.Entity.General.
@@ -164,6 +147,14 @@ function Entity(attributeValues) {
 }
 
 /**
+ * This is a read-only property to get the adapter of an Entity class.
+ * @type {!module:back4app/entity/adapters.Adapter}
+ * @readonly
+ * @example
+ * var myDefaultAdapter = Entity.adapter;
+ */
+Entity.adapter = null;
+/**
  * This is a read-only property to get the general Entity Class of the current
  * Entity Class.
  * @type {?Class}
@@ -244,6 +235,33 @@ Entity.new = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 
+var _adapter = null;
+Object.defineProperty(this, 'adapter', {
+  get: function () {
+    if (!_adapter) {
+      try {
+        expect(settings).to.have.hasOwnProperty('ADAPTERS');
+        expect(settings.ADAPTERS).to.have.ownProperty('default');
+        expect(settings.ADAPTERS.default).to.be.an.instanceOf(Adapter);
+        _adapter = settings.ADAPTERS.default;
+      } catch (e) {
+        if (e instanceof AssertionError) {
+          throw new errors.AdapterNotFoundError('default', e);
+        } else {
+          throw e;
+        }
+      }
+    }
+    return _adapter;
+  },
+  set: function () {
+    throw new Error(
+      'Adapter property of an Entity instance cannot be changed'
+    );
+  },
+  enumerable: false,
+  configurable: true
+});
 
 Object.defineProperty(Entity, 'General', {
   value: null,
