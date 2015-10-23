@@ -19,7 +19,7 @@ module.exports = Attribute;
  * extensible. The Attribute is an abstract class and cannot be directly
  * initialized. Use Attribute.resolve anywhere or Attribute.call inside a
  * subclass' constructor to initialize a new Attribute.
- * @memberof module:back4app/entity/models/attributes
+ * @memberof module:back4app-entity/models/attributes
  * @name Attribute
  * @constructor
  * @abstract
@@ -43,7 +43,7 @@ module.exports = Attribute;
  * extensible. The Attribute is an abstract class and cannot be directly
  * initialized. Use Attribute.resolve anywhere or Attribute.call inside a
  * subclass' constructor to initialize a new Attribute.
- * @memberof module:back4app/entity/models/attributes
+ * @memberof module:back4app-entity/models/attributes
  * @name Attribute
  * @constructor
  * @param {!string} name It is the name of the attribute.
@@ -62,7 +62,7 @@ module.exports = Attribute;
 function Attribute() {
   /**
    * This is the attribute' name.
-   * @name module:back4app/entity/models/attributes.Attribute#name
+   * @name module:back4app-entity/models/attributes.Attribute#name
    * @type {!string}
    * @readonly
    * @example
@@ -77,7 +77,7 @@ function Attribute() {
   this.name = null;
   /**
    * This is the attribute type.
-   * @name module:back4app/entity/models/attributes.Attribute#type
+   * @name module:back4app-entity/models/attributes.Attribute#type
    * @type {!Class}
    * @readonly
    * @example
@@ -92,7 +92,7 @@ function Attribute() {
   this.type = null;
   /**
    * This is the attribute's multiplicity.
-   * @name module:back4app/entity/models/attributes.Attribute#multiplicity
+   * @name module:back4app-entity/models/attributes.Attribute#multiplicity
    * @type {!string}
    * @readonly
    * @example
@@ -107,7 +107,7 @@ function Attribute() {
   this.multiplicity = null;
   /**
    * This is the attribute's default expression.
-   * @name module:back4app/entity/models/attributes.Attribute#default
+   * @name module:back4app-entity/models/attributes.Attribute#default
    * @type {?(boolean|number|string|Object|function)}
    * @readonly
    * @example
@@ -283,7 +283,7 @@ Attribute.prototype.validateValue = validateValue;
  * Resolves the arguments and create a new instance of Attribute. It tries to
  * find the Attribute type. It it is not possible, it assumes that it is an
  * AssociationAttribute.
- * @memberof module:back4app/entity/models/attributes.Attribute
+ * @memberof module:back4app-entity/models/attributes.Attribute
  * @name resolve
  * @param {!Object} attribute This is the attribute to be resolved. It can be
  * passed as an Object.
@@ -296,9 +296,9 @@ Attribute.prototype.validateValue = validateValue;
  * value.
  * @param {?(boolean|number|string|Object|function)} [attribute.default] It is
  * the default expression of the attribute.
- * @returns {module:back4app/entity/models/attributes.Attribute} The new
+ * @returns {module:back4app-entity/models/attributes.Attribute} The new
  * Attribute instance.
- * @throws {module:back4app/entity/models/errors.AttributeTypeNotFoundError}
+ * @throws {module:back4app-entity/models/errors.AttributeTypeNotFoundError}
  * @example
  * Attribute.resolve({
  *   name: 'attribute',
@@ -311,7 +311,7 @@ Attribute.prototype.validateValue = validateValue;
  * Resolves the arguments and create a new instance of Attribute. It tries to
  * find the Attribute type. It it is not possible, it assumes that it is an
  * AssociationAttribute.
- * @memberof module:back4app/entity/models/attributes.Attribute
+ * @memberof module:back4app-entity/models/attributes.Attribute
  * @name resolve
  * @param {!string} name It is the name of the attribute.
  * @param {!string} [type='Object'] It is the type of the attribute. It is
@@ -320,9 +320,9 @@ Attribute.prototype.validateValue = validateValue;
  * It is optional and if not passed it will assume '1' as the default value.
  * @param {?(boolean|number|string|Object|function)} [default] It is the default
  * expression of the attribute.
- * @returns {module:back4app/entity/models/attributes.Attribute} The new
+ * @returns {module:back4app-entity/models/attributes.Attribute} The new
  * Attribute instance.
- * @throws {module:back4app/entity/models/errors.AttributeTypeNotFoundError}
+ * @throws {module:back4app-entity/models/errors.AttributeTypeNotFoundError}
  * @example
  * Attribute.resolve(
  *   this,
@@ -406,9 +406,9 @@ function resolve() {
 
 /**
  * Gets the default value of the current Attribute to a given Entity instance.
- * @name module:back4app/entity/models/attributes.Attribute#getDefaultValue
+ * @name module:back4app-entity/models/attributes.Attribute#getDefaultValue
  * @function
- * @param {!module:back4app/entity/models.Entity} entity The Entity instance to
+ * @param {!module:back4app-entity/models.Entity} entity The Entity instance to
  * which the default value will be get.
  * @returns {boolean|number|string|Object|function} The default value.
  * @example
@@ -430,7 +430,7 @@ function getDefaultValue(entity) {
   );
 
   if (typeof this.default === 'function') {
-    return this.default.call(new models.Entity());
+    return this.default.call(entity);
   } else {
     return this.default;
   }
@@ -438,13 +438,13 @@ function getDefaultValue(entity) {
 
 /**
  * Validates an attribute of an Entity instance and throws a
- * {@link module:back4app/entity/models/errors.ValidationError} if
+ * {@link module:back4app-entity/models/errors.ValidationError} if
  * it is not validated.
- * @name module:back4app/entity/models/attributes.Attribute#validate
+ * @name module:back4app-entity/models/attributes.Attribute#validate
  * @function
- * @param {!module:back4app/entity/models.Entity} entity The entity whose
+ * @param {!module:back4app-entity/models.Entity} entity The entity whose
  * attribute will be validated.
- * @throws {module:back4app/entity/models/errors.ValidationError}
+ * @throws {module:back4app-entity/models/errors.ValidationError}
  * @example
  * myEntity.Entity.attributes.myAttribute.validate(myEntity);
  */
@@ -545,13 +545,13 @@ function validate(entity) {
 
 /**
  * Validates a value and throws a
- * {@link module:back4app/entity/models/errors.ValidationError} if
+ * {@link module:back4app-entity/models/errors.ValidationError} if
  * it is not validated. It shall be implemented in the specializations of
  * Attribute class.
- * @name module:back4app/entity/models/attributes.Attribute#validateValue
+ * @name module:back4app-entity/models/attributes.Attribute#validateValue
  * @function
  * @param {*} value The value to be validated.
- * @throws {module:back4app/entity/models/errors.ValidationError}
+ * @throws {module:back4app-entity/models/errors.ValidationError}
  * @example
  * myEntity.Entity.attributes.myAttribute.validateValue(myEntity.myAttribute);
  */

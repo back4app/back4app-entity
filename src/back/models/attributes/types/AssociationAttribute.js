@@ -15,10 +15,10 @@ module.exports = AssociationAttribute;
 
 /**
  * Implementation of an Entity Attribute to store association data.
- * @memberof module:back4app/entity/models/attributes/types
+ * @memberof module:back4app-entity/models/attributes/types
  * @name AssociationAttribute
  * @constructor
- * @extends module:back4app/entity/models/attributes.Attribute
+ * @extends module:back4app-entity/models/attributes.Attribute
  * @param {!Object} attribute This is the attribute to be added. It can be
  * passed as an Object.
  * @param {!string} attribute.name It is the name of the attribute.
@@ -39,10 +39,10 @@ module.exports = AssociationAttribute;
  */
 /**
  * Implementation of an Entity Attribute to store association data.
- * @memberof module:back4app/entity/models/attributes/types
+ * @memberof module:back4app-entity/models/attributes/types
  * @name AssociationAttribute
  * @constructor
- * @extends module:back4app/entity/models/attributes.Attribute
+ * @extends module:back4app-entity/models/attributes.Attribute
  * @param {!string} name It is the name of the attribute.
  * @param {!(string|Class)} entity It is the Entity that
  * is associated with the current AssociationAttribute.
@@ -63,10 +63,10 @@ function AssociationAttribute() {
    * It is a readonly property with the Entity that is associated with the
    * current AssociationAttribute.
    * @name
-   * module:back4app/entity/models/attributes/types.AssociationAttribute#Entity
+   * module:back4app-entity/models/attributes/types.AssociationAttribute#Entity
    * @type {!Class}
    * @readonly
-   * @throws {module:back4app/entity/models/errors.EntityNotFoundError}
+   * @throws {module:back4app-entity/models/errors.EntityNotFoundError}
    * @example
    * var associationAttribute = new AssociationAttribute(
    *   'associationAttribute',

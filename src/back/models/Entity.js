@@ -1,21 +1,27 @@
 'use strict';
 
-var expect = require('chai').expect;
+var chai = require('chai');
+var expect = chai.expect;
+var AssertionError = chai.AssertionError;
+var settings = require('../settings');
 var classes = require('../utils/classes');
 var objects = require('../utils/objects');
+var Adapter = require('../adapters/Adapter');
 var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
 var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
+var uuid = require('node-uuid');
 
 module.exports = Entity;
 
 require('./index').Entity = Entity;
 
+
 /**
  * Base class for entities.
  * @constructor
- * @memberof module:back4app/entity/models
+ * @memberof module:back4app-entity/models
  * @param {?Object.<!string, ?Object>} [attributeValues] It has to be passed as
  * a dictionary of attribute's name and values to initialize a new Entity.
  * @example
@@ -24,7 +30,7 @@ require('./index').Entity = Entity;
 function Entity(attributeValues) {
   /**
    * This is a read-only property to get the Entity Class of an instance.
-   * @name module:back4app/entity/models.Entity#Entity
+   * @name module:back4app-entity/models.Entity#Entity
    * @type {!Class}
    * @readonly
    * @example
@@ -45,6 +51,17 @@ function Entity(attributeValues) {
    * console.log(myEntity.General == Entity); // Logs "true"
    */
   this.General = null;
+  /**
+   * This is a read-only property to get the id of a new entity
+   * instance. It is generated in according to UUID pattern type 4.
+   * @type {!String}
+   * @readonly
+   * @example
+   * var MyEntity = Entity.specify('MyEntity');
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.id); // Logs a string id
+   */
+  this.id = null;
 
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     Object.defineProperty(this, 'Entity', {
@@ -103,7 +120,7 @@ function Entity(attributeValues) {
       value: attributeValue,
       enumerable: true,
       writable: true,
-      configurable: false
+      configurable: attribute === 'id'
     });
   }
 
@@ -112,8 +129,31 @@ function Entity(attributeValues) {
       this[attribute] = attributes[attribute].getDefaultValue(this);
     }
   }
+
+  var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
+    '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+  expect(new RegExp(regex).test(this.id)).to.equal(
+    true,
+    'Invalid property "id" when creating a new "' +
+    this.Entity.specification.name + '" (it has to be a valid uuid)'
+  );
+
+  Object.defineProperty(this, 'id', {
+    value: this.id,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
 }
 
+/**
+ * This is a read-only property to get the adapter of an Entity class.
+ * @type {!module:back4app-entity/adapters.Adapter}
+ * @readonly
+ * @example
+ * var myDefaultAdapter = Entity.adapter;
+ */
+Entity.adapter = null;
 /**
  * This is a read-only property to get the general Entity Class of the current
  * Entity Class.
@@ -125,7 +165,7 @@ function Entity(attributeValues) {
 Entity.General = null;
 /**
  * This is the specification of the current Entity Class.
- * @type {!module:back4app/entity/models.EntitySpecification}
+ * @type {!module:back4app-entity/models.EntitySpecification}
  * @readonly
  * @example
  * var entitySpecification = Entity.specification;
@@ -134,7 +174,7 @@ Entity.specification = null;
 /**
  * This is a dictionary with a consolidation of the Entity's attributes.
  * @type
- * {!Object.<!string, !module:back4app/entity/models/attributes.Attribute>}
+ * {!Object.<!string, !module:back4app-entity/models/attributes.Attribute>}
  * @readonly
  * @example
  * var consolidatedAttributes = Entity.attributes;
@@ -142,7 +182,7 @@ Entity.specification = null;
 Entity.attributes = null;
 /**
  * This is a dictionary with a consolidation of the Entity's methods.
- * @type {!Object.<!string, !module:back4app/entity/models/methods.Method>}
+ * @type {!Object.<!string, !module:back4app-entity/models/methods.Method>}
  * @readonly
  * @example
  * var consolidatedMethods = Entity.methods;
@@ -195,6 +235,17 @@ Entity.new = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 
+Object.defineProperty(Entity, 'adapter', {
+  get: _getAdapter,
+  set: function () {
+    throw new Error(
+      'Adapter property of an Entity class cannot be changed'
+    );
+  },
+  enumerable: false,
+  configurable: false
+});
+
 Object.defineProperty(Entity, 'General', {
   value: null,
   enumerable: true,
@@ -202,7 +253,17 @@ Object.defineProperty(Entity, 'General', {
   configurable: false
 });
 
-var _entitySpecification = new EntitySpecification('Entity');
+var _entityAttributes = new AttributeDictionary({
+  id: {
+    type: 'String',
+    default: uuid.v4
+  }
+});
+
+var _entitySpecification = new EntitySpecification(
+  'Entity',
+  _entityAttributes
+);
 
 Object.defineProperty(Entity, 'specification', {
   value: _entitySpecification,
@@ -214,7 +275,7 @@ Object.defineProperty(Entity, 'specification', {
 _entitySpecification.Entity = Entity;
 
 Object.defineProperty(Entity, 'attributes', {
-  value: {},
+  value: _entityAttributes,
   enumerable: true,
   writable: false,
   configurable: false
@@ -268,8 +329,37 @@ Object.defineProperty(Entity, 'specializations', {
 });
 
 /**
+ * Gets the adapter to be used by the Entity class.
+ * @name module:back4app-entity/models.Entity~_getAdapter
+ * @function
+ * @returns {module:back4app-entity/adapters.Adapter}
+ * @throws {module:back4app-entity/models/errors.AdapterNotFoundError}
+ * @private
+ * @example
+ * var defaultAdapter = _getAdapter();
+ */
+var _adapter = null;
+function _getAdapter() {
+  if (!_adapter) {
+    try {
+      expect(settings).to.have.ownProperty('ADAPTERS');
+      expect(settings.ADAPTERS).to.have.ownProperty('default');
+      expect(settings.ADAPTERS.default).to.be.an.instanceOf(Adapter);
+      _adapter = settings.ADAPTERS.default;
+    } catch (e) {
+      if (e instanceof AssertionError) {
+        throw new errors.AdapterNotFoundError('default', e);
+      } else {
+        throw e;
+      }
+    }
+  }
+  return _adapter;
+}
+
+/**
  * Visits all specializations of a list of entities.
- * @name module:back4app/entity/models.Entity~_visitSpecializations
+ * @name module:back4app-entity/models.Entity~_visitSpecializations
  * @function
  * @param entities The entities whose specializations shall be visited.
  * @param visitedEntities The list of visited entities.
@@ -295,7 +385,7 @@ function _visitSpecializations(entities, visitedEntities) {
 /**
  * Private function used to get the specify function specific for the current
  * Entity class.
- * @name module:back4app/entity/models.Entity~_getSpecifyFunction
+ * @name module:back4app-entity/models.Entity~_getSpecifyFunction
  * @function
  * @param {!Class} CurrentEntity The currentEntity for which the specify
  * function will be got.
@@ -316,6 +406,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     );
 
     var SpecificEntity = function (attributeValues) {
+
       if (!this.hasOwnProperty('Entity') || !this.Entity) {
         Object.defineProperty(this, 'Entity', {
           value: SpecificEntity,
@@ -329,6 +420,17 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     };
 
     classes.generalize(CurrentEntity, SpecificEntity);
+
+    Object.defineProperty(SpecificEntity, 'adapter', {
+      get: _getAdapter,
+      set: function () {
+        throw new Error(
+          'Adapter property of an Entity class cannot be changed'
+        );
+      },
+      enumerable: false,
+      configurable: false
+    });
 
     Object.defineProperty(SpecificEntity, 'General', {
       value: CurrentEntity,
@@ -533,10 +635,10 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
 /**
  * Creates a new Entity Class by specifying a general one.
- * @memberof module:back4app/entity/models.Entity
+ * @memberof module:back4app-entity/models.Entity
  * @name specify
  * @function
- * @param {!module:back4app/entity/models.EntitySpecification} specification
+ * @param {!module:back4app-entity/models.EntitySpecification} specification
  * The new Entity specification.
  * @returns {Class} The new Entity Class.
  * @example
@@ -556,27 +658,27 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  */
 /**
  * Creates a new Entity Class by specifying a general one.
- * @memberof module:back4app/entity/models.Entity
+ * @memberof module:back4app-entity/models.Entity
  * @name specify
  * @function
  * @param {!string} name The new entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeDictionary|
- * module:back4app/entity/models/attributes.Attribute[]|
- * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
+ * {?(module:back4app-entity/models/attributes.AttributeDictionary|
+ * module:back4app-entity/models/attributes.Attribute[]|
+ * Object.<!string, !(module:back4app-entity/models/attributes.Attribute|
  * Object)>)}
  * [attributes] The new entity specification attributes. It can be given as an
  * instance of
- * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
+ * {@link module:back4app-entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
+ * {@link module:back4app-entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodDictionary|
+ * {?(module:back4app-entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
  * [methods] The new entity specification methods. It can be given as an
- * instance of {@link module:back4app/entity/models/methods.MethodDictionary}
+ * instance of {@link module:back4app-entity/models/methods.MethodDictionary}
  * or an object, as specified in
- * {@link module:back4app/entity/models/methods.MethodDictionary}.
+ * {@link module:back4app-entity/models/methods.MethodDictionary}.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify('MyEntity');
@@ -607,29 +709,29 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  */
 /**
  * Creates a new Entity Class by specifying a general one.
- * @memberof module:back4app/entity/models.Entity
+ * @memberof module:back4app-entity/models.Entity
  * @name specify
  * @function
  * @param {!Object} specification The new Entity specification.
  * @param {!string} specification.name The new Entity name.
  * @param
- * {?(module:back4app/entity/models/attributes.AttributeDictionary|
- * module:back4app/entity/models/attributes.Attribute[]|
- * Object.<!string, !(module:back4app/entity/models/attributes.Attribute|
+ * {?(module:back4app-entity/models/attributes.AttributeDictionary|
+ * module:back4app-entity/models/attributes.Attribute[]|
+ * Object.<!string, !(module:back4app-entity/models/attributes.Attribute|
  * Object)>)}
  * [specification.attributes] The new entity specification attributes. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/attributes.AttributeDictionary} or an
+ * {@link module:back4app-entity/models/attributes.AttributeDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/attributes.AttributeDictionary}.
+ * {@link module:back4app-entity/models/attributes.AttributeDictionary}.
  * @param
- * {?(module:back4app/entity/models/methods.MethodDictionary|
+ * {?(module:back4app-entity/models/methods.MethodDictionary|
  * Object.<!string, !function>)}
  * [specification.methods] The new entity specification methods. It can be
  * given as an instance of
- * {@link module:back4app/entity/models/methods.MethodDictionary} or an
+ * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
- * {@link module:back4app/entity/models/methods.MethodDictionary}.
+ * {@link module:back4app-entity/models/methods.MethodDictionary}.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify({ name: 'MyEntity' });
@@ -665,7 +767,7 @@ Entity.specify = _getSpecifyFunction(Entity, _directSpecializations);
 /**
  * Private function used to get the getSpecialization function specific for the
  * current Entity class.
- * @name module:back4app/entity/models.Entity~_getGetSpecializationFunction
+ * @name module:back4app-entity/models.Entity~_getGetSpecializationFunction
  * @function
  * @param {!Class} CurrentEntity The current entity class for which the new
  * function will be created.
@@ -705,12 +807,12 @@ var _getGetSpecializationFunction = function (CurrentEntity) {
 
 /**
  * Gets an Entity specialization by its name.
- * @memberof module:back4app/entity/models.Entity
+ * @memberof module:back4app-entity/models.Entity
  * @name getSpecialization
  * @function
  * @param {!string} entity The name of the entity.
  * @returns {Class}
- * @throws {module:back4app/entity/models/errors.EntityNotFoundError}
+ * @throws {module:back4app-entity/models/errors.EntityNotFoundError}
  * @example
  * var MyEntity = Entity.getSpecialization('MyEntity');
  */
@@ -719,7 +821,7 @@ Entity.getSpecialization = _getGetSpecializationFunction(Entity);
 /**
  * Private function used to get the new function specific for the current Entity
  * class.
- * @name module:back4app/entity/models.Entity~_getNewFunction
+ * @name module:back4app-entity/models.Entity~_getNewFunction
  * @function
  * @param {!Class} CurrentEntity The current entity class for which the new
  * function will be created.
@@ -756,7 +858,7 @@ var _getNewFunction = function (CurrentEntity) {
 
 /**
  * Returns a function that creates new instances of an Entity Class.
- * @memberof module:back4app/entity/models.Entity
+ * @memberof module:back4app-entity/models.Entity
  * @name new
  * @function
  * @param {?string} [entity] The Entity Class of which the new instances will be
@@ -771,13 +873,13 @@ Entity.new = _getNewFunction(Entity);
 
 /**
  * Validates an entity and throws a
- * {@link module:back4app/entity/models/errors.ValidationError} if it is not
+ * {@link module:back4app-entity/models/errors.ValidationError} if it is not
  * validated.
- * @name module:back4app/entity/models.Entity#validate
+ * @name module:back4app-entity/models.Entity#validate
  * @function
  * @param {?string} attribute The name of the attribute to be validated. If no
  * attribute is passed, all attributes will be validated.
- * @throws {module:back4app/entity/models/errors.ValidationError}
+ * @throws {module:back4app-entity/models/errors.ValidationError}
  * @example
  * myEntity.validate('myAttribute'); // Validates attribute "myAttribute" of
  *                                   // Entity "myEntity"
@@ -818,7 +920,7 @@ function validate(attribute) {
 
 /**
  * Validates an entity and returns a boolean indicating if it is valid.
- * @name module:back4app/entity/models.Entity#isValid
+ * @name module:back4app-entity/models.Entity#isValid
  * @function
  * @param {?string} attribute The name of the attribute to be validated. If no
  * attribute is passed, all attributes will be validated.
@@ -842,3 +944,4 @@ function isValid(attribute) {
   }
   return true;
 }
+

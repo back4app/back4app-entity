@@ -9,6 +9,8 @@ var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var classes = require('../../../../src/back/utils').classes;
 
+require('../../settings');
+
 describe('classes', function () {
   describe('~generalize', function () {
     context('interface tests', function () {

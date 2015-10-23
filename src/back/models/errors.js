@@ -10,13 +10,14 @@ var expect = require('chai').expect;
 /**
  * Contains Error Classes used to be thrown when the models API is not used
  * correctly.
- * @module back4app/entity/models/errors
+ * @module back4app-entity/models/errors
  */
 module.exports = {};
 
 module.exports.EntityNotFoundError = EntityNotFoundError;
 module.exports.AttributeTypeNotFoundError = AttributeTypeNotFoundError;
 module.exports.ValidationError = ValidationError;
+module.exports.AdapterNotFoundError = AdapterNotFoundError;
 
 /**
  * Error class to be used when an Entity was referenced and the platform was not
@@ -25,7 +26,7 @@ module.exports.ValidationError = ValidationError;
  * @extends Error
  * @param {?string} [entity] The entity name to be displayed.
  * @param {?Error} [innerError] The inner error.
- * @memberof module:back4app/entity/models/errors
+ * @memberof module:back4app-entity/models/errors
  * @example
  * try {
  *   var myEntity = require('./MyEntity');
@@ -84,7 +85,7 @@ util.inherits(EntityNotFoundError, Error);
  * @extends Error
  * @param {?string} [type] The attribute type name to be displayed.
  * @param {?Error} [innerError] The inner error.
- * @memberof module:back4app/entity/models/errors
+ * @memberof module:back4app-entity/models/errors
  * @example
  * try {
  *   var TypedAttribute = types.get('MyCustomAttribute');
@@ -148,7 +149,7 @@ util.inherits(AttributeTypeNotFoundError, Error);
  * @param {?(string|number)} [position] The position in the attribute that is
  * not valid.
  * @param {?Error} [innerError] The inner error.
- * @memberof module:back4app/entity/models/errors
+ * @memberof module:back4app-entity/models/errors
  * @example
  * try
  * {
@@ -256,3 +257,61 @@ function ValidationError(
 }
 
 util.inherits(ValidationError, Error);
+
+/**
+ * Error class to be used when an Adapter was referenced and the platform
+ * was not able to find it.
+ * @constructor
+ * @extends Error
+ * @param {?string} [adapterName] The adapter name to be displayed.
+ * @param {?Error} [innerError] The inner error.
+ * @memberof module:back4app-entity/models/errors
+ * @example
+ * if (settings.ADAPTERS.default) {
+ *   return settings.ADAPTERS.default;
+ * } else {
+ *   throw new errors.AdapterNotFoundError('default');
+ * }
+ */
+function AdapterNotFoundError(adapterName, innerError) {
+  /**
+   * The name of the adapter that was not found.
+   * @type {?string}
+   */
+  this.adapterName = adapterName;
+  /**
+   * The inner error that generated the current error.
+   * @type {?Error}
+   */
+  this.innerError = innerError;
+
+  expect(arguments).to.have.length.below(
+    3,
+    'Invalid arguments length when creating a new ' +
+    'EntityNotFoundError (it has to be passed less than 3 arguments)'
+  );
+
+  this.name = 'AdapterNotFoundError';
+
+  this.message = 'Cannot find Adapter';
+  if (adapterName) {
+    expect(adapterName).to.be.a(
+      'string',
+      'Invalid argument "adapterName" when creating a new ' +
+      'AdapterNotFoundError (it has to be a string)'
+    );
+    this.message += ' "' + adapterName + '"';
+  }
+
+  this.stack = (new Error(this.message)).stack;
+  if (innerError) {
+    expect(innerError).to.be.an.instanceof(
+      Error,
+      'Invalid argument "innerError" when creating a new ' +
+      'AdapterNotFoundError (it has to be an Error)'
+    );
+    this.stack += '\n\n' + innerError.stack;
+  }
+}
+
+util.inherits(AdapterNotFoundError, Error);

@@ -3,6 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var settings = require('../../../../src/back').settings;
 var classes = require('../../../../src/back/utils').classes;
 var models = require('../../../../src/back/models');
 var EntityNotFoundError = models.errors.EntityNotFoundError;
@@ -11,6 +12,10 @@ var Entity = models.Entity;
 var EntitySpecification = models.EntitySpecification;
 var attributes = models.attributes;
 var methods = models.methods;
+var MockAdapter = require('../adapters/MockAdapter');
+var mockery = require('mockery');
+
+require('../../settings');
 
 describe('Entity', function () {
   var entity;
@@ -131,6 +136,85 @@ describe('Entity', function () {
         Entity.specify('MyEntity14', {}, function () {});
       }).to.throw(AssertionError);
     });
+
+    describe('.id', function () {
+      it('expect not be undefined', function () {
+        expect(c1.id).to.not.equal(undefined);
+        expect(c11.id).to.not.equal(undefined);
+        expect(c2.id).to.not.equal(undefined);
+      });
+
+      it('expect to be valid', function () {
+        var c1Id = c1.id;
+        var c11Id = c11.id;
+        var c2Id = c2.id;
+
+        function isValid(id) {
+          var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
+            '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+          return new RegExp(regex).test(id);
+        }
+
+        expect(isValid(c1Id)).to.equal(true);
+        expect(isValid(c11Id)).to.equal(true);
+        expect(isValid(c2Id)).to.equal(true);
+      });
+
+      it('expect to generate different ids', function () {
+        expect(c1.id).to.not.equal(c11.id);
+        expect(c1.id).to.not.equal(c2.id);
+        expect(c2.id).to.not.equal(c11.id);
+      });
+
+      it('expect to be given in the constructor', function () {
+        expect(new Entity({
+          id: '00000000-0000-4000-a000-000000000000'
+        }))
+          .to.have.property('id')
+          .that.equals('00000000-0000-4000-a000-000000000000');
+      });
+
+      it('expect to validate if given id is valid', function () {
+        expect(function () {
+          entity = new Entity({id: 'itisnotvalid'});
+        }).to.throw(Error);
+      });
+
+      it('expect to be not writable', function () {
+        expect(function () {
+          c1.id = '00000000-0000-4000-a000-000000000000';
+        }).to.throw(Error);
+      });
+    });
+  });
+
+  describe('.adapter', function () {
+    it(
+      'expect to exist as a static property and contain the right adapter',
+      function () {
+        expect(Entity).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+        expect(C1).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+        expect(C11).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+        expect(C2).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+      }
+    );
+
+    it('expect to not be changed or deleted', function () {
+      expect(function () {
+        delete Entity.adapter;
+      }).to.throw(Error);
+
+      expect(function () {
+        Entity.adapter = new MockAdapter();
+      }).to.throw(Error);
+
+      expect(Entity).to.have.property('adapter')
+        .that.be.an.instanceOf(MockAdapter);
+    });
   });
 
   describe('.General', function () {
@@ -212,7 +296,8 @@ describe('Entity', function () {
           'c1A7',
           'c1A8',
           'c1A9',
-          'c1A10'
+          'c1A10',
+          'id'
         ]);
       }
     );
@@ -562,6 +647,31 @@ describe('Entity', function () {
     });
 
     it('expect to store data correctly', function () {
+      //enable mockery
+      mockery.enable({
+        useCleanCache: true,
+        warnOnUnregistered: false
+      });
+
+      //mocking v4() node-uuid function
+      var uuidMock = {
+        v4: function () {
+          return '00000000-0000-4000-a000-000000000000';
+        }
+      };
+
+      //register mock on node-uuid and require node-uuid
+      mockery.registerMock('node-uuid', uuidMock);
+
+      //new require to use the mock
+      C1 = require('./C1');
+      C11 = require('./C11');
+      C2 = require('./C2');
+
+      c1 = new C1();
+      c11 = new C11();
+      c2 = new C2();
+
       expect(c1).to.have.property('c1A1').that.equals(false);
       expect(c1).to.have.property('c1A2');
       expect(c1).to.have.property('c1A3').that.deep.equals([0]);
@@ -613,6 +723,22 @@ describe('Entity', function () {
       expect(newC11).to.have.property('c1A9').that.deep.equals([new C2()]);
       expect(newC11).to.have.property('c1A10').that.deep.equals(new C2());
       expect(newC11).to.have.property('c11A1').that.deep.equals({z: 'z'});
+
+      //disable mock on node-uuid
+      mockery.deregisterMock('node-uuid');
+
+      //disable mockery
+      mockery.disable();
+
+      //restoring old require without mock
+      C1 = require('./C1');
+      C11 = require('./C11');
+      C2 = require('./C2');
+
+      c1 = new C1();
+      c11 = new C11();
+      c2 = new C2();
+
     });
 
     it('expect methods to run correctly', function () {
@@ -630,10 +756,9 @@ describe('Entity', function () {
       expect(c11.c1M2(1, 2)).to.equal(3);
       expect(c11.c1M2('a', 'b')).to.equal('ab');
       expect(c11.c11M()).to.equal(
-        'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10c11A1c1A1c1A2c1A3c1A4c1A5' +
-        'c1A6c1A7c1A8c1A9c1A10'
+        'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10idc11A1c1A1c1A2c1A3c1A4c1A5' +
+        'c1A6c1A7c1A8c1A9c1A10id'
       );
-
       expect(c2.constructor()).to.equal('constructor');
     });
   });

@@ -14,6 +14,8 @@ var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var NumberAttribute = attributes.types.NumberAttribute;
 
+require('../../../../settings');
+
 describe('NumberAttribute', function () {
   var numberAttribute;
 

@@ -14,6 +14,8 @@ var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var StringAttribute = attributes.types.StringAttribute;
 
+require('../../../../settings');
+
 describe('StringAttribute', function () {
   var stringAttribute;
 

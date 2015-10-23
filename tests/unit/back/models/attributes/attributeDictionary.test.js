@@ -9,6 +9,8 @@ var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var attributes = require('../../../../../').models.attributes;
 
+require('../../../settings');
+
 describe('AttributeDictionary', function () {
   var attributeDictionary;
 

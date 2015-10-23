@@ -17,7 +17,7 @@ var StringAttribute = require('./StringAttribute');
 /**
  * Contains specializations of the Attribute class to be used as types of
  * attributes.
- * @module back4app/entity/models/attributes/types
+ * @module back4app-entity/models/attributes/types
  */
 module.exports = {};
 
@@ -44,12 +44,12 @@ Object.defineProperty(module.exports, 'get', {
  * tries to find the exactly name. If not find, it tries concatenates the given
  * string with "Attribute" in the end and tries again. If it still cannot find,
  * it throws an
- * {@link module:back4app/entity/models/errors.AttributeTypeNotFoundError}.
- * @name module:back4app/entity/models/attributes/types~get
+ * {@link module:back4app-entity/models/errors.AttributeTypeNotFoundError}.
+ * @name module:back4app-entity/models/attributes/types~get
  * @function
  * @param {!string} type The name of type to be get.
  * @returns {Class} The Attribute type class.
- * @throws {module:back4app/entity/models/errors.AttributeTypeNotFoundError}
+ * @throws {module:back4app-entity/models/errors.AttributeTypeNotFoundError}
  * @example
  * var ObjectAttribute = types.get('ObjectAttribute);
  */
