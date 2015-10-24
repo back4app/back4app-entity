@@ -364,7 +364,7 @@ function EntitySpecification() {
    * _loadEntityMembers();
    */
   function _loadEntityMembers() {
-    if (_Entity) {
+    if (_Entity && _Entity !== models.Entity) {
       for (var attribute in _attributes) {
         _loadEntityAttribute(_attributes[attribute]);
       }
@@ -427,6 +427,23 @@ function EntitySpecification() {
         'there is a method with same name in a child of current Entity'
       );
     }
+
+    var dataName = attribute.getDataName(_Entity.adapterName);
+
+    for (var entityAttribute in _attributes) {
+      if (entityAttribute !== attribute.name) {
+        expect(
+          _attributes[entityAttribute].getDataName(_Entity.adapterName)
+        ).to.not.equal(
+          dataName,
+          'failed to load entity attribute "' + attribute.name + '" because ' +
+          'there is another attribute with same dataName "' + dataName + '" ' +
+          'for adapter "' + _Entity.adapterName + '" in the current Entity'
+        );
+      }
+    }
+
+    _Entity.adapter.loadAttribute(_Entity, attribute);
   }
 
   /**

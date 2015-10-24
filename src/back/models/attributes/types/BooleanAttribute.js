@@ -24,11 +24,19 @@ module.exports = BooleanAttribute;
  * value.
  * @param {?boolean} [attribute.default] It is
  * the default expression of the attribute.
+ * @param {?(string|Object.<!string, !string>)} [attribute.dataName] It is the
+ * name to be used to stored the attribute data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * attribute's name will be used instead.
  * @example
  * var booleanAttribute = new BooleanAttribute({
  *   name: 'booleanAttribute',
  *   multiplicity: '0..1',
- *   default: null
+ *   default: null,
+ *   dataName: {
+ *     mongodb: 'mongodbAttribute'
+ *   }
  * });
  */
 /**
@@ -42,11 +50,19 @@ module.exports = BooleanAttribute;
  * It is optional and if not passed it will assume '1' as the default value.
  * @param {?boolean} [default] It is the default
  * expression of the attribute.
+ * @param {?(string|Object.<!string, !string>)} [dataName] It is the name to be
+ * used to stored the attribute data in the repository. It can be given as a
+ * string that will be used by all adapters or as a dictionary specifying the
+ * data name for each adapter. If dataName is not given, the attribute's name
+ * will be used instead.
  * @example
  * var booleanAttribute = new BooleanAttribute(
  *   'booleanAttribute',
  *   '0..1',
- *   null
+ *   null,
+ *   {
+ *     mongodb: 'mongodbAttribute'
+ *   }
  * );
  */
 function BooleanAttribute() {

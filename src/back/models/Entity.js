@@ -148,6 +148,14 @@ function Entity(attributeValues) {
 }
 
 /**
+ * This is a read-only property to get the adapterName of an Entity class.
+ * @type {!string}
+ * @readonly
+ * @example
+ * var myDefaultAdapterName = Entity.adapterName;
+ */
+Entity.adapterName = null;
+/**
  * This is a read-only property to get the adapter of an Entity class.
  * @type {!module:back4app-entity/adapters.Adapter}
  * @readonly
@@ -237,6 +245,13 @@ Entity.create = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 
+Object.defineProperty(Entity, 'adapterName', {
+  value: 'default',
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
+
 Object.defineProperty(Entity, 'adapter', {
   get: _getAdapter,
   set: function () {
@@ -244,7 +259,7 @@ Object.defineProperty(Entity, 'adapter', {
       'Adapter property of an Entity class cannot be changed'
     );
   },
-  enumerable: false,
+  enumerable: true,
   configurable: false
 });
 
@@ -345,12 +360,13 @@ function _getAdapter() {
   if (!_adapter) {
     try {
       expect(settings).to.have.ownProperty('ADAPTERS');
-      expect(settings.ADAPTERS).to.have.ownProperty('default');
-      expect(settings.ADAPTERS.default).to.be.an.instanceOf(Adapter);
-      _adapter = settings.ADAPTERS.default;
+      expect(settings.ADAPTERS).to.have.ownProperty(this.adapterName);
+      var adapter = settings.ADAPTERS[this.adapterName];
+      expect(adapter).to.be.an.instanceOf(Adapter);
+      _adapter = adapter;
     } catch (e) {
       if (e instanceof AssertionError) {
-        throw new errors.AdapterNotFoundError('default', e);
+        throw new errors.AdapterNotFoundError(this.adapterName, e);
       } else {
         throw e;
       }
@@ -422,17 +438,6 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     };
 
     classes.generalize(CurrentEntity, SpecificEntity);
-
-    Object.defineProperty(SpecificEntity, 'adapter', {
-      get: _getAdapter,
-      set: function () {
-        throw new Error(
-          'Adapter property of an Entity class cannot be changed'
-        );
-      },
-      enumerable: false,
-      configurable: false
-    });
 
     Object.defineProperty(SpecificEntity, 'General', {
       value: CurrentEntity,
@@ -887,7 +892,7 @@ var _getCreateFunction = function (CurrentEntity) {
 
       newEntity.validate();
 
-      var promise = CurrentEntity.adapter.create(newEntity);
+      var promise = CurrentEntity.adapter.insertObject(newEntity);
 
       expect(promise).to.be.an.instanceOf(
         Promise,

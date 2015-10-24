@@ -44,11 +44,17 @@ function Adapter() {
   );
 }
 
-Adapter.prototype.create = create;
+Adapter.prototype.loadAttribute = loadAttribute;
+Adapter.prototype.insertObject = insertObject;
 
-function create() {
+function loadAttribute() {
+  throw new Error('Function "loadAttribute" has to be implemented in the ' +
+    'Adapter specialization');
+}
+
+function insertObject() {
   return new Promise(function () {
-    throw new Error('Function "create" have to be implemented in the Adapter ' +
-      'specialization');
+    throw new Error('Function "insertObject" has to be implemented in the ' +
+      'Adapter specialization');
   });
 }

@@ -29,12 +29,20 @@ module.exports = AssociationAttribute;
  * value.
  * @param {?Object} [attribute.default] It is
  * the default expression of the attribute.
+ * @param {?(string|Object.<!string, !string>)} [attribute.dataName] It is the
+ * name to be used to stored the attribute data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * attribute's name will be used instead.
  * @example
  * var associationAttribute = new AssociationAttribute({
  *   name: 'associationAttribute',
  *   entity: 'MyEntity',
  *   multiplicity: '0..1',
- *   default: null
+ *   default: null,
+ *   dataName: {
+ *     mongodb: 'mongodbAttribute'
+ *   }
  * });
  */
 /**
@@ -50,12 +58,20 @@ module.exports = AssociationAttribute;
  * It is optional and if not passed it will assume '1' as the default value.
  * @param {?Object} [default] It is the default
  * expression of the attribute.
+ * @param {?(string|Object.<!string, !string>)} [dataName] It is the name to be
+ * used to stored the attribute data in the repository. It can be given as a
+ * string that will be used by all adapters or as a dictionary specifying the
+ * data name for each adapter. If dataName is not given, the attribute's name
+ * will be used instead.
  * @example
  * var associationAttribute = new AssociationAttribute(
  *   'associationAttribute',
  *   'MyEntity',
  *   '0..1',
- *   null
+ *   null,
+ *   {
+ *     mongodb: 'mongodbAttribute'
+ *   }
  * );
  */
 function AssociationAttribute() {
@@ -98,9 +114,9 @@ function AssociationAttribute() {
 
   expect(argumentsArray).to.have.length.within(
     1,
-    4,
+    5,
     'Invalid arguments length when creating an AssociationAttribute (it has ' +
-    'to be passed from 1 to 4 arguments)'
+    'to be passed from 1 to 5 arguments)'
   );
 
   if (argumentsArray.length === 1) {

@@ -31,11 +31,19 @@ module.exports = Attribute;
  * value.
  * @param {?(boolean|number|string|Object|function)} [attribute.default] It is
  * the default expression of the attribute.
+ * @param {?(string|Object.<!string, !string>)} [attribute.dataName] It is the
+ * name to be used to stored the attribute data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * attribute's name will be used instead.
  * @example
  * Attribute.call(this, {
  *   name: 'attribute',
  *   multiplicity: '0..1',
- *   default: null
+ *   default: null,
+ *   dataName: {
+ *     mongodb: 'mongodbAttribute'
+ *   }
  * });
  */
 /**
@@ -51,12 +59,20 @@ module.exports = Attribute;
  * It is optional and if not passed it will assume '1' as the default value.
  * @param {?(boolean|number|string|Object|function)} [default] It is the default
  * expression of the attribute.
+ * @param {?(string|Object.<!string, !string>)} [dataName] It is the name to be
+ * used to stored the attribute data in the repository. It can be given as a
+ * string that will be used by all adapters or as a dictionary specifying the
+ * data name for each adapter. If dataName is not given, the attribute's name
+ * will be used instead.
  * @example
  * Attribute.call(
  *   this,
  *   'attribute',
  *   '0..1',
- *   null
+ *   null,
+ *   {
+ *     mongodb: 'mongodbAttribute'
+ *   }
  * );
  */
 function Attribute() {
@@ -120,6 +136,36 @@ function Attribute() {
    * console.log(this.default); // Logs "default"
    */
   this.default = null;
+  /**
+   * This is is the name to be used to stored the attribute data in the
+   * repository. It can be given as a string that will be used by all adapters
+   * or as a dictionary specifying the data name for each adapter. If dataName
+   * is not given, the attribute's name will be used instead.
+   * @name module:back4app-entity/models/attributes.Attribute#dataName
+   * @type {?(string|Object.<!string, !string>)}
+   * @readonly
+   * @example
+   * Attribute.call(
+   *   this,
+   *   'attribute',
+   *   '0..1',
+   *   'default',
+   *   {
+   *     mongodb: 'mongodbAttribute'
+   *   }
+   * );
+   * console.log(this.dataName.mongodb); // Logs "mongodbAttribute"
+   * @example
+   * Attribute.call(
+   *   this,
+   *   'attribute',
+   *   '0..1',
+   *   'default',
+   *   'dataAttribute'
+   * );
+   * console.log(this.dataName); // Logs "dataAttribute"
+   */
+  this.dataName = null;
 
   expect(this).to.be.an(
     'object',
@@ -154,12 +200,13 @@ function Attribute() {
   var _type = this.constructor;
   var _multiplicity = '1';
   var _default = null;
+  var _dataName, dataName = null;
 
   expect(arguments).to.have.length.within(
     1,
-    3,
+    4,
     'Invalid arguments length when creating an Attribute (it has to be ' +
-    'passed from 1 to 3 arguments)'
+    'passed from 1 to 4 arguments)'
   );
 
   if (arguments.length === 1 && typeof arguments[0] !== 'string') {
@@ -196,12 +243,12 @@ function Attribute() {
       expect(attribute.multiplicity).to.be.a(
         'string',
         'Invalid property "multiplicity" when creating an Attribute called "' +
-        _name + '" (it has to be a string'
+        _name + '" (it has to be a string)'
       );
 
       expect(['1', '0..1', '1..*', '*']).to.contain(
         attribute.multiplicity,
-        'Invalid property "multiplicity" when creating an Attribtue called "' +
+        'Invalid property "multiplicity" when creating an Attribute called "' +
         _name + '" (valid values are "1", "0..1", "1..*", "*")'
       );
 
@@ -210,6 +257,34 @@ function Attribute() {
 
     if (attribute.hasOwnProperty('default')) {
       _default = attribute.default;
+    }
+
+    if (attribute.hasOwnProperty('dataName')) {
+      if (typeof attribute.dataName === 'string') {
+        _dataName = attribute.dataName;
+      } else {
+        expect(attribute.dataName).to.be.an(
+          'object',
+          'Invalid property "dataName" when creating an Attribute called "' +
+          _name + '" (it has to be a string or an object)'
+        );
+
+        _dataName = {};
+        for (dataName in attribute.dataName) {
+          expect(attribute.dataName[dataName]).to.be.a(
+            'string',
+            'Invalid property "dataName" for adapter "' + dataName + '" when ' +
+            'creating an Attribute called "' + _name + '" (it has to be a ' +
+            'string)'
+          );
+
+          _dataName[dataName] = attribute.dataName[dataName];
+
+          Object.preventExtensions(_dataName);
+          Object.seal(_dataName);
+          Object.freeze(_dataName);
+        }
+      }
     }
   } else {
     expect(arguments[0]).to.be.a(
@@ -238,6 +313,34 @@ function Attribute() {
 
     if (arguments.length > 2) {
       _default = arguments[2];
+    }
+
+    if (arguments.length > 3) {
+      if (typeof arguments[3] === 'string') {
+        _dataName = arguments[3];
+      } else {
+        expect(arguments[3]).to.be.an(
+          'object',
+          'Invalid argument "dataName" when creating an Attribute called "' +
+          _name + '" (it has to be a string or an object)'
+        );
+
+        _dataName = {};
+        for (dataName in arguments[3]) {
+          expect(arguments[3][dataName]).to.be.a(
+            'string',
+            'Invalid argument "dataName" for adapter "' + dataName + '" when ' +
+            'creating an Attribute called "' + _name + '" (it has to be a ' +
+            'string)'
+          );
+
+          _dataName[dataName] = arguments[3][dataName];
+
+          Object.preventExtensions(_dataName);
+          Object.seal(_dataName);
+          Object.freeze(_dataName);
+        }
+      }
     }
   }
 
@@ -269,6 +372,13 @@ function Attribute() {
     configurable: false
   });
 
+  Object.defineProperty(this, 'dataName', {
+    value: _dataName,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
+
   Object.preventExtensions(this);
   Object.seal(this);
 }
@@ -278,6 +388,7 @@ Attribute.resolve = resolve;
 Attribute.prototype.getDefaultValue = getDefaultValue;
 Attribute.prototype.validate = validate;
 Attribute.prototype.validateValue = validateValue;
+Attribute.prototype.getDataName = getDataName;
 
 /**
  * Resolves the arguments and create a new instance of Attribute. It tries to
@@ -555,4 +666,36 @@ function validate(entity) {
  * @example
  * myEntity.Entity.attributes.myAttribute.validateValue(myEntity.myAttribute);
  */
-function validateValue() {}
+function validateValue() {
+  throw new Error('Function "validateValue" has to be implemented in the ' +
+    'Attribute specialization');
+}
+
+function getDataName(adapterName) {
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when getting the data name of an Attribute ' +
+    '(it has to be passed less than 2 arguments)');
+
+  if (adapterName) {
+    expect(adapterName).to.be.a(
+      'string',
+      'Invalid argument "adapterName" when getting the data name of an ' +
+      'Attribute (it has to be a string)'
+    );
+
+    if (
+      this.dataName &&
+      typeof this.dataName === 'object' &&
+      this.dataName.hasOwnProperty(adapterName)
+    ) {
+      return this.dataName[adapterName];
+    }
+  }
+
+  if (this.dataName && typeof this.dataName === 'string') {
+    return this.dataName;
+  } else {
+    return this.name;
+  }
+}
