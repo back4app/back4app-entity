@@ -1,6 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
+var Promise = require('bluebird');
 var classes = require('../utils').classes;
 
 module.exports = Adapter;
@@ -41,4 +42,13 @@ function Adapter() {
     'The Adapter\'s constructor can be only invoked from specialized' +
     'classes\' constructors'
   );
+}
+
+Adapter.prototype.create = create;
+
+function create(entity) {
+  return new Promise(function () {
+    throw new Error('Function "create" have to be implemented in the Adapter ' +
+      'specialization');
+  });
 }
