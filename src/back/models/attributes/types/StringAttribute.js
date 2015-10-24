@@ -55,6 +55,8 @@ function StringAttribute() {
 
 classes.generalize(Attribute, StringAttribute);
 
+StringAttribute.typeName = 'String';
+
 StringAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {

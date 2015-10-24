@@ -55,6 +55,8 @@ function DateAttribute() {
 
 classes.generalize(Attribute, DateAttribute);
 
+DateAttribute.typeName = 'Date';
+
 DateAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {

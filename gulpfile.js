@@ -27,51 +27,105 @@ gulp.task('test', ['dist', 'test-js', 'docs']);
  * Task to generate dist build
  */
 gulp.task('dist', ['clean:dist'], function () {
-  // core source code
-  gulp.src('')
-    .pipe(shell([
-      '<%= rjs %> -convert <%= src %> <%= dest %>'
-    ], {
-      templateData: {
-        rjs: paths.tools.rjs,
-        src: paths.core.src,
-        dest: paths.core.dest
-      }
-    }));
 
-  // vendor libs
-  gulp.src(paths.vendor.libs.chai)
-    .pipe(gulp.dest(paths.vendor.dest));
+  start();
 
-  gulp.src(paths.vendor.libs.util)
-    .pipe(rename('util.js'))
-    .pipe(gulp.dest(paths.vendor.dest));
+  function start() {
+    // wrap core source code in AMD-friendly format
+    gulp.src('')
+      .pipe(shell([
+        '<%= rjs %> -convert <%= src %> <%= dest %>'
+      ], {
+        templateData: {
+          rjs: paths.tools.rjs,
+          src: paths.core.src,
+          dest: paths.core.dest
+        }
+      }))
+      .on('end', convertLibChai);
+  }
 
-  gulp.src('')
-    .pipe(shell([
-      '<%= rjs %> -convert <%= src %> <%= dest %>'
-    ], {
-      templateData: {
-        rjs: paths.tools.rjs,
-        src: paths.vendor.libs.path,
-        dest: paths.build.tmpDir
-      }
-    }))
-    .on('end', function () {
-      gulp.src(path.join(paths.build.tmpDir, 'index.js'))
-        .pipe(rename('path.js'))
-        .pipe(gulp.dest(paths.vendor.dest))
-        .on('end', function () {
-          del([paths.build.tmpDir]);
-        });
-    });
+  function convertLibChai() {
+    // copy vendor lib, wrapping in AMD format if necessary
+    gulp.src(paths.vendor.libs.chai)
+      .pipe(gulp.dest(paths.vendor.dest))
+      .on('end', convertLibUuid);
+  }
+
+  function convertLibUuid() {
+    // copy vendor lib, wrapping in AMD format if necessary
+    gulp.src(paths.vendor.libs.uuid)
+      .pipe(gulp.dest(paths.vendor.dest))
+      .on('end', convertLibUtil);
+  }
+
+  function convertLibUtil() {
+    // copy vendor lib, wrapping in AMD format if necessary
+    gulp.src(paths.vendor.libs.util)
+      .pipe(rename('util.js'))
+      .pipe(gulp.dest(paths.vendor.dest))
+      .on('end', convertLibPath);
+  }
+
+  function convertLibPath() {
+    // copy vendor lib, wrapping in AMD format if necessary
+    var tmpConvertDir = path.join(paths.build.tmp, 'tmpConvert');
+    gulp.src('')
+      .pipe(shell([
+        '<%= rjs %> -convert <%= src %> <%= dest %>'
+      ], {
+        templateData: {
+          rjs: paths.tools.rjs,
+          src: paths.vendor.libs.path,
+          dest: tmpConvertDir
+        }
+      }))
+      .on('end', function () {
+        gulp.src(path.join(tmpConvertDir, 'index.js'))
+          .pipe(rename('path.js'))
+          .pipe(gulp.dest(paths.vendor.dest))
+          .on('end', buildMainBundle);
+      });
+  }
+
+  function buildMainBundle() {
+    // bundle all files and minify
+    gulp.src('')
+      .pipe(shell([
+        '<%= rjs %> -o build/config.json'
+      ], {
+        templateData: {
+          rjs: paths.tools.rjs
+        }
+      }))
+      .on('end', copyFilesToDist);
+  }
+
+  function copyFilesToDist() {
+    // copy bundle and index files to dist folder
+    var bundle = path.join(paths.build.tmp, 'back4app-entity.js');
+    var libDir = path.join(paths.build.dest, 'lib');
+    gulp.src(bundle)
+      .pipe(gulp.dest(libDir))
+      .on('end', function () {
+        var index = path.join(paths.build.src, 'index.js');
+        return gulp.src(index)
+          .pipe(gulp.dest(paths.build.dest))
+          .on('end', removeTempBuildFiles);
+      });
+  }
+
+  function removeTempBuildFiles() {
+    // remove temporary build folder
+    del([paths.build.tmp]);
+  }
 });
 
 /**
  * Task to clean dist folder
  */
 gulp.task('clean:dist', function () {
-  return del(['dist/lib/**/*']);
+  return del(['dist/**/*']);
 });
 
 /**

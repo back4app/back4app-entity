@@ -3,24 +3,27 @@
 
     "core": {
       "src": "src/back/",
-      "dest": "dist/lib/back4app-entity/"
+      "dest": "tmp-build/lib/back4app-entity/"
     },
 
     "vendor": {
-      "dest": "dist/lib/vendor/",
       "libs": {
         "chai": "node_modules/chai/chai.js",
+        "uuid": "node_modules/node-uuid/uuid.js",
         "util": "node_modules/util-browser/index.js",
         "path": "node_modules/path-browserify/"
-      }
+      },
+      "dest": "tmp-build/lib/vendor/"
+    },
+
+    "build": {
+      "src": "build/",
+      "dest": "dist/",
+      "tmp": "tmp-build/"
     },
 
     "tools": {
       "rjs": "node_modules/.bin/r.js"
-    },
-
-    "build": {
-      "tmpDir": ".tmp-build/"
     },
 
     "lintCheckFiles": [

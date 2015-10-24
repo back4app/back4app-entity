@@ -138,6 +138,11 @@ describe('StringAttribute', function () {
         });
       }).to.throw(AssertionError);
     });
+
+    it('expect to find correct typeName', function () {
+      expect(StringAttribute).to.have.property('typeName')
+        .that.equals('String');
+    });
   });
 
   context('functional tests', function () {
