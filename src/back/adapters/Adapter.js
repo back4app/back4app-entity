@@ -46,7 +46,7 @@ function Adapter() {
 
 Adapter.prototype.create = create;
 
-function create(entity) {
+function create() {
   return new Promise(function () {
     throw new Error('Function "create" have to be implemented in the Adapter ' +
       'specialization');

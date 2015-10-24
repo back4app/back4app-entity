@@ -876,13 +876,13 @@ Entity.new = _getNewFunction(Entity);
 
 var _getCreateFunction = function (CurrentEntity) {
   return function (attributeValues) {
-    return new Promise(function (resolve, reject) {
-      expect(arguments).to.have.length.below(
-        2,
-        'Invalid arguments length when creating a new "' +
-        this.Entity.specification.name +
-        '" instance (it has to be passed less than 2 arguments)');
+    expect(arguments).to.have.length.below(
+      2,
+      'Invalid arguments length when creating a new "' +
+      this.Entity.specification.name +
+      '" instance (it has to be passed less than 2 arguments)');
 
+    return new Promise(function (resolve, reject) {
       var newEntity = new CurrentEntity(attributeValues);
 
       newEntity.validate();
@@ -903,7 +903,7 @@ var _getCreateFunction = function (CurrentEntity) {
         });
     });
   };
-}
+};
 
 Entity.create = _getCreateFunction(Entity);
 
@@ -979,8 +979,4 @@ function isValid(attribute) {
     }
   }
   return true;
-}
-
-function save() {
-
 }
