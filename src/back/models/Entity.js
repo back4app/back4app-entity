@@ -3,6 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var Promise = require('bluebird');
 var settings = require('../settings');
 var classes = require('../utils/classes');
 var objects = require('../utils/objects');
@@ -232,6 +233,7 @@ Entity.specializations = null;
 Entity.specify = null;
 Entity.getSpecialization = null;
 Entity.new = null;
+Entity.create = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 
@@ -618,6 +620,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       SpecificEntity
     );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
+    SpecificEntity.create = _getCreateFunction(SpecificEntity);
 
     if (_specificEntitySpecification.Entity) {
       expect(_specificEntitySpecification.Entity).to.equal(
@@ -871,6 +874,39 @@ var _getNewFunction = function (CurrentEntity) {
  */
 Entity.new = _getNewFunction(Entity);
 
+var _getCreateFunction = function (CurrentEntity) {
+  return function (attributeValues) {
+    expect(arguments).to.have.length.below(
+      2,
+      'Invalid arguments length when creating a new "' +
+      this.Entity.specification.name +
+      '" instance (it has to be passed less than 2 arguments)');
+
+    return new Promise(function (resolve, reject) {
+      var newEntity = new CurrentEntity(attributeValues);
+
+      newEntity.validate();
+
+      var promise = CurrentEntity.adapter.create(newEntity);
+
+      expect(promise).to.be.an.instanceOf(
+        Promise,
+        'Function "create" of an Adapter specialization should return a Promise'
+      );
+
+      promise
+        .then(function () {
+          resolve(newEntity);
+        })
+        .catch(function (error) {
+          reject(error);
+        });
+    });
+  };
+};
+
+Entity.create = _getCreateFunction(Entity);
+
 /**
  * Validates an entity and throws a
  * {@link module:back4app-entity/models/errors.ValidationError} if it is not
@@ -944,4 +980,3 @@ function isValid(attribute) {
   }
   return true;
 }
-
