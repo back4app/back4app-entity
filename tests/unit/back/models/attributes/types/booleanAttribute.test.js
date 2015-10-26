@@ -138,6 +138,11 @@ describe('BooleanAttribute', function () {
         });
       }).to.throw(AssertionError);
     });
+
+    it('expect to find correct typeName', function () {
+      expect(BooleanAttribute).to.have.property('typeName')
+        .that.equals('Boolean');
+    });
   });
 
   context('functional tests', function () {

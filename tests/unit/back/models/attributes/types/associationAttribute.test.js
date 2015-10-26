@@ -177,6 +177,11 @@ describe('AssociationAttribute', function () {
         });
       }).to.throw(AssertionError);
     });
+
+    it('expect to find correct typeName', function () {
+      expect(AssociationAttribute).to.have.property('typeName')
+        .that.equals('Association');
+    });
   });
 
   context('functional tests', function () {

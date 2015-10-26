@@ -71,6 +71,8 @@ function BooleanAttribute() {
 
 classes.generalize(Attribute, BooleanAttribute);
 
+BooleanAttribute.typeName = 'Boolean';
+
 BooleanAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {

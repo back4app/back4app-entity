@@ -1,0 +1,23 @@
+{
+  "baseUrl": "../tmp-build/lib/",
+
+  "packages": [
+    {"name": "back4app-entity", "main": "index"},
+    {"name": "back4app-entity/adapters", "main": "index"},
+    {"name": "back4app-entity/models", "main": "index"},
+    {"name": "back4app-entity/models/attributes", "main": "index"},
+    {"name": "back4app-entity/models/attributes/types", "main": "index"},
+    {"name": "back4app-entity/utils", "main": "index"}
+  ],
+
+  "paths": {
+    "chai": "vendor/chai",
+    "node-uuid": "vendor/uuid",
+    "path": "vendor/path",
+    "util": "vendor/util"
+  },
+
+  "name": "back4app-entity",
+
+  "out": "../tmp-build/back4app-entity.js"
+}

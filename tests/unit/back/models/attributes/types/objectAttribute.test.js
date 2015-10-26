@@ -139,6 +139,11 @@ describe('ObjectAttribute', function () {
         });
       }).to.throw(AssertionError);
     });
+
+    it('expect to find correct typeName', function () {
+      expect(ObjectAttribute).to.have.property('typeName')
+        .that.equals('Object');
+    });
   });
 
   context('functional tests', function () {

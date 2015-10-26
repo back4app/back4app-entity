@@ -138,6 +138,11 @@ describe('DateAttribute', function () {
         });
       }).to.throw(AssertionError);
     });
+
+    it('expect to find correct typeName', function () {
+      expect(DateAttribute).to.have.property('typeName')
+        .that.equals('Date');
+    });
   });
 
   context('functional tests', function () {

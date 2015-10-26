@@ -71,6 +71,8 @@ function NumberAttribute() {
 
 classes.generalize(Attribute, NumberAttribute);
 
+NumberAttribute.typeName = 'Number';
+
 NumberAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {
