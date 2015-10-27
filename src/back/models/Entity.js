@@ -211,6 +211,14 @@ Entity.General = null;
  */
 Entity.specification = null;
 /**
+ * This is the data name of the current Entity Class.
+ * @type {!string}
+ * @readonly
+ * @example
+ * var entityDataName = Entity.dataName;
+ */
+Entity.dataName = null;
+/**
  * This is a dictionary with a consolidation of the Entity's attributes.
  * @type
  * {!Object.<!string, !module:back4app-entity/models/attributes.Attribute>}
@@ -320,6 +328,13 @@ Object.defineProperty(Entity, 'specification', {
 });
 
 _entitySpecification.Entity = Entity;
+
+Object.defineProperty(Entity, 'dataName', {
+  value: Entity.specification.getDataName(Entity.adapterName),
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
 
 Object.defineProperty(Entity, 'attributes', {
   value: _entityAttributes,
@@ -554,6 +569,15 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
     Object.defineProperty(SpecificEntity, 'specification', {
       value: _specificEntitySpecification,
+      enumerable: true,
+      writable: false,
+      configurable: false
+    });
+
+    Object.defineProperty(SpecificEntity, 'dataName', {
+      value: SpecificEntity.specification.getDataName(
+        SpecificEntity.adapterName
+      ),
       enumerable: true,
       writable: false,
       configurable: false
