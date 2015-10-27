@@ -90,6 +90,7 @@ describe('ObjectAttribute', function () {
           'attribute',
           '0..1',
           null,
+          null,
           null
         );
       }).to.throw(AssertionError);

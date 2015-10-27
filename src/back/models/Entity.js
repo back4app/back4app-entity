@@ -418,9 +418,9 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
   return function () {
     expect(arguments).to.have.length.within(
       1,
-      3,
+      4,
       'Invalid arguments length when specifying an Entity (it has to be ' +
-      'passed from 1 to 3 arguments)'
+      'passed from 1 to 4 arguments)'
     );
 
     var SpecificEntity = function (attributeValues) {
@@ -473,6 +473,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
       var attributes = null;
       var methods = null;
+      var dataName = null;
 
       if (arguments.length > 1 && arguments[1]) {
         attributes = arguments[1];
@@ -494,10 +495,21 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
         );
       }
 
+      if (arguments.length > 3 && arguments[3]) {
+        dataName = arguments[3];
+
+        expect(['string', 'object']).to.contain(
+          typeof dataName,
+          'Invalid property "dataName" when specifying an Entity (it has to ' +
+          'be an object or a string)'
+        );
+      }
+
       _specificEntitySpecification = new EntitySpecification(
         name,
         attributes,
-        methods
+        methods,
+        dataName
       );
     }
 
@@ -661,7 +673,8 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   dataName: 'MyEntityDataName'
  * ));
  */
 /**
@@ -687,20 +700,26 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * instance of {@link module:back4app-entity/models/methods.MethodDictionary}
  * or an object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {?(string|Object.<!string, !string>)} [dataName] It is the name to be
+ * used to store the Entity data in the repository. It can be given as a
+ * string that will be used by all adapters or as a dictionary specifying the
+ * data name for each adapter. If dataName is not given, the Entity's name
+ * will be used instead.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify('MyEntity');
  * @example
- * var MyEntity = Entity.specify('MyEntity', null, null);
+ * var MyEntity = Entity.specify('MyEntity', null, null, null);
  * @example
- * var MyEntity = Entity.specify('MyEntity', {}, {});
+ * var MyEntity = Entity.specify('MyEntity', {}, {}, null);
  * @example
- * var MyEntity = Entity.specify('MyEntity', [], {});
+ * var MyEntity = Entity.specify('MyEntity', [], {}, null);
  * @example
  * var MyEntity = Entity.specify(
  *   'MyEntity',
  *   new AttributeDictionary(),
- *   new MethodDictionary()
+ *   new MethodDictionary(),
+ *   'MyEntityDataName'
  * );
  * @example
  * var MyEntity = Entity.specify(
@@ -712,7 +731,10 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   {
+ *     default: 'MyEntityMongoDBDataName',
+ *     rest: 'MyEntityRESTDataName'
  * );
  */
 /**
@@ -740,6 +762,11 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {?(string|Object.<!string, !string>)} [specification.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify({ name: 'MyEntity' });
@@ -747,7 +774,8 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * var MyEntity = Entity.specify({
  *   name: 'MyEntity',
  *   attributes: {},
- *   methods: {}
+ *   methods: {},
+ *   dataName: null
  * });
  * @example
  * var MyEntity = Entity.specify({
@@ -767,6 +795,10 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   methods: {
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
+ *   },
+ *   dataName: {
+ *     adapter1: 'MyEntityAdapter1DataName',
+ *     adapter2: 'MyEntityAdapter2DataName'
  *   }
  * });
  */

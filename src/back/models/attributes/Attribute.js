@@ -231,11 +231,11 @@ function Attribute() {
     _name = attribute.name;
 
     for (var property in attribute) {
-      expect(['name', 'multiplicity', 'default']).to.include(
+      expect(['name', 'multiplicity', 'default', 'dataName']).to.include(
         property,
         'Invalid property "' + property + '" when creating an Attribute ' +
         'called "' + _name + '" (valid properties are "name", "type", ' +
-        '"multiplicity" and "default")'
+        '"multiplicity", "default" and "dataName")'
       );
     }
 
@@ -259,7 +259,7 @@ function Attribute() {
       _default = attribute.default;
     }
 
-    if (attribute.hasOwnProperty('dataName')) {
+    if (attribute.dataName) {
       if (typeof attribute.dataName === 'string') {
         _dataName = attribute.dataName;
       } else {
@@ -315,7 +315,7 @@ function Attribute() {
       _default = arguments[2];
     }
 
-    if (arguments.length > 3) {
+    if (arguments.length > 3 && arguments[3]) {
       if (typeof arguments[3] === 'string') {
         _dataName = arguments[3];
       } else {

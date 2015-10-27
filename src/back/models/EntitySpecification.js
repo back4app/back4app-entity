@@ -36,6 +36,11 @@ module.exports = EntitySpecification;
  * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {?(string|Object.<!string, !string>)} [dataName] It is the name to be
+ * used to store the Entity data in the repository. It can be given as a
+ * string that will be used by all adapters or as a dictionary specifying the
+ * data name for each adapter. If dataName is not given, the Entity's name
+ * will be used instead.
  * @example
  * var entitySpecification = new EntitySpecification(
  *   'MyEntity',
@@ -46,7 +51,8 @@ module.exports = EntitySpecification;
  *   new methods.MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   'MyEntityDataName'
  * );
  */
 /**
@@ -74,6 +80,11 @@ module.exports = EntitySpecification;
  * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {?(string|Object.<!string, !string>)} [specification.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @example
  * var entitySpecification = new EntitySpecification({
  *   name: 'MyEntity',
@@ -84,7 +95,8 @@ module.exports = EntitySpecification;
  *   methods: new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   dataName: 'MyEntityDataName'
  * });
  */
 function EntitySpecification() {
@@ -153,6 +165,50 @@ function EntitySpecification() {
    * ); // Logs "method1"
    */
   this.methods = null;
+  /**
+   * This is is the name to be used to stored the Entity data in the
+   * repository. It can be given as a string that will be used by all adapters
+   * or as a dictionary specifying the data name for each adapter. If dataName
+   * is not given, the Entity's name will be used instead.
+   * @name module:back4app-entity/models.EntitySpecification#dataName
+   * @type {?(string|Object.<!string, !string>)}
+   * @readonly
+   * @example
+   * var entitySpecification = new EntitySpecification({
+   *   name: 'MyEntity',
+   *   attributes: new AttributeDictionary({
+   *     attribute1: new StringAttribute('attribute1'),
+   *     attribute2: new StringAttribute('attribute2')
+   *   }),
+   *   methods: new MethodDictionary({
+   *     method1: function () { return 'method1'; },
+   *     method2: function () { return 'method2'; }
+   *   }),
+   *   dataName: {
+   *     mongodb: 'MyEntityMongoDBName'
+   *   }
+   * });
+   * console.log(
+   *   entitySpecification.dataName.mongodb
+   * ); // Logs "MyEntityMongoDBName"
+   * @example
+   * var entitySpecification = new EntitySpecification({
+   *   name: 'MyEntity',
+   *   attributes: new AttributeDictionary({
+   *     attribute1: new StringAttribute('attribute1'),
+   *     attribute2: new StringAttribute('attribute2')
+   *   }),
+   *   methods: new MethodDictionary({
+   *     method1: function () { return 'method1'; },
+   *     method2: function () { return 'method2'; }
+   *   }),
+   *   dataName: 'MyEntityDataName'
+   * });
+   * console.log(
+   *   entitySpecification.dataName
+   * ); // Logs "MyEntityDataName"
+   */
+  this.dataName = null;
 
   this.addAttribute = addAttribute;
   this.addMethod = addMethod;
@@ -223,11 +279,13 @@ function EntitySpecification() {
     configurable: false
   });
 
+  var _dataName, dataName = null;
+
   expect(arguments).to.have.length.within(
     1,
-    3,
+    4,
     'Invalid arguments length when creating a new EntitySpecification (it ' +
-    'has to be passed from 1 to 3 arguments)'
+    'has to be passed from 1 to 4 arguments)'
   );
 
   if (arguments.length === 1 && typeof arguments[0] !== 'string') {
@@ -240,11 +298,11 @@ function EntitySpecification() {
     );
 
     for (var property in specification) {
-      expect(['name', 'attributes', 'methods']).to.include(
+      expect(['name', 'attributes', 'methods', 'dataName']).to.include(
         property,
         'Invalid property "' + property + '" when creating a new ' +
-        'EntitySpecification (valid properties are "name", "attributes" and ' +
-        '"methods")'
+        'EntitySpecification (valid properties are "name", "attributes", ' +
+        '"methods" and "dataName")'
       );
     }
 
@@ -293,6 +351,33 @@ function EntitySpecification() {
         );
       }
     }
+
+    if (specification.dataName) {
+      if (typeof specification.dataName === 'string') {
+        _dataName = specification.dataName;
+      } else {
+        expect(specification.dataName).to.be.an(
+          'object',
+          'Invalid property "dataName" when creating a new ' +
+          'EntitySpecification (it has to be a string or an object)'
+        );
+
+        _dataName = {};
+        for (dataName in specification.dataName) {
+          expect(specification.dataName[dataName]).to.be.a(
+            'string',
+            'Invalid property "dataName" for adapter "' + dataName + '" when ' +
+            'creating a new EntitySpecification (it has to be a string)'
+          );
+
+          _dataName[dataName] = specification.dataName[dataName];
+
+          Object.preventExtensions(_dataName);
+          Object.seal(_dataName);
+          Object.freeze(_dataName);
+        }
+      }
+    }
   } else {
     expect(arguments[0]).to.be.a(
       'string',
@@ -337,6 +422,33 @@ function EntitySpecification() {
         );
       }
     }
+
+    if (arguments.length > 3 && arguments[3]) {
+      if (typeof arguments[3] === 'string') {
+        _dataName = arguments[3];
+      } else {
+        expect(arguments[3]).to.be.an(
+          'object',
+          'Invalid argument "dataName" when creating a new ' +
+          'EntitySpecification (it has to be a string or an object)'
+        );
+
+        _dataName = {};
+        for (dataName in arguments[3]) {
+          expect(arguments[3][dataName]).to.be.a(
+            'string',
+            'Invalid argument "dataName" for adapter "' + dataName + '" when ' +
+            'creating a new EntitySpecification (it has to be a string)'
+          );
+
+          _dataName[dataName] = arguments[3][dataName];
+
+          Object.preventExtensions(_dataName);
+          Object.seal(_dataName);
+          Object.freeze(_dataName);
+        }
+      }
+    }
   }
 
   Object.defineProperty(this, 'name', {
@@ -349,6 +461,13 @@ function EntitySpecification() {
       );
     },
     enumerable: true,
+    configurable: false
+  });
+
+  Object.defineProperty(this, 'dataName', {
+    value: _dataName,
+    enumerable: true,
+    writable: false,
     configurable: false
   });
 
@@ -597,4 +716,35 @@ function EntitySpecification() {
 
   Object.preventExtensions(this);
   Object.seal(this);
+}
+
+EntitySpecification.prototype.getDataName = getDataName;
+
+function getDataName(adapterName) {
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when getting the data name of an ' +
+    'EntitySpecification (it has to be passed less than 2 arguments)');
+
+  if (adapterName) {
+    expect(adapterName).to.be.a(
+      'string',
+      'Invalid argument "adapterName" when getting the data name of an ' +
+      'EntitySpecification (it has to be a string)'
+    );
+
+    if (
+      this.dataName &&
+      typeof this.dataName === 'object' &&
+      this.dataName.hasOwnProperty(adapterName)
+    ) {
+      return this.dataName[adapterName];
+    }
+  }
+
+  if (this.dataName && typeof this.dataName === 'string') {
+    return this.dataName;
+  } else {
+    return this.name;
+  }
 }

@@ -99,6 +99,7 @@ describe('AssociationAttribute', function () {
           'MyEntity30',
           '0..1',
           null,
+          null,
           null
         );
       }).to.throw(AssertionError);
