@@ -30,6 +30,22 @@ require('./index').Entity = Entity;
  */
 function Entity(attributeValues) {
   /**
+   * This is a read-only property to get the adapterName of an Entity instance.
+   * @type {!string}
+   * @readonly
+   * @example
+   * var myDefaultAdapterName = myEntity.adapterName;
+   */
+  this.adapterName = null;
+  /**
+   * This is a read-only property to get the adapter of an Entity instance.
+   * @type {!module:back4app-entity/adapters.Adapter}
+   * @readonly
+   * @example
+   * var myDefaultAdapter = myEntity.adapter;
+   */
+  this.adapter = null;
+  /**
    * This is a read-only property to get the Entity Class of an instance.
    * @name module:back4app-entity/models.Entity#Entity
    * @type {!Class}
@@ -82,6 +98,20 @@ function Entity(attributeValues) {
         'General property of an Entity instance cannot be changed'
       );
     },
+    enumerable: false,
+    configurable: true
+  });
+
+  Object.defineProperty(this, 'adapterName', {
+    value: this.Entity.adapterName,
+    writable: false,
+    enumerable: false,
+    configurable: true
+  });
+
+  Object.defineProperty(this, 'adapter', {
+    value: this.Entity.adapter,
+    writable: false,
     enumerable: false,
     configurable: true
   });
