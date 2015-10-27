@@ -237,7 +237,7 @@ function EntitySpecification() {
 
         _Entity = SetEntity;
 
-        _loadEntityMembers();
+        _loadEntity();
       } else {
         throw new Error(
           'Once that the property "Entity" of an EntitySpecification ' +
@@ -471,19 +471,21 @@ function EntitySpecification() {
     configurable: false
   });
 
-  _loadEntityMembers();
+  _loadEntity();
 
   /**
    * Loads the attributes and methods of the Entity that is associated with the
    * current specification.
-   * @name module:back4app-entity/models.EntitySpecification~_loadEntityMembers
+   * @name module:back4app-entity/models.EntitySpecification~_loadEntity
    * @function
    * @private
    * @example
-   * _loadEntityMembers();
+   * _loadEntity();
    */
-  function _loadEntityMembers() {
+  function _loadEntity() {
     if (_Entity && _Entity !== models.Entity) {
+      _Entity.adapter.loadEntity(_Entity);
+
       for (var attribute in _attributes) {
         _loadEntityAttribute(_attributes[attribute]);
       }
@@ -562,7 +564,7 @@ function EntitySpecification() {
       }
     }
 
-    _Entity.adapter.loadAttribute(_Entity, attribute);
+    _Entity.adapter.loadEntityAttribute(_Entity, attribute);
   }
 
   /**

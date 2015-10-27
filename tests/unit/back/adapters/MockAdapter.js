@@ -11,9 +11,12 @@ function MockAdapter() {
 
 classes.generalize(Adapter, MockAdapter);
 
-Adapter.prototype.loadAttribute = loadAttribute;
+Adapter.prototype.loadEntity = loadEntity;
+Adapter.prototype.loadEntityAttribute = loadEntityAttribute;
 Adapter.prototype.insertObject = insertObject;
 
-function loadAttribute() {}
+function loadEntity() {}
+
+function loadEntityAttribute() {}
 
 function insertObject() {}

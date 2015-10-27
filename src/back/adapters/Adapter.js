@@ -44,10 +44,16 @@ function Adapter() {
   );
 }
 
-Adapter.prototype.loadAttribute = loadAttribute;
+Adapter.prototype.loadEntity = loadEntity;
+Adapter.prototype.loadEntityAttribute = loadEntityAttribute;
 Adapter.prototype.insertObject = insertObject;
 
-function loadAttribute() {
+function loadEntity() {
+  throw new Error('Function "loadEntity" has to be implemented in the ' +
+    'Adapter specialization');
+}
+
+function loadEntityAttribute() {
   throw new Error('Function "loadAttribute" has to be implemented in the ' +
     'Adapter specialization');
 }
