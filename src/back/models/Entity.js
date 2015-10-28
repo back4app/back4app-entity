@@ -989,9 +989,7 @@ var _getCreateFunction = function (CurrentEntity) {
         .then(function () {
           resolve(newEntity);
         })
-        .catch(function (error) {
-          reject(error);
-        });
+        .catch(reject);
     });
   };
 };
