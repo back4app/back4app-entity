@@ -28,7 +28,7 @@ require('./index').Entity = Entity;
  * @example
  * var entity = new Entity();
  */
-function Entity(attributeValues) {
+function Entity(attributeValues/*, options*/) {
   /**
    * This is a read-only property to get the adapterName of an Entity instance.
    * @type {!string}

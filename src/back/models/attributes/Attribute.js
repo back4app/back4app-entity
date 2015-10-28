@@ -389,6 +389,8 @@ Attribute.prototype.getDefaultValue = getDefaultValue;
 Attribute.prototype.validate = validate;
 Attribute.prototype.validateValue = validateValue;
 Attribute.prototype.getDataName = getDataName;
+Attribute.prototype.getDataValue = getDataValue;
+Attribute.prototype.parseDataValue = parseDataValue;
 
 /**
  * Resolves the arguments and create a new instance of Attribute. It tries to
@@ -698,4 +700,16 @@ function getDataName(adapterName) {
   } else {
     return this.name;
   }
+}
+
+function getDataValue(attributeValue) {
+  validateValue(attributeValue);
+
+  return attributeValue;
+}
+
+function parseDataValue(dataValue) {
+  validateValue(dataValue);
+
+  return dataValue;
 }

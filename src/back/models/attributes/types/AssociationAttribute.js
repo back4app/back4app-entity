@@ -169,6 +169,8 @@ function AssociationAttribute() {
 classes.generalize(Attribute, AssociationAttribute);
 
 AssociationAttribute.prototype.validateValue = validateValue;
+AssociationAttribute.prototype.getDataValue = getDataValue;
+AssociationAttribute.prototype.parseDataValue = parseDataValue;
 
 function validateValue(value) {
   if (!(value instanceof this.Entity)) {
@@ -178,4 +180,24 @@ function validateValue(value) {
       '"'
     );
   }
+}
+
+function getDataValue(attributeValue) {
+  validateValue(attributeValue);
+
+  return {
+    id: attributeValue.id
+  };
+}
+
+function parseDataValue(dataValue) {
+  expect(dataValue).to.be.a(
+    'string',
+    'Invalid argument "dataValue" when parsing a data value in an ' +
+    'AssociationAttribute (it has to be a string)'
+  );
+
+  return new this.Entity({
+    id: dataValue
+  });
 }
