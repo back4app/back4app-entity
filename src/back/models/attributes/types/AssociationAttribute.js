@@ -183,7 +183,7 @@ function validateValue(value) {
 }
 
 function getDataValue(attributeValue) {
-  validateValue(attributeValue);
+  this.validateValue(attributeValue);
 
   return {
     id: attributeValue.id
