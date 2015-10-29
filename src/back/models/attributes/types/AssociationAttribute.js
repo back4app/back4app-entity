@@ -205,7 +205,7 @@ function getDataValue(attributeValue) {
     return dataValue;
   } else {
     return {
-      Entity: attributeValue.Entity.dataName,
+      Entity: attributeValue.Entity.specification.name,
       id: attributeValue.id
     };
   }

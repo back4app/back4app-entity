@@ -970,7 +970,7 @@ var _getCreateFunction = function (CurrentEntity) {
     expect(arguments).to.have.length.below(
       2,
       'Invalid arguments length when creating a new "' +
-      this.Entity.specification.name +
+      CurrentEntity.specification.name +
       '" instance (it has to be passed less than 2 arguments)');
 
     return new Promise(function (resolve, reject) {
@@ -980,8 +980,13 @@ var _getCreateFunction = function (CurrentEntity) {
 
       var promise = CurrentEntity.adapter.insertObject(newEntity);
 
-      expect(promise).to.be.an.instanceOf(
-        Promise,
+      expect(promise).to.respondTo(
+        'then',
+        'Function "create" of an Adapter specialization should return a Promise'
+      );
+
+      expect(promise).to.respondTo(
+        'catch',
         'Function "create" of an Adapter specialization should return a Promise'
       );
 
