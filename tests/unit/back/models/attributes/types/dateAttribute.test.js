@@ -250,9 +250,6 @@ describe('DateAttribute', function () {
         dateAttribute.validateValue({});
       }).to.throw(ValidationError);
       expect(function () {
-        dateAttribute.validateValue(null);
-      }).to.throw(ValidationError);
-      expect(function () {
         dateAttribute.validateValue(false);
       }).to.throw(ValidationError);
       expect(function () {

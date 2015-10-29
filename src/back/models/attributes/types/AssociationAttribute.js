@@ -173,7 +173,10 @@ AssociationAttribute.prototype.getDataValue = getDataValue;
 AssociationAttribute.prototype.parseDataValue = parseDataValue;
 
 function validateValue(value) {
-  if (!(value instanceof this.Entity)) {
+  if (
+    value !== null &&
+    !(value instanceof this.Entity)
+  ) {
     throw new ValidationError(
       'this attribute\'s value should be a "' +
       this.Entity.specification.name +
@@ -185,19 +188,43 @@ function validateValue(value) {
 function getDataValue(attributeValue) {
   this.validateValue(attributeValue);
 
-  return {
-    id: attributeValue.id
-  };
+  if (attributeValue === null) {
+    return null;
+  } else if (
+    this.multiplicity === '*' ||
+    this.multiplicity === '1..*'
+  ) {
+    var dataValue = [];
+
+    for (var i = 0; i < attributeValue.length; i++) {
+      dataValue.push({
+        id: attributeValue[i].id
+      });
+    }
+
+    return dataValue;
+  } else {
+    return {
+      id: attributeValue.id
+    };
+  }
 }
 
 function parseDataValue(dataValue) {
-  expect(dataValue).to.be.a(
-    'string',
-    'Invalid argument "dataValue" when parsing a data value in an ' +
-    'AssociationAttribute (it has to be a string)'
-  );
+  var value = null;
 
-  return new this.Entity({
-    id: dataValue
-  });
+  if (dataValue !== null) {
+    if (dataValue instanceof Array) {
+      value = [];
+      for (var i = 0; i < dataValue.length; i++) {
+        value.push(new this.Entity(dataValue[i]));
+      }
+    } else {
+      value = new this.Entity(dataValue);
+    }
+  }
+
+  this.validateValue(value);
+
+  return value;
 }

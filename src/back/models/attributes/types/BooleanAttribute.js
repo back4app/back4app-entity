@@ -74,7 +74,10 @@ classes.generalize(Attribute, BooleanAttribute);
 BooleanAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {
-  if (typeof value !== 'boolean') {
+  if (
+    value !== null &&
+    typeof value !== 'boolean'
+  ) {
     throw new ValidationError(
       'this attribute\'s value should be a boolean'
     );

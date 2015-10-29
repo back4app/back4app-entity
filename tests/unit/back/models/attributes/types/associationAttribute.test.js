@@ -318,9 +318,6 @@ describe('AssociationAttribute', function () {
       expect(function () {
         associationAttribute.validateValue(new Entity());
       }).to.throw(ValidationError);
-      expect(function () {
-        associationAttribute.validateValue(null);
-      }).to.throw(ValidationError);
     });
   });
 });

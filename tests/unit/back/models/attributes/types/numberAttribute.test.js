@@ -255,9 +255,6 @@ describe('NumberAttribute', function () {
         numberAttribute.validateValue({});
       }).to.throw(ValidationError);
       expect(function () {
-        numberAttribute.validateValue(null);
-      }).to.throw(ValidationError);
-      expect(function () {
         numberAttribute.validateValue(false);
       }).to.throw(ValidationError);
       expect(function () {

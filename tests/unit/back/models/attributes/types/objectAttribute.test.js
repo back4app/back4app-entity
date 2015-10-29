@@ -256,9 +256,6 @@ describe('ObjectAttribute', function () {
         objectAttribute.validateValue(function () {});
       }).to.throw(ValidationError);
       expect(function () {
-        objectAttribute.validateValue(null);
-      }).to.throw(ValidationError);
-      expect(function () {
         objectAttribute.validateValue(false);
       }).to.throw(ValidationError);
       expect(function () {
