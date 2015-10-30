@@ -74,11 +74,7 @@ classes.generalize(Attribute, StringAttribute);
 StringAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {
-  if (
-    value !== null &&
-    typeof value !== 'string' &&
-    !(value instanceof String)
-  ) {
+  if (typeof value !== 'string' && !(value instanceof String)) {
     throw new ValidationError(
       'this attribute\'s value should be a string'
     );

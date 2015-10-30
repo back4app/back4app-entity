@@ -316,6 +316,9 @@ describe('AssociationAttribute', function () {
         new (MyEntity30.specify('MyEntity31'))()
       );
       expect(function () {
+        associationAttribute.validateValue(null);
+      }).to.throw(ValidationError);
+      expect(function () {
         associationAttribute.validateValue(new Entity());
       }).to.throw(ValidationError);
     });

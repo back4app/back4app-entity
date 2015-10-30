@@ -703,13 +703,9 @@ function getDataName(adapterName) {
 }
 
 function getDataValue(attributeValue) {
-  this.validateValue(attributeValue);
-
   return attributeValue;
 }
 
 function parseDataValue(dataValue) {
-  this.validateValue(dataValue);
-
   return dataValue;
 }

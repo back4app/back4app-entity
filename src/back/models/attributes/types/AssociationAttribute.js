@@ -173,10 +173,7 @@ AssociationAttribute.prototype.getDataValue = getDataValue;
 AssociationAttribute.prototype.parseDataValue = parseDataValue;
 
 function validateValue(value) {
-  if (
-    value !== null &&
-    !(value instanceof this.Entity)
-  ) {
+  if (!(value instanceof this.Entity)) {
     throw new ValidationError(
       'this attribute\'s value should be a "' +
       this.Entity.specification.name +
@@ -186,46 +183,49 @@ function validateValue(value) {
 }
 
 function getDataValue(attributeValue) {
-  this.validateValue(attributeValue);
+  var dataValue = attributeValue;
 
-  if (attributeValue === null) {
-    return null;
-  } else if (
-    this.multiplicity === '*' ||
-    this.multiplicity === '1..*'
-  ) {
-    var dataValue = [];
-
-    for (var i = 0; i < attributeValue.length; i++) {
-      dataValue.push({
-        id: attributeValue[i].id
-      });
-    }
-
-    return dataValue;
-  } else {
-    return {
+  if (attributeValue instanceof models.Entity) {
+    dataValue = {
       Entity: attributeValue.Entity.specification.name,
       id: attributeValue.id
     };
-  }
-}
+  } else if (attributeValue instanceof Array) {
+    dataValue = [];
 
-function parseDataValue(dataValue) {
-  var value = null;
-
-  if (dataValue !== null) {
-    if (dataValue instanceof Array) {
-      value = [];
-      for (var i = 0; i < dataValue.length; i++) {
-        value.push(new this.Entity(dataValue[i]));
+    for (var i = 0; i < attributeValue.length; i++) {
+      if (attributeValue[i] instanceof models.Entity) {
+        dataValue.push({
+          Entity: attributeValue[i].Entity.specification.name,
+          id: attributeValue[i].id
+        });
+      } else {
+        dataValue.push(attributeValue[i]);
       }
-    } else {
-      value = new this.Entity(dataValue);
     }
   }
 
-  this.validateValue(value);
+  return dataValue;
+}
 
-  return value;
+function parseDataValue(dataValue) {
+  var attributeValue = dataValue;
+
+  if (dataValue instanceof Array) {
+    attributeValue = [];
+    for (var i = 0; i < dataValue.length; i++) {
+      try {
+        attributeValue.push(new this.Entity(dataValue[i]));
+
+      } catch (error) {
+        attributeValue.push(dataValue[i]);
+      }
+    }
+  } else if (dataValue instanceof Object) {
+    try {
+      attributeValue = new this.Entity(dataValue);
+    } catch (error) {}
+  }
+
+  return attributeValue;
 }

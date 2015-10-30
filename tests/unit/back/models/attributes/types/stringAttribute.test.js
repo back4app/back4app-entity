@@ -254,6 +254,9 @@ describe('StringAttribute', function () {
         stringAttribute.validateValue(1);
       }).to.throw(ValidationError);
       expect(function () {
+        stringAttribute.validateValue(null);
+      }).to.throw(ValidationError);
+      expect(function () {
         stringAttribute.validateValue(function () {});
       }).to.throw(ValidationError);
       expect(function () {

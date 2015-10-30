@@ -248,6 +248,9 @@ describe('BooleanAttribute', function () {
       booleanAttribute.validateValue(true);
       booleanAttribute.validateValue(false);
       expect(function () {
+        booleanAttribute.validateValue(null);
+      }).to.throw(ValidationError);
+      expect(function () {
         booleanAttribute.validateValue({});
       }).to.throw(ValidationError);
     });

@@ -74,11 +74,7 @@ classes.generalize(Attribute, NumberAttribute);
 NumberAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {
-  if (
-    value !== null &&
-    typeof value !== 'number' &&
-    !(value instanceof Number)
-  ) {
+  if (typeof value !== 'number' && !(value instanceof Number)) {
     throw new ValidationError(
       'this attribute\'s value should be a number'
     );

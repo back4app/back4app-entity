@@ -74,10 +74,7 @@ classes.generalize(Attribute, DateAttribute);
 DateAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {
-  if (
-    value !== null &&
-    !(value instanceof Date)
-  ) {
+  if (!(value instanceof Date)) {
     throw new ValidationError(
       'this attribute\'s value should be a Date'
     );
