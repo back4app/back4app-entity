@@ -89,6 +89,7 @@ describe('DateAttribute', function () {
           'attribute',
           '0..1',
           null,
+          null,
           null
         );
       }).to.throw(AssertionError);
@@ -251,10 +252,10 @@ describe('DateAttribute', function () {
     it('expect to work correctly', function () {
       dateAttribute.validateValue(new Date());
       expect(function () {
-        dateAttribute.validateValue({});
+        dateAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        dateAttribute.validateValue(null);
+        dateAttribute.validateValue({});
       }).to.throw(ValidationError);
       expect(function () {
         dateAttribute.validateValue(false);

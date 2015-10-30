@@ -89,6 +89,7 @@ describe('StringAttribute', function () {
           'attribute',
           '0..1',
           null,
+          null,
           null
         );
       }).to.throw(AssertionError);
@@ -258,10 +259,10 @@ describe('StringAttribute', function () {
         stringAttribute.validateValue(1);
       }).to.throw(ValidationError);
       expect(function () {
-        stringAttribute.validateValue(function () {});
+        stringAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        stringAttribute.validateValue(null);
+        stringAttribute.validateValue(function () {});
       }).to.throw(ValidationError);
       expect(function () {
         stringAttribute.validateValue(false);

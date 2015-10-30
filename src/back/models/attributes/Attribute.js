@@ -5,7 +5,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-var classes = require('../../utils/classes');
 var objects = require('../../utils/objects');
 var errors = require('../errors');
 var ValidationError = errors.ValidationError;
@@ -54,6 +53,7 @@ module.exports = Attribute;
  * @memberof module:back4app-entity/models/attributes
  * @name Attribute
  * @constructor
+ * @abstract
  * @param {!string} name It is the name of the attribute.
  * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
  * It is optional and if not passed it will assume '1' as the default value.
@@ -190,12 +190,6 @@ function Attribute() {
     'classes\' constructors'
   );
 
-  expect(classes.isGeneral(Attribute, this.constructor)).to.equal(
-    true,
-    'The Attribute\'s constructor can be only invoked from specialized' +
-    'classes\' constructors'
-  );
-
   var _name = null;
   var _type = this.constructor;
   var _multiplicity = '1';
@@ -231,11 +225,11 @@ function Attribute() {
     _name = attribute.name;
 
     for (var property in attribute) {
-      expect(['name', 'multiplicity', 'default']).to.include(
+      expect(['name', 'multiplicity', 'default', 'dataName']).to.include(
         property,
         'Invalid property "' + property + '" when creating an Attribute ' +
         'called "' + _name + '" (valid properties are "name", "type", ' +
-        '"multiplicity" and "default")'
+        '"multiplicity", "default" and "dataName")'
       );
     }
 
@@ -259,7 +253,7 @@ function Attribute() {
       _default = attribute.default;
     }
 
-    if (attribute.hasOwnProperty('dataName')) {
+    if (attribute.dataName) {
       if (typeof attribute.dataName === 'string') {
         _dataName = attribute.dataName;
       } else {
@@ -315,7 +309,7 @@ function Attribute() {
       _default = arguments[2];
     }
 
-    if (arguments.length > 3) {
+    if (arguments.length > 3 && arguments[3]) {
       if (typeof arguments[3] === 'string') {
         _dataName = arguments[3];
       } else {
@@ -389,6 +383,8 @@ Attribute.prototype.getDefaultValue = getDefaultValue;
 Attribute.prototype.validate = validate;
 Attribute.prototype.validateValue = validateValue;
 Attribute.prototype.getDataName = getDataName;
+Attribute.prototype.getDataValue = getDataValue;
+Attribute.prototype.parseDataValue = parseDataValue;
 
 /**
  * Resolves the arguments and create a new instance of Attribute. It tries to
@@ -698,4 +694,12 @@ function getDataName(adapterName) {
   } else {
     return this.name;
   }
+}
+
+function getDataValue(attributeValue) {
+  return attributeValue;
+}
+
+function parseDataValue(dataValue) {
+  return dataValue;
 }

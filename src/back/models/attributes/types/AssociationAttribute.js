@@ -171,6 +171,8 @@ classes.generalize(Attribute, AssociationAttribute);
 AssociationAttribute.typeName = 'Association';
 
 AssociationAttribute.prototype.validateValue = validateValue;
+AssociationAttribute.prototype.getDataValue = getDataValue;
+AssociationAttribute.prototype.parseDataValue = parseDataValue;
 
 function validateValue(value) {
   if (!(value instanceof this.Entity)) {
@@ -180,4 +182,52 @@ function validateValue(value) {
       '"'
     );
   }
+}
+
+function getDataValue(attributeValue) {
+  var dataValue = attributeValue;
+
+  if (attributeValue instanceof models.Entity) {
+    dataValue = {
+      Entity: attributeValue.Entity.specification.name,
+      id: attributeValue.id
+    };
+  } else if (attributeValue instanceof Array) {
+    dataValue = [];
+
+    for (var i = 0; i < attributeValue.length; i++) {
+      if (attributeValue[i] instanceof models.Entity) {
+        dataValue.push({
+          Entity: attributeValue[i].Entity.specification.name,
+          id: attributeValue[i].id
+        });
+      } else {
+        dataValue.push(attributeValue[i]);
+      }
+    }
+  }
+
+  return dataValue;
+}
+
+function parseDataValue(dataValue) {
+  var attributeValue = dataValue;
+
+  if (dataValue instanceof Array) {
+    attributeValue = [];
+    for (var i = 0; i < dataValue.length; i++) {
+      try {
+        attributeValue.push(new this.Entity(dataValue[i]));
+
+      } catch (error) {
+        attributeValue.push(dataValue[i]);
+      }
+    }
+  } else if (dataValue instanceof Object) {
+    try {
+      attributeValue = new this.Entity(dataValue);
+    } catch (error) {}
+  }
+
+  return attributeValue;
 }

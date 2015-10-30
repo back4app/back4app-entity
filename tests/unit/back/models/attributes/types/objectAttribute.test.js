@@ -10,10 +10,10 @@ var AssertionError = chai.AssertionError;
 var classes = require('../../../../../../src/back/utils').classes;
 var models = require('../../../../../../').models;
 var ValidationError = models.errors.ValidationError;
-var Entity = models.Entity;
 var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var ObjectAttribute = attributes.types.ObjectAttribute;
+var EntityProxy = require('../../EntityProxy');
 
 require('../../../../settings');
 
@@ -89,6 +89,7 @@ describe('ObjectAttribute', function () {
         objectAttribute = new ObjectAttribute(
           'attribute',
           '0..1',
+          null,
           null,
           null
         );
@@ -252,15 +253,15 @@ describe('ObjectAttribute', function () {
     it('expect to work correctly', function () {
       objectAttribute.validateValue({});
       objectAttribute.validateValue(new Date());
-      objectAttribute.validateValue(new Entity());
+      objectAttribute.validateValue(new EntityProxy());
       expect(function () {
         objectAttribute.validateValue(1);
       }).to.throw(ValidationError);
       expect(function () {
-        objectAttribute.validateValue(function () {});
+        objectAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        objectAttribute.validateValue(null);
+        objectAttribute.validateValue(function () {});
       }).to.throw(ValidationError);
       expect(function () {
         objectAttribute.validateValue(false);

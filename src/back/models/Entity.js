@@ -18,25 +18,41 @@ module.exports = Entity;
 
 require('./index').Entity = Entity;
 
-
 /**
  * Base class for entities.
  * @constructor
+ * @abstract
  * @memberof module:back4app-entity/models
  * @param {?Object.<!string, ?Object>} [attributeValues] It has to be passed as
  * a dictionary of attribute's name and values to initialize a new Entity.
  * @example
- * var entity = new Entity();
+ * var myEntity = new MyEntity();
  */
-function Entity(attributeValues) {
+function Entity(attributeValues/*, options*/) {
+  /**
+   * This is a read-only property to get the adapterName of an Entity instance.
+   * @type {!string}
+   * @readonly
+   * @example
+   * var myDefaultAdapterName = myEntity.adapterName;
+   */
+  this.adapterName = null;
+  /**
+   * This is a read-only property to get the adapter of an Entity instance.
+   * @type {!module:back4app-entity/adapters.Adapter}
+   * @readonly
+   * @example
+   * var myDefaultAdapter = myEntity.adapter;
+   */
+  this.adapter = null;
   /**
    * This is a read-only property to get the Entity Class of an instance.
    * @name module:back4app-entity/models.Entity#Entity
    * @type {!Class}
    * @readonly
    * @example
-   * var entity = new Entity();
-   * console.log(entity.Entity == Entity); // Logs "true"
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.Entity == MyEntity); // Logs "true"
    */
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     this.Entity = null;
@@ -85,6 +101,43 @@ function Entity(attributeValues) {
     enumerable: false,
     configurable: true
   });
+
+  Object.defineProperty(this, 'adapterName', {
+    value: this.Entity.adapterName,
+    writable: false,
+    enumerable: false,
+    configurable: true
+  });
+
+  Object.defineProperty(this, 'adapter', {
+    value: this.Entity.adapter,
+    writable: false,
+    enumerable: false,
+    configurable: true
+  });
+
+  expect(this).to.be.an(
+    'object',
+    'The Entity\'s constructor can be only invoked from specialized ' +
+    'classes\' constructors'
+  );
+
+  expect(this.constructor).to.be.a(
+    'function',
+    'The Entity\'s constructor can be only invoked from specialized ' +
+    'classes\' constructors'
+  );
+
+  expect(this.constructor).to.not.equal(
+    Entity,
+    'The Entity is an abstract class and cannot be directly initialized'
+  );
+
+  expect(this).to.be.instanceof(
+    Entity,
+    'The Entity\'s constructor can be only invoked from specialized ' +
+    'classes\' constructors'
+  );
 
   expect(arguments).to.have.length.below(
     2,
@@ -180,6 +233,14 @@ Entity.General = null;
  * var entitySpecification = Entity.specification;
  */
 Entity.specification = null;
+/**
+ * This is the data name of the current Entity Class.
+ * @type {!string}
+ * @readonly
+ * @example
+ * var entityDataName = Entity.dataName;
+ */
+Entity.dataName = null;
 /**
  * This is a dictionary with a consolidation of the Entity's attributes.
  * @type
@@ -279,7 +340,11 @@ var _entityAttributes = new AttributeDictionary({
 
 var _entitySpecification = new EntitySpecification(
   'Entity',
-  _entityAttributes
+  _entityAttributes,
+  null,
+  {
+    isAbstract: true
+  }
 );
 
 Object.defineProperty(Entity, 'specification', {
@@ -290,6 +355,13 @@ Object.defineProperty(Entity, 'specification', {
 });
 
 _entitySpecification.Entity = Entity;
+
+Object.defineProperty(Entity, 'dataName', {
+  value: Entity.specification.getDataName(Entity.adapterName),
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
 
 Object.defineProperty(Entity, 'attributes', {
   value: _entityAttributes,
@@ -418,9 +490,9 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
   return function () {
     expect(arguments).to.have.length.within(
       1,
-      3,
+      4,
       'Invalid arguments length when specifying an Entity (it has to be ' +
-      'passed from 1 to 3 arguments)'
+      'passed from 1 to 4 arguments)'
     );
 
     var SpecificEntity = function (attributeValues) {
@@ -432,6 +504,32 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
           writable: false,
           configurable: true
         });
+      }
+
+      if (SpecificEntity.specification.isAbstract) {
+        expect(this).to.be.an(
+          'object',
+          'The "' + SpecificEntity.specification.name + '"\'s constructor ' +
+          'can be only invoked from specialized classes\' constructors'
+        );
+
+        expect(this.constructor).to.be.a(
+          'function',
+          'The "' + SpecificEntity.specification.name + '"\'s constructor ' +
+          'can be only invoked from specialized classes\' constructors'
+        );
+
+        expect(this.constructor).to.not.equal(
+          SpecificEntity,
+          'The "' + SpecificEntity.specification.name + '" is an abstract ' +
+          'class and cannot be directly initialized'
+        );
+
+        expect(this).to.be.instanceof(
+          SpecificEntity,
+          'The "' + SpecificEntity.specification.name + '"\'s constructor ' +
+          'can be only invoked from specialized classes\' constructors'
+        );
       }
 
       CurrentEntity.call(this, attributeValues);
@@ -473,6 +571,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
       var attributes = null;
       var methods = null;
+      var options = null;
 
       if (arguments.length > 1 && arguments[1]) {
         attributes = arguments[1];
@@ -494,10 +593,21 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
         );
       }
 
+      if (arguments.length > 3 && arguments[3]) {
+        options = arguments[3];
+
+        expect(options).to.be.an(
+          'object',
+          'Invalid property "options" when specifying an Entity (it has to ' +
+          'be an object)'
+        );
+      }
+
       _specificEntitySpecification = new EntitySpecification(
         name,
         attributes,
-        methods
+        methods,
+        options
       );
     }
 
@@ -512,6 +622,15 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
     Object.defineProperty(SpecificEntity, 'specification', {
       value: _specificEntitySpecification,
+      enumerable: true,
+      writable: false,
+      configurable: false
+    });
+
+    Object.defineProperty(SpecificEntity, 'dataName', {
+      value: SpecificEntity.specification.getDataName(
+        SpecificEntity.adapterName
+      ),
       enumerable: true,
       writable: false,
       configurable: false
@@ -661,7 +780,11 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   {
+ *     isAbstract: false,
+ *     dataName: 'MyEntityDataName'
+ *   }
  * ));
  */
 /**
@@ -687,20 +810,33 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * instance of {@link module:back4app-entity/models/methods.MethodDictionary}
  * or an object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {Object} [options] It is the optional properties of the new Entity
+ * being specified.
+ * @param {boolean} [options.isAbstract=false] It is a flag to indicate if
+ * the new Entity being specified is an abstract one.
+ * @param {?(string|Object.<!string, !string>)} [options.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify('MyEntity');
  * @example
- * var MyEntity = Entity.specify('MyEntity', null, null);
+ * var MyEntity = Entity.specify('MyEntity', null, null, null);
  * @example
- * var MyEntity = Entity.specify('MyEntity', {}, {});
+ * var MyEntity = Entity.specify('MyEntity', {}, {}, null);
  * @example
- * var MyEntity = Entity.specify('MyEntity', [], {});
+ * var MyEntity = Entity.specify('MyEntity', [], {}, null);
  * @example
  * var MyEntity = Entity.specify(
  *   'MyEntity',
  *   new AttributeDictionary(),
- *   new MethodDictionary()
+ *   new MethodDictionary(),
+ *   {
+ *     isAbstract: false,
+ *     dataName: 'MyEntityDataName'
+ *   }
  * );
  * @example
  * var MyEntity = Entity.specify(
@@ -712,7 +848,14 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   {
+ *     isAbstract: false,
+ *     dataName: {
+ *       default: 'MyEntityMongoDBDataName',
+ *       rest: 'MyEntityRESTDataName'
+ *     }
+ *   }
  * );
  */
 /**
@@ -740,6 +883,13 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {boolean} [specification.isAbstract=false] It is a flag to indicate if
+ * the new Entity being specified is an abstract one.
+ * @param {?(string|Object.<!string, !string>)} [specification.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify({ name: 'MyEntity' });
@@ -747,7 +897,9 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * var MyEntity = Entity.specify({
  *   name: 'MyEntity',
  *   attributes: {},
- *   methods: {}
+ *   methods: {},
+ *   isAbstract: false,
+ *   dataName: null
  * });
  * @example
  * var MyEntity = Entity.specify({
@@ -767,6 +919,11 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   methods: {
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
+ *   },
+ *   isAbstract: false,
+ *   dataName: {
+ *     adapter1: 'MyEntityAdapter1DataName',
+ *     adapter2: 'MyEntityAdapter2DataName'
  *   }
  * });
  */
@@ -884,7 +1041,7 @@ var _getCreateFunction = function (CurrentEntity) {
     expect(arguments).to.have.length.below(
       2,
       'Invalid arguments length when creating a new "' +
-      this.Entity.specification.name +
+      CurrentEntity.specification.name +
       '" instance (it has to be passed less than 2 arguments)');
 
     return new Promise(function (resolve, reject) {
@@ -894,8 +1051,13 @@ var _getCreateFunction = function (CurrentEntity) {
 
       var promise = CurrentEntity.adapter.insertObject(newEntity);
 
-      expect(promise).to.be.an.instanceOf(
-        Promise,
+      expect(promise).to.respondTo(
+        'then',
+        'Function "create" of an Adapter specialization should return a Promise'
+      );
+
+      expect(promise).to.respondTo(
+        'catch',
         'Function "create" of an Adapter specialization should return a Promise'
       );
 
@@ -903,9 +1065,7 @@ var _getCreateFunction = function (CurrentEntity) {
         .then(function () {
           resolve(newEntity);
         })
-        .catch(function (error) {
-          reject(error);
-        });
+        .catch(reject);
     });
   };
 };

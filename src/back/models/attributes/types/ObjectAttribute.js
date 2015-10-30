@@ -76,7 +76,7 @@ ObjectAttribute.typeName = 'Object';
 ObjectAttribute.prototype.validateValue = validateValue;
 
 function validateValue(value) {
-  if (typeof value !== 'object' || value === null) {
+  if (value === null || typeof value !== 'object') {
     throw new ValidationError(
       'this attribute\'s value should be an object'
     );

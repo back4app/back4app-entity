@@ -14,6 +14,7 @@ var attributes = models.attributes;
 var methods = models.methods;
 var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
+var EntityProxy = require('./EntityProxy');
 
 require('../../settings');
 
@@ -30,16 +31,16 @@ describe('Entity', function () {
 
   context('interface tests', function () {
     it('expect to instantiate new Entity without error', function () {
-      entity = new Entity();
+      entity = new EntityProxy();
 
-      entity = new Entity(null);
+      entity = new EntityProxy(null);
 
-      entity = new Entity({});
+      entity = new EntityProxy({});
     });
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
-        entity = new Entity(null, null);
+        entity = new EntityProxy(null, null);
       }).to.throw(AssertionError);
     });
   });
@@ -117,7 +118,7 @@ describe('Entity', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify('MyEntity12', {}, {}, {});
+        Entity.specify('MyEntity12', {}, {}, null, {});
       }).to.throw(AssertionError);
 
       expect(function () {
@@ -167,7 +168,7 @@ describe('Entity', function () {
       });
 
       it('expect to be given in the constructor', function () {
-        expect(new Entity({
+        expect(new EntityProxy({
           id: '00000000-0000-4000-a000-000000000000'
         }))
           .to.have.property('id')
@@ -176,7 +177,7 @@ describe('Entity', function () {
 
       it('expect to validate if given id is valid', function () {
         expect(function () {
-          entity = new Entity({id: 'itisnotvalid'});
+          entity = new EntityProxy({id: 'itisnotvalid'});
         }).to.throw(Error);
       });
 
@@ -554,7 +555,6 @@ describe('Entity', function () {
       'expect to return a function that create new instances of the right' +
       'classes',
       function () {
-        expect(Entity.new()()).to.be.an.instanceof(Entity);
         expect(Entity.new('C1')()).to.be.an.instanceof(C1);
         expect(Entity.new('C11')()).to.be.an.instanceof(C11);
         expect(Entity.new('C2')()).to.be.an.instanceof(C2);

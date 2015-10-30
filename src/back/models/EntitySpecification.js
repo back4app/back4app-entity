@@ -36,6 +36,15 @@ module.exports = EntitySpecification;
  * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {Object} [options] It is the optional properties of the new Entity
+ * being specified.
+ * @param {boolean} [options.isAbstract=false] It is a flag to indicate if
+ * the new Entity being specified is an abstract one.
+ * @param {?(string|Object.<!string, !string>)} [options.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @example
  * var entitySpecification = new EntitySpecification(
  *   'MyEntity',
@@ -46,7 +55,11 @@ module.exports = EntitySpecification;
  *   new methods.MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   {
+ *     isAbstract: false,
+ *     dataName: 'MyEntityDataName'
+ *   }
  * );
  */
 /**
@@ -74,6 +87,13 @@ module.exports = EntitySpecification;
  * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {boolean} [specification.isAbstract=false] It is a flag to indicate if
+ * the new Entity being specified is an abstract one.
+ * @param {?(string|Object.<!string, !string>)} [specification.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @example
  * var entitySpecification = new EntitySpecification({
  *   name: 'MyEntity',
@@ -84,7 +104,11 @@ module.exports = EntitySpecification;
  *   methods: new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   options: {
+ *     isAbstract: false,
+ *     dataName: 'MyEntityDataName'
+ *   }
  * });
  */
 function EntitySpecification() {
@@ -101,7 +125,7 @@ function EntitySpecification() {
   this.Entity = null;
   /**
    * The name of the entity.
-   * @name module:back4app-entity/models/EntitySpecification#name
+   * @name module:back4app-entity/models.EntitySpecification#name
    * @type {!string}
    * @readonly
    * @example
@@ -153,6 +177,60 @@ function EntitySpecification() {
    * ); // Logs "method1"
    */
   this.methods = null;
+  /**
+   * Flag indicating if the Entity being specified is an abstract one.
+   * @name module:back4app-entity/models.EntitySpecification#isAbstract
+   * @type {!boolean}
+   * @readonly
+   * @example
+   * var myEntitySpecification = new EntitySpecification('MyEntity');
+   * console.log(myEntitySpecification.isAbstract) // Logs "false"
+   */
+  this.isAbstract = null;
+  /**
+   * This is is the name to be used to stored the Entity data in the
+   * repository. It can be given as a string that will be used by all adapters
+   * or as a dictionary specifying the data name for each adapter. If dataName
+   * is not given, the Entity's name will be used instead.
+   * @name module:back4app-entity/models.EntitySpecification#dataName
+   * @type {?(string|Object.<!string, !string>)}
+   * @readonly
+   * @example
+   * var entitySpecification = new EntitySpecification({
+   *   name: 'MyEntity',
+   *   attributes: new AttributeDictionary({
+   *     attribute1: new StringAttribute('attribute1'),
+   *     attribute2: new StringAttribute('attribute2')
+   *   }),
+   *   methods: new MethodDictionary({
+   *     method1: function () { return 'method1'; },
+   *     method2: function () { return 'method2'; }
+   *   }),
+   *   dataName: {
+   *     mongodb: 'MyEntityMongoDBName'
+   *   }
+   * });
+   * console.log(
+   *   entitySpecification.dataName.mongodb
+   * ); // Logs "MyEntityMongoDBName"
+   * @example
+   * var entitySpecification = new EntitySpecification({
+   *   name: 'MyEntity',
+   *   attributes: new AttributeDictionary({
+   *     attribute1: new StringAttribute('attribute1'),
+   *     attribute2: new StringAttribute('attribute2')
+   *   }),
+   *   methods: new MethodDictionary({
+   *     method1: function () { return 'method1'; },
+   *     method2: function () { return 'method2'; }
+   *   }),
+   *   dataName: 'MyEntityDataName'
+   * });
+   * console.log(
+   *   entitySpecification.dataName
+   * ); // Logs "MyEntityDataName"
+   */
+  this.dataName = null;
 
   this.addAttribute = addAttribute;
   this.addMethod = addMethod;
@@ -181,7 +259,7 @@ function EntitySpecification() {
 
         _Entity = SetEntity;
 
-        _loadEntityMembers();
+        _loadEntity();
       } else {
         throw new Error(
           'Once that the property "Entity" of an EntitySpecification ' +
@@ -223,11 +301,14 @@ function EntitySpecification() {
     configurable: false
   });
 
+  var _isAbstract = false;
+  var _dataName, dataName = null;
+
   expect(arguments).to.have.length.within(
     1,
-    3,
+    4,
     'Invalid arguments length when creating a new EntitySpecification (it ' +
-    'has to be passed from 1 to 3 arguments)'
+    'has to be passed from 1 to 4 arguments)'
   );
 
   if (arguments.length === 1 && typeof arguments[0] !== 'string') {
@@ -240,11 +321,11 @@ function EntitySpecification() {
     );
 
     for (var property in specification) {
-      expect(['name', 'attributes', 'methods']).to.include(
+      expect(['name', 'attributes', 'methods', 'dataName']).to.include(
         property,
         'Invalid property "' + property + '" when creating a new ' +
-        'EntitySpecification (valid properties are "name", "attributes" and ' +
-        '"methods")'
+        'EntitySpecification (valid properties are "name", "attributes", ' +
+        '"methods" and "dataName")'
       );
     }
 
@@ -293,6 +374,43 @@ function EntitySpecification() {
         );
       }
     }
+
+    if (specification.isAbstract) {
+      expect(specification.isAbstract).to.be.a(
+        'boolean',
+        'Invalid property "isAbstract" when creating a new ' +
+        'EntitySpecification (it has to be a boolean)'
+      );
+
+      _isAbstract = specification.isAbstract;
+    }
+
+    if (specification.dataName) {
+      if (typeof specification.dataName === 'string') {
+        _dataName = specification.dataName;
+      } else {
+        expect(specification.dataName).to.be.an(
+          'object',
+          'Invalid property "dataName" when creating a new ' +
+          'EntitySpecification (it has to be a string or an object)'
+        );
+
+        _dataName = {};
+        for (dataName in specification.dataName) {
+          expect(specification.dataName[dataName]).to.be.a(
+            'string',
+            'Invalid property "dataName" for adapter "' + dataName + '" when ' +
+            'creating a new EntitySpecification (it has to be a string)'
+          );
+
+          _dataName[dataName] = specification.dataName[dataName];
+
+          Object.preventExtensions(_dataName);
+          Object.seal(_dataName);
+          Object.freeze(_dataName);
+        }
+      }
+    }
   } else {
     expect(arguments[0]).to.be.a(
       'string',
@@ -337,6 +455,54 @@ function EntitySpecification() {
         );
       }
     }
+
+    if (arguments.length > 3 && arguments[3]) {
+      var options = arguments[3];
+
+      expect(options).to.be.an(
+        'object',
+        'Invalid argument "object" when creating a new EntitySpecification ' +
+        '(it has to be an object)'
+      );
+
+      if (options.isAbstract) {
+        expect(options.isAbstract).to.be.a(
+          'boolean',
+          'Invalid property "isAbstract" when creating a new ' +
+          'EntitySpecification (it has to be a boolean)'
+        );
+
+        _isAbstract = options.isAbstract;
+      }
+
+      if (options.dataName) {
+        if (typeof options.dataName === 'string') {
+          _dataName = options.dataName;
+        } else {
+          expect(options.dataName).to.be.an(
+            'object',
+            'Invalid property "dataName" when creating a new ' +
+            'EntitySpecification (it has to be a string or an object)'
+          );
+
+          _dataName = {};
+          for (dataName in options.dataName) {
+            expect(options.dataName[dataName]).to.be.a(
+              'string',
+              'Invalid property "dataName" for adapter "' + dataName +
+              '" when creating a new EntitySpecification (it has to be a ' +
+              'string)'
+            );
+
+            _dataName[dataName] = options.dataName[dataName];
+
+            Object.preventExtensions(_dataName);
+            Object.seal(_dataName);
+            Object.freeze(_dataName);
+          }
+        }
+      }
+    }
   }
 
   Object.defineProperty(this, 'name', {
@@ -352,19 +518,35 @@ function EntitySpecification() {
     configurable: false
   });
 
-  _loadEntityMembers();
+  Object.defineProperty(this, 'isAbstract', {
+    value: _isAbstract,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(this, 'dataName', {
+    value: _dataName,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
+
+  _loadEntity();
 
   /**
    * Loads the attributes and methods of the Entity that is associated with the
    * current specification.
-   * @name module:back4app-entity/models.EntitySpecification~_loadEntityMembers
+   * @name module:back4app-entity/models.EntitySpecification~_loadEntity
    * @function
    * @private
    * @example
-   * _loadEntityMembers();
+   * _loadEntity();
    */
-  function _loadEntityMembers() {
+  function _loadEntity() {
     if (_Entity && _Entity !== models.Entity) {
+      _Entity.adapter.loadEntity(_Entity);
+
       for (var attribute in _attributes) {
         _loadEntityAttribute(_attributes[attribute]);
       }
@@ -443,7 +625,7 @@ function EntitySpecification() {
       }
     }
 
-    _Entity.adapter.loadAttribute(_Entity, attribute);
+    _Entity.adapter.loadEntityAttribute(_Entity, attribute);
   }
 
   /**
@@ -597,4 +779,35 @@ function EntitySpecification() {
 
   Object.preventExtensions(this);
   Object.seal(this);
+}
+
+EntitySpecification.prototype.getDataName = getDataName;
+
+function getDataName(adapterName) {
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when getting the data name of an ' +
+    'EntitySpecification (it has to be passed less than 2 arguments)');
+
+  if (adapterName) {
+    expect(adapterName).to.be.a(
+      'string',
+      'Invalid argument "adapterName" when getting the data name of an ' +
+      'EntitySpecification (it has to be a string)'
+    );
+
+    if (
+      this.dataName &&
+      typeof this.dataName === 'object' &&
+      this.dataName.hasOwnProperty(adapterName)
+    ) {
+      return this.dataName[adapterName];
+    }
+  }
+
+  if (this.dataName && typeof this.dataName === 'string') {
+    return this.dataName;
+  } else {
+    return this.name;
+  }
 }
