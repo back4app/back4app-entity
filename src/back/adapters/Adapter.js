@@ -2,7 +2,6 @@
 
 var expect = require('chai').expect;
 var Promise = require('bluebird');
-var classes = require('../utils').classes;
 
 module.exports = Adapter;
 

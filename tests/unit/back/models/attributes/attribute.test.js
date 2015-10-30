@@ -676,14 +676,18 @@ describe('Attribute', function () {
         '1',
         {}
       );
-      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.deep.equal({});
+      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.deep.equal(
+        {}
+      );
 
       objectAttribute = new ObjectAttribute(
         'objectAttribute',
         '1',
         function () { return this.Entity.specification.name; }
       );
-      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.equal('Entity');
+      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.equal(
+        'Entity'
+      );
     });
   });
 

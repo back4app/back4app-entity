@@ -10,7 +10,6 @@ var AssertionError = chai.AssertionError;
 var classes = require('../../../../../../src/back/utils').classes;
 var models = require('../../../../../../').models;
 var ValidationError = models.errors.ValidationError;
-var Entity = models.Entity;
 var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var ObjectAttribute = attributes.types.ObjectAttribute;

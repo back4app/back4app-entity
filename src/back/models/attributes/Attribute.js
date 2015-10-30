@@ -5,7 +5,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-var classes = require('../../utils/classes');
 var objects = require('../../utils/objects');
 var errors = require('../errors');
 var ValidationError = errors.ValidationError;
