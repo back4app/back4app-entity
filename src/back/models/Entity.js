@@ -317,7 +317,11 @@ var _entityAttributes = new AttributeDictionary({
 
 var _entitySpecification = new EntitySpecification(
   'Entity',
-  _entityAttributes
+  _entityAttributes,
+  null,
+  {
+    isAbstract: true
+  }
 );
 
 Object.defineProperty(Entity, 'specification', {
@@ -518,7 +522,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
       var attributes = null;
       var methods = null;
-      var dataName = null;
+      var options = null;
 
       if (arguments.length > 1 && arguments[1]) {
         attributes = arguments[1];
@@ -541,12 +545,12 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       }
 
       if (arguments.length > 3 && arguments[3]) {
-        dataName = arguments[3];
+        options = arguments[3];
 
-        expect(['string', 'object']).to.contain(
-          typeof dataName,
-          'Invalid property "dataName" when specifying an Entity (it has to ' +
-          'be an object or a string)'
+        expect(options).to.be.an(
+          'object',
+          'Invalid property "options" when specifying an Entity (it has to ' +
+          'be an object)'
         );
       }
 
@@ -554,7 +558,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
         name,
         attributes,
         methods,
-        dataName
+        options
       );
     }
 
@@ -728,7 +732,10 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
  *   }),
- *   dataName: 'MyEntityDataName'
+ *   {
+ *     isAbstract: false,
+ *     dataName: 'MyEntityDataName'
+ *   }
  * ));
  */
 /**
@@ -754,11 +761,15 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * instance of {@link module:back4app-entity/models/methods.MethodDictionary}
  * or an object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
- * @param {?(string|Object.<!string, !string>)} [dataName] It is the name to be
- * used to store the Entity data in the repository. It can be given as a
- * string that will be used by all adapters or as a dictionary specifying the
- * data name for each adapter. If dataName is not given, the Entity's name
- * will be used instead.
+ * @param {Object} [options] It is the optional properties of the new Entity
+ * being specified.
+ * @param {boolean} [options.isAbstract=false] It is a flag to indicate if
+ * the new Entity being specified is an abstract one.
+ * @param {?(string|Object.<!string, !string>)} [options.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify('MyEntity');
@@ -773,7 +784,10 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   'MyEntity',
  *   new AttributeDictionary(),
  *   new MethodDictionary(),
- *   'MyEntityDataName'
+ *   {
+ *     isAbstract: false,
+ *     dataName: 'MyEntityDataName'
+ *   }
  * );
  * @example
  * var MyEntity = Entity.specify(
@@ -787,8 +801,12 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *     method2: function () { return 'method2'; }
  *   }),
  *   {
- *     default: 'MyEntityMongoDBDataName',
- *     rest: 'MyEntityRESTDataName'
+ *     isAbstract: false,
+ *     dataName: {
+ *       default: 'MyEntityMongoDBDataName',
+ *       rest: 'MyEntityRESTDataName'
+ *     }
+ *   }
  * );
  */
 /**
@@ -816,6 +834,8 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {boolean} [specification.isAbstract=false] It is a flag to indicate if
+ * the new Entity being specified is an abstract one.
  * @param {?(string|Object.<!string, !string>)} [specification.dataName] It is
  * the name to be used to store the Entity data in the repository. It can be
  * given as a string that will be used by all adapters or as a dictionary
@@ -829,6 +849,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   name: 'MyEntity',
  *   attributes: {},
  *   methods: {},
+ *   isAbstract: false,
  *   dataName: null
  * });
  * @example
@@ -850,6 +871,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
  *   },
+ *   isAbstract: false,
  *   dataName: {
  *     adapter1: 'MyEntityAdapter1DataName',
  *     adapter2: 'MyEntityAdapter2DataName'
