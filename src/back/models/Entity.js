@@ -1099,11 +1099,15 @@ function deleteInstance() {
 
   return new Promise(function (resolve, reject) {
 
-    //var promise = _this.adapter.deleteObject(_this);
-    var promise = _this.Entity.adapter.deleteObject(_this);
+    var promise = _this.adapter.deleteObject(_this);
 
-    expect(promise).to.be.an.instanceOf(
-      Promise,
+    expect(promise).to.respondTo(
+      'then',
+      'Function "delete" of an Adapter specialization should return a Promise'
+    );
+
+    expect(promise).to.respondTo(
+      'catch',
       'Function "delete" of an Adapter specialization should return a Promise'
     );
 

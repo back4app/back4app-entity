@@ -40,7 +40,8 @@
     "path-browserify": "0.0.0",
     "requirejs": "^2.1.20",
     "util-browser": "0.0.2",
-    "mockery": "^1.4.0"
+    "mockery": "^1.4.0",
+    "sinon": "^1.17.2"
   },
   "dependencies": {
     "bluebird": "^2.10.2",

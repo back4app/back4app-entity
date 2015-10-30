@@ -14,6 +14,7 @@ var attributes = models.attributes;
 var methods = models.methods;
 var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
+var sinon = require('sinon');
 
 require('../../settings');
 
@@ -852,6 +853,35 @@ describe('Entity', function () {
       myEntity50.a1 = {};
 
       expect(myEntity50.isValid()).to.equal(true);
+    });
+  });
+
+  describe('#delete', function() {
+
+    it('expects to delete an instance', function () {
+
+      var mockAdapter = sinon.mock({
+        deleteObject: function (entity) {
+          return new Promise(function  (resolve, reject) {
+            resolve();
+          });
+        }
+      });
+
+      mockAdapter.expects("deleteObject").once().withExactArgs('00000000-0000-4000-a000-000000000111');
+
+      settings.ADAPTERS.default = mockAdapter;
+
+      var EntityMock = Entity.specify({name: 'EntityMock'});
+
+      var myEntity = new EntityMock({id: '00000000-0000-4000-a000-000000000111'});
+
+      myEntity.delete();
+
+      mockAdapter.verify();
+
+      mockAdapter.restore();
+
     });
   });
 });
