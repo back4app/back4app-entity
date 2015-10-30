@@ -14,9 +14,15 @@ classes.generalize(Adapter, MockAdapter);
 Adapter.prototype.loadEntity = loadEntity;
 Adapter.prototype.loadEntityAttribute = loadEntityAttribute;
 Adapter.prototype.insertObject = insertObject;
+Adapter.prototype.getObject = getObject;
+Adapter.prototype.findObjects = findObjects;
 
 function loadEntity() {}
 
 function loadEntityAttribute() {}
 
 function insertObject() {}
+
+function getObject(EntityClass, query) {}
+
+function findObjects(EntityClass, query) {}
