@@ -14,6 +14,7 @@ var Entity = models.Entity;
 var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var ObjectAttribute = attributes.types.ObjectAttribute;
+var EntityProxy = require('../../EntityProxy');
 
 require('../../../../settings');
 
@@ -248,7 +249,7 @@ describe('ObjectAttribute', function () {
     it('expect to work correctly', function () {
       objectAttribute.validateValue({});
       objectAttribute.validateValue(new Date());
-      objectAttribute.validateValue(new Entity());
+      objectAttribute.validateValue(new EntityProxy());
       expect(function () {
         objectAttribute.validateValue(1);
       }).to.throw(ValidationError);

@@ -14,6 +14,7 @@ var Entity = models.Entity;
 var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var AssociationAttribute = attributes.types.AssociationAttribute;
+var EntityProxy = require('../../EntityProxy');
 
 require('../../../../settings');
 
@@ -319,7 +320,7 @@ describe('AssociationAttribute', function () {
         associationAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        associationAttribute.validateValue(new Entity());
+        associationAttribute.validateValue(new EntityProxy());
       }).to.throw(ValidationError);
     });
   });

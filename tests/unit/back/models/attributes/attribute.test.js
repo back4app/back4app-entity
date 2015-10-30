@@ -19,6 +19,7 @@ var DateAttribute = attributes.types.DateAttribute;
 var NumberAttribute = attributes.types.NumberAttribute;
 var ObjectAttribute = attributes.types.ObjectAttribute;
 var StringAttribute = attributes.types.StringAttribute;
+var EntityProxy = require('../EntityProxy');
 var C1 = require('../C1');
 var C2 = require('../C2');
 
@@ -655,10 +656,10 @@ describe('Attribute', function () {
         objectAttribute.getDefaultValue(function () {});
       }).to.throw(AssertionError);
 
-      objectAttribute.getDefaultValue(new Entity());
+      objectAttribute.getDefaultValue(new EntityProxy());
 
       expect(function () {
-        objectAttribute.getDefaultValue(new Entity(), new Entity());
+        objectAttribute.getDefaultValue(new EntityProxy(), new EntityProxy());
       }).to.throw(AssertionError);
     });
 
@@ -668,21 +669,21 @@ describe('Attribute', function () {
         '1',
         null
       );
-      expect(objectAttribute.getDefaultValue(new Entity())).to.equal(null);
+      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.equal(null);
 
       objectAttribute = new ObjectAttribute(
         'objectAttribute',
         '1',
         {}
       );
-      expect(objectAttribute.getDefaultValue(new Entity())).to.deep.equal({});
+      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.deep.equal({});
 
       objectAttribute = new ObjectAttribute(
         'objectAttribute',
         '1',
         function () { return this.Entity.specification.name; }
       );
-      expect(objectAttribute.getDefaultValue(new Entity())).to.equal('Entity');
+      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.equal('Entity');
     });
   });
 

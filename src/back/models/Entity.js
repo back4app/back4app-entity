@@ -18,15 +18,15 @@ module.exports = Entity;
 
 require('./index').Entity = Entity;
 
-
 /**
  * Base class for entities.
  * @constructor
+ * @abstract
  * @memberof module:back4app-entity/models
  * @param {?Object.<!string, ?Object>} [attributeValues] It has to be passed as
  * a dictionary of attribute's name and values to initialize a new Entity.
  * @example
- * var entity = new Entity();
+ * var myEntity = new MyEntity();
  */
 function Entity(attributeValues/*, options*/) {
   /**
@@ -51,8 +51,8 @@ function Entity(attributeValues/*, options*/) {
    * @type {!Class}
    * @readonly
    * @example
-   * var entity = new Entity();
-   * console.log(entity.Entity == Entity); // Logs "true"
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.Entity == MyEntity); // Logs "true"
    */
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     this.Entity = null;
@@ -115,6 +115,29 @@ function Entity(attributeValues/*, options*/) {
     enumerable: false,
     configurable: true
   });
+
+  expect(this).to.be.an(
+    'object',
+    'The Entity\'s constructor can be only invoked from specialized ' +
+    'classes\' constructors'
+  );
+
+  expect(this.constructor).to.be.a(
+    'function',
+    'The Entity\'s constructor can be only invoked from specialized ' +
+    'classes\' constructors'
+  );
+
+  expect(this.constructor).to.not.equal(
+    Entity,
+    'The Entity is an abstract class and cannot be directly initialized'
+  );
+
+  expect(this).to.be.instanceof(
+    Entity,
+    'The Entity\'s constructor can be only invoked from specialized ' +
+    'classes\' constructors'
+  );
 
   expect(arguments).to.have.length.below(
     2,
@@ -481,6 +504,32 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
           writable: false,
           configurable: true
         });
+      }
+
+      if (SpecificEntity.specification.isAbstract) {
+        expect(this).to.be.an(
+          'object',
+          'The "' + SpecificEntity.specification.name + '"\'s constructor ' +
+          'can be only invoked from specialized classes\' constructors'
+        );
+
+        expect(this.constructor).to.be.a(
+          'function',
+          'The "' + SpecificEntity.specification.name + '"\'s constructor ' +
+          'can be only invoked from specialized classes\' constructors'
+        );
+
+        expect(this.constructor).to.not.equal(
+          SpecificEntity,
+          'The "' + SpecificEntity.specification.name + '" is an abstract ' +
+          'class and cannot be directly initialized'
+        );
+
+        expect(this).to.be.instanceof(
+          SpecificEntity,
+          'The "' + SpecificEntity.specification.name + '"\'s constructor ' +
+          'can be only invoked from specialized classes\' constructors'
+        );
       }
 
       CurrentEntity.call(this, attributeValues);

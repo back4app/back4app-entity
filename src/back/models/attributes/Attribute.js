@@ -54,6 +54,7 @@ module.exports = Attribute;
  * @memberof module:back4app-entity/models/attributes
  * @name Attribute
  * @constructor
+ * @abstract
  * @param {!string} name It is the name of the attribute.
  * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
  * It is optional and if not passed it will assume '1' as the default value.
@@ -186,12 +187,6 @@ function Attribute() {
 
   expect(this).to.be.instanceof(
     Attribute,
-    'The Attribute\'s constructor can be only invoked from specialized' +
-    'classes\' constructors'
-  );
-
-  expect(classes.isGeneral(Attribute, this.constructor)).to.equal(
-    true,
     'The Attribute\'s constructor can be only invoked from specialized' +
     'classes\' constructors'
   );

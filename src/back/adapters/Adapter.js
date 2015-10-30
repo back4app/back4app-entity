@@ -36,12 +36,6 @@ function Adapter() {
     'The Adapter\'s constructor can be only invoked from specialized' +
     'classes\' constructors'
   );
-
-  expect(classes.isGeneral(Adapter, this.constructor)).to.equal(
-    true,
-    'The Adapter\'s constructor can be only invoked from specialized' +
-    'classes\' constructors'
-  );
 }
 
 Adapter.prototype.loadEntity = loadEntity;
