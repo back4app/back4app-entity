@@ -90,6 +90,7 @@ describe('ObjectAttribute', function () {
           'attribute',
           '0..1',
           null,
+          null,
           null
         );
       }).to.throw(AssertionError);
@@ -257,10 +258,10 @@ describe('ObjectAttribute', function () {
         objectAttribute.validateValue(1);
       }).to.throw(ValidationError);
       expect(function () {
-        objectAttribute.validateValue(function () {});
+        objectAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        objectAttribute.validateValue(null);
+        objectAttribute.validateValue(function () {});
       }).to.throw(ValidationError);
       expect(function () {
         objectAttribute.validateValue(false);

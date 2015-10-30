@@ -89,6 +89,7 @@ describe('NumberAttribute', function () {
           'attribute',
           '0..1',
           null,
+          null,
           null
         );
       }).to.throw(AssertionError);
@@ -256,10 +257,10 @@ describe('NumberAttribute', function () {
       numberAttribute.validateValue(new Number());
       /* jshint ignore:end */
       expect(function () {
-        numberAttribute.validateValue({});
+        numberAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        numberAttribute.validateValue(null);
+        numberAttribute.validateValue({});
       }).to.throw(ValidationError);
       expect(function () {
         numberAttribute.validateValue(false);

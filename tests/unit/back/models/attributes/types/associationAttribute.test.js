@@ -99,6 +99,7 @@ describe('AssociationAttribute', function () {
           'MyEntity30',
           '0..1',
           null,
+          null,
           null
         );
       }).to.throw(AssertionError);
@@ -320,10 +321,10 @@ describe('AssociationAttribute', function () {
         new (MyEntity30.specify('MyEntity31'))()
       );
       expect(function () {
-        associationAttribute.validateValue(new Entity());
+        associationAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        associationAttribute.validateValue(null);
+        associationAttribute.validateValue(new Entity());
       }).to.throw(ValidationError);
     });
   });

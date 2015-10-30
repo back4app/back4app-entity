@@ -89,6 +89,7 @@ describe('BooleanAttribute', function () {
           'attribute',
           '0..1',
           null,
+          null,
           null
         );
       }).to.throw(AssertionError);
@@ -252,10 +253,10 @@ describe('BooleanAttribute', function () {
       booleanAttribute.validateValue(true);
       booleanAttribute.validateValue(false);
       expect(function () {
-        booleanAttribute.validateValue({});
+        booleanAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        booleanAttribute.validateValue(null);
+        booleanAttribute.validateValue({});
       }).to.throw(ValidationError);
     });
   });

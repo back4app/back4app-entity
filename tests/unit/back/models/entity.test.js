@@ -117,7 +117,7 @@ describe('Entity', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify('MyEntity12', {}, {}, {});
+        Entity.specify('MyEntity12', {}, {}, null, {});
       }).to.throw(AssertionError);
 
       expect(function () {

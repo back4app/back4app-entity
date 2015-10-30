@@ -1,6 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
+var Promise = require('bluebird');
 var classes = require('../utils').classes;
 
 module.exports = Adapter;
@@ -41,4 +42,25 @@ function Adapter() {
     'The Adapter\'s constructor can be only invoked from specialized' +
     'classes\' constructors'
   );
+}
+
+Adapter.prototype.loadEntity = loadEntity;
+Adapter.prototype.loadEntityAttribute = loadEntityAttribute;
+Adapter.prototype.insertObject = insertObject;
+
+function loadEntity() {
+  throw new Error('Function "loadEntity" has to be implemented in the ' +
+    'Adapter specialization');
+}
+
+function loadEntityAttribute() {
+  throw new Error('Function "loadAttribute" has to be implemented in the ' +
+    'Adapter specialization');
+}
+
+function insertObject() {
+  return new Promise(function () {
+    throw new Error('Function "insertObject" has to be implemented in the ' +
+      'Adapter specialization');
+  });
 }

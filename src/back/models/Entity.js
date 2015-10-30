@@ -28,7 +28,23 @@ require('./index').Entity = Entity;
  * @example
  * var entity = new Entity();
  */
-function Entity(attributeValues) {
+function Entity(attributeValues/*, options*/) {
+  /**
+   * This is a read-only property to get the adapterName of an Entity instance.
+   * @type {!string}
+   * @readonly
+   * @example
+   * var myDefaultAdapterName = myEntity.adapterName;
+   */
+  this.adapterName = null;
+  /**
+   * This is a read-only property to get the adapter of an Entity instance.
+   * @type {!module:back4app-entity/adapters.Adapter}
+   * @readonly
+   * @example
+   * var myDefaultAdapter = myEntity.adapter;
+   */
+  this.adapter = null;
   /**
    * This is a read-only property to get the Entity Class of an instance.
    * @name module:back4app-entity/models.Entity#Entity
@@ -82,6 +98,20 @@ function Entity(attributeValues) {
         'General property of an Entity instance cannot be changed'
       );
     },
+    enumerable: false,
+    configurable: true
+  });
+
+  Object.defineProperty(this, 'adapterName', {
+    value: this.Entity.adapterName,
+    writable: false,
+    enumerable: false,
+    configurable: true
+  });
+
+  Object.defineProperty(this, 'adapter', {
+    value: this.Entity.adapter,
+    writable: false,
     enumerable: false,
     configurable: true
   });
@@ -148,6 +178,14 @@ function Entity(attributeValues) {
 }
 
 /**
+ * This is a read-only property to get the adapterName of an Entity class.
+ * @type {!string}
+ * @readonly
+ * @example
+ * var myDefaultAdapterName = Entity.adapterName;
+ */
+Entity.adapterName = null;
+/**
  * This is a read-only property to get the adapter of an Entity class.
  * @type {!module:back4app-entity/adapters.Adapter}
  * @readonly
@@ -172,6 +210,14 @@ Entity.General = null;
  * var entitySpecification = Entity.specification;
  */
 Entity.specification = null;
+/**
+ * This is the data name of the current Entity Class.
+ * @type {!string}
+ * @readonly
+ * @example
+ * var entityDataName = Entity.dataName;
+ */
+Entity.dataName = null;
 /**
  * This is a dictionary with a consolidation of the Entity's attributes.
  * @type
@@ -233,9 +279,17 @@ Entity.specializations = null;
 Entity.specify = null;
 Entity.getSpecialization = null;
 Entity.new = null;
+Entity.create = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 Entity.prototype.delete = deleteInstance;
+
+Object.defineProperty(Entity, 'adapterName', {
+  value: 'default',
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
 
 Object.defineProperty(Entity, 'adapter', {
   get: _getAdapter,
@@ -244,7 +298,7 @@ Object.defineProperty(Entity, 'adapter', {
       'Adapter property of an Entity class cannot be changed'
     );
   },
-  enumerable: false,
+  enumerable: true,
   configurable: false
 });
 
@@ -275,6 +329,13 @@ Object.defineProperty(Entity, 'specification', {
 });
 
 _entitySpecification.Entity = Entity;
+
+Object.defineProperty(Entity, 'dataName', {
+  value: Entity.specification.getDataName(Entity.adapterName),
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
 
 Object.defineProperty(Entity, 'attributes', {
   value: _entityAttributes,
@@ -345,12 +406,13 @@ function _getAdapter() {
   if (!_adapter) {
     try {
       expect(settings).to.have.ownProperty('ADAPTERS');
-      expect(settings.ADAPTERS).to.have.ownProperty('default');
-      expect(settings.ADAPTERS.default).to.be.an.instanceOf(Adapter);
-      _adapter = settings.ADAPTERS.default;
+      expect(settings.ADAPTERS).to.have.ownProperty(this.adapterName);
+      var adapter = settings.ADAPTERS[this.adapterName];
+      expect(adapter).to.be.an.instanceOf(Adapter);
+      _adapter = adapter;
     } catch (e) {
       if (e instanceof AssertionError) {
-        throw new errors.AdapterNotFoundError('default', e);
+        throw new errors.AdapterNotFoundError(this.adapterName, e);
       } else {
         throw e;
       }
@@ -402,9 +464,9 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
   return function () {
     expect(arguments).to.have.length.within(
       1,
-      3,
+      4,
       'Invalid arguments length when specifying an Entity (it has to be ' +
-      'passed from 1 to 3 arguments)'
+      'passed from 1 to 4 arguments)'
     );
 
     var SpecificEntity = function (attributeValues) {
@@ -422,17 +484,6 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     };
 
     classes.generalize(CurrentEntity, SpecificEntity);
-
-    Object.defineProperty(SpecificEntity, 'adapter', {
-      get: _getAdapter,
-      set: function () {
-        throw new Error(
-          'Adapter property of an Entity class cannot be changed'
-        );
-      },
-      enumerable: false,
-      configurable: false
-    });
 
     Object.defineProperty(SpecificEntity, 'General', {
       value: CurrentEntity,
@@ -468,6 +519,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
       var attributes = null;
       var methods = null;
+      var dataName = null;
 
       if (arguments.length > 1 && arguments[1]) {
         attributes = arguments[1];
@@ -489,10 +541,21 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
         );
       }
 
+      if (arguments.length > 3 && arguments[3]) {
+        dataName = arguments[3];
+
+        expect(['string', 'object']).to.contain(
+          typeof dataName,
+          'Invalid property "dataName" when specifying an Entity (it has to ' +
+          'be an object or a string)'
+        );
+      }
+
       _specificEntitySpecification = new EntitySpecification(
         name,
         attributes,
-        methods
+        methods,
+        dataName
       );
     }
 
@@ -507,6 +570,15 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
     Object.defineProperty(SpecificEntity, 'specification', {
       value: _specificEntitySpecification,
+      enumerable: true,
+      writable: false,
+      configurable: false
+    });
+
+    Object.defineProperty(SpecificEntity, 'dataName', {
+      value: SpecificEntity.specification.getDataName(
+        SpecificEntity.adapterName
+      ),
       enumerable: true,
       writable: false,
       configurable: false
@@ -620,6 +692,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       SpecificEntity
     );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
+    SpecificEntity.create = _getCreateFunction(SpecificEntity);
 
     if (_specificEntitySpecification.Entity) {
       expect(_specificEntitySpecification.Entity).to.equal(
@@ -655,7 +728,8 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   dataName: 'MyEntityDataName'
  * ));
  */
 /**
@@ -681,20 +755,26 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * instance of {@link module:back4app-entity/models/methods.MethodDictionary}
  * or an object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {?(string|Object.<!string, !string>)} [dataName] It is the name to be
+ * used to store the Entity data in the repository. It can be given as a
+ * string that will be used by all adapters or as a dictionary specifying the
+ * data name for each adapter. If dataName is not given, the Entity's name
+ * will be used instead.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify('MyEntity');
  * @example
- * var MyEntity = Entity.specify('MyEntity', null, null);
+ * var MyEntity = Entity.specify('MyEntity', null, null, null);
  * @example
- * var MyEntity = Entity.specify('MyEntity', {}, {});
+ * var MyEntity = Entity.specify('MyEntity', {}, {}, null);
  * @example
- * var MyEntity = Entity.specify('MyEntity', [], {});
+ * var MyEntity = Entity.specify('MyEntity', [], {}, null);
  * @example
  * var MyEntity = Entity.specify(
  *   'MyEntity',
  *   new AttributeDictionary(),
- *   new MethodDictionary()
+ *   new MethodDictionary(),
+ *   'MyEntityDataName'
  * );
  * @example
  * var MyEntity = Entity.specify(
@@ -706,7 +786,10 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   {
+ *     default: 'MyEntityMongoDBDataName',
+ *     rest: 'MyEntityRESTDataName'
  * );
  */
 /**
@@ -734,6 +817,11 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {?(string|Object.<!string, !string>)} [specification.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify({ name: 'MyEntity' });
@@ -741,7 +829,8 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * var MyEntity = Entity.specify({
  *   name: 'MyEntity',
  *   attributes: {},
- *   methods: {}
+ *   methods: {},
+ *   dataName: null
  * });
  * @example
  * var MyEntity = Entity.specify({
@@ -761,6 +850,10 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   methods: {
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
+ *   },
+ *   dataName: {
+ *     adapter1: 'MyEntityAdapter1DataName',
+ *     adapter2: 'MyEntityAdapter2DataName'
  *   }
  * });
  */
@@ -873,6 +966,42 @@ var _getNewFunction = function (CurrentEntity) {
  */
 Entity.new = _getNewFunction(Entity);
 
+var _getCreateFunction = function (CurrentEntity) {
+  return function (attributeValues) {
+    expect(arguments).to.have.length.below(
+      2,
+      'Invalid arguments length when creating a new "' +
+      CurrentEntity.specification.name +
+      '" instance (it has to be passed less than 2 arguments)');
+
+    return new Promise(function (resolve, reject) {
+      var newEntity = new CurrentEntity(attributeValues);
+
+      newEntity.validate();
+
+      var promise = CurrentEntity.adapter.insertObject(newEntity);
+
+      expect(promise).to.respondTo(
+        'then',
+        'Function "create" of an Adapter specialization should return a Promise'
+      );
+
+      expect(promise).to.respondTo(
+        'catch',
+        'Function "create" of an Adapter specialization should return a Promise'
+      );
+
+      promise
+        .then(function () {
+          resolve(newEntity);
+        })
+        .catch(reject);
+    });
+  };
+};
+
+Entity.create = _getCreateFunction(Entity);
+
 /**
  * Validates an entity and throws a
  * {@link module:back4app-entity/models/errors.ValidationError} if it is not
@@ -947,6 +1076,7 @@ function isValid(attribute) {
   return true;
 }
 
+
 /**
  * deletes an entity.
  * @name module:back4app-entity/models.Entity#isValid
@@ -982,4 +1112,5 @@ function deleteInstance() {
       .catch(reject);
   });
 }
+
 
