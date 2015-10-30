@@ -857,9 +857,7 @@ describe('Entity', function () {
   });
 
   describe('#delete', function() {
-
     it('expects to delete an instance', function () {
-
       var mockAdapter = sinon.mock({
         deleteObject: function (entity) {
           return new Promise(function  (resolve, reject) {

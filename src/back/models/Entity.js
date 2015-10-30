@@ -1088,7 +1088,6 @@ function isValid(attribute) {
  *
  */
 function deleteInstance() {
-
   var _this = this;
 
   expect(arguments).to.have.length(
