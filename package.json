@@ -43,6 +43,7 @@
     "mockery": "^1.4.0"
   },
   "dependencies": {
+    "bluebird": "^2.10.2",
     "chai": "^3.3.0",
     "node-uuid": "^1.4.3"
   }

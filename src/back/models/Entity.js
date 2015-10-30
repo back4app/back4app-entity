@@ -3,6 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var Promise = require('bluebird');
 var settings = require('../settings');
 var classes = require('../utils/classes');
 var objects = require('../utils/objects');
@@ -234,6 +235,7 @@ Entity.getSpecialization = null;
 Entity.new = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
+Entity.prototype.delete = deleteInstance;
 
 Object.defineProperty(Entity, 'adapter', {
   get: _getAdapter,
@@ -943,5 +945,41 @@ function isValid(attribute) {
     }
   }
   return true;
+}
+
+/**
+ * deletes an entity.
+ * @name module:back4app-entity/models.Entity#isValid
+ * @function
+ * @param {}
+ * @returns {boolean} The validation result.
+ * @example
+ * myEntity.delete(); // Deletes the instance of an Entity.
+ *
+ */
+function deleteInstance() {
+
+  var _this = this;
+
+  expect(arguments).to.have.length(
+    0,
+    'Invalid arguments length when deleting a "' +
+    this.Entity.specification.name +
+    '" instance (it has to be passed 0 arguments)');
+
+  return new Promise(function (resolve, reject) {
+
+    //var promise = _this.adapter.deleteObject(_this);
+    var promise = _this.Entity.adapter.deleteObject(_this);
+
+    expect(promise).to.be.an.instanceOf(
+      Promise,
+      'Function "delete" of an Adapter specialization should return a Promise'
+    );
+
+    promise
+      .then(resolve)
+      .catch(reject);
+  });
 }
 
