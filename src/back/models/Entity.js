@@ -1105,7 +1105,7 @@ function _getGetFunction(CurrentEntity) {
       var adapter = CurrentEntity.adapter;
       return adapter.getObject(CurrentEntity, query);
     });
-  }
+  };
 }
 
 /**
@@ -1152,7 +1152,7 @@ function _getFindFunction(CurrentEntity) {
       var adapter = CurrentEntity.adapter;
       return adapter.findObjects(CurrentEntity, query);
     });
-  }
+  };
 }
 
 /**

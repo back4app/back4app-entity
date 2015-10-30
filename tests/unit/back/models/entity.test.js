@@ -3,6 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var Promise = require('bluebird');
 var settings = require('../../../../src/back').settings;
 var classes = require('../../../../src/back/utils').classes;
 var models = require('../../../../src/back/models');

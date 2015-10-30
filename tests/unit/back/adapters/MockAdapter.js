@@ -23,6 +23,6 @@ function loadEntityAttribute() {}
 
 function insertObject() {}
 
-function getObject(EntityClass, query) {}
+function getObject() {}
 
-function findObjects(EntityClass, query) {}
+function findObjects() {}
