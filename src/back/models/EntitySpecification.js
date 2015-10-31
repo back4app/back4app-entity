@@ -610,21 +610,6 @@ function EntitySpecification() {
       );
     }
 
-    var dataName = attribute.getDataName(_Entity.adapterName);
-
-    for (var entityAttribute in _attributes) {
-      if (entityAttribute !== attribute.name) {
-        expect(
-          _attributes[entityAttribute].getDataName(_Entity.adapterName)
-        ).to.not.equal(
-          dataName,
-          'failed to load entity attribute "' + attribute.name + '" because ' +
-          'there is another attribute with same dataName "' + dataName + '" ' +
-          'for adapter "' + _Entity.adapterName + '" in the current Entity'
-        );
-      }
-    }
-
     _Entity.adapter.loadEntityAttribute(_Entity, attribute);
   }
 

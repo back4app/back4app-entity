@@ -44,11 +44,11 @@ describe('Entity', function () {
 
     it('expect to be not directly initialized', function () {
       expect(function () {
-        new Entity();
+        entity = new Entity();
       }).to.throw(AssertionError);
 
       expect(function () {
-        new WrongEntityProxy();
+        entity = new WrongEntityProxy();
       }).to.throw(AssertionError);
     });
 
@@ -267,6 +267,36 @@ describe('Entity', function () {
 
       expect(MyEntity.specification).to.equal(entitySpecification);
     });
+  });
+
+  describe('.dataName', function () {
+    it(
+      'expect to exist as a static property and contain the right name',
+      function () {
+        expect(Entity).to.have.property('dataName')
+          .that.equals('Entity');
+        expect(Entity).to.have.property('dataName')
+          .that.equals(Entity.specification.getDataName(Entity.adapterName));
+        expect(C1).to.have.property('dataName')
+          .that.equals(C1.specification.getDataName(C1.adapterName));
+        expect(C11).to.have.property('dataName')
+          .that.equals(C11.specification.getDataName(C11.adapterName));
+        expect(C2).to.have.property('dataName')
+          .that.equals(C2.specification.getDataName(C2.adapterName));
+
+        expect(Entity.specify({
+          name: 'MyNewC111',
+          dataName: 'MyC111DataName'
+        }).dataName).to.equal('MyC111DataName');
+
+        expect(Entity.specify({
+          name: 'MyNewC112',
+          dataName: {
+            default: 'MyC111DataName'
+          }
+        }).dataName).to.equal('MyC111DataName');
+      }
+    );
   });
 
   describe('.attributes', function () {
