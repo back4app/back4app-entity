@@ -911,6 +911,33 @@ describe('Entity', function () {
       );
       expect(c2.constructor()).to.equal('constructor');
     });
+
+    it('expect to not instantiate abstract Entities', function () {
+      var MyAbstractEntity = Entity.specify({
+        name: 'MyAbstractEntity',
+        isAbstract: true
+      });
+
+      function MyAbstractEntityProxy() {
+        MyAbstractEntity.apply(this, Array.prototype.slice.call(arguments));
+      }
+
+      classes.generalize(MyAbstractEntity, MyAbstractEntityProxy);
+
+      function MyAbstractEntityWrongProxy() {
+        MyAbstractEntity.apply(this, Array.prototype.slice.call(arguments));
+      }
+
+      expect(function () {
+        entity = new MyAbstractEntity();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        entity = new MyAbstractEntityWrongProxy();
+      }).to.throw(AssertionError);
+
+      entity = new MyAbstractEntityProxy();
+    });
   });
 
   describe('#validate', function () {
