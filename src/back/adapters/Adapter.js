@@ -82,6 +82,8 @@ function loadEntityAttribute() {
  * @function
  * @param {!module:back4app-entity/models.Entity} entityObject The Entity object
  * to be inserted.
+ * @returns {Promise.<undefined|Error>} Promise that returns nothis if succeed
+ * and the Error if failed.
  * @example
  * myAdapter.insertObject(new MyEntity());
  */
