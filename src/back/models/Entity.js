@@ -621,15 +621,6 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       );
     }
 
-    expect(_specializations).to.not.have.ownProperty(
-      _specificEntitySpecification.name,
-      'It was not possible to specify a new Entity called "' +
-      _specificEntitySpecification.name + '" because duplicates are not allowed'
-    );
-
-    _specializations[_specificEntitySpecification.name] = SpecificEntity;
-    directSpecializations[_specificEntitySpecification.name] = SpecificEntity;
-
     Object.defineProperty(SpecificEntity, 'specification', {
       value: _specificEntitySpecification,
       enumerable: true,
@@ -765,6 +756,15 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     } else {
       _specificEntitySpecification.Entity = SpecificEntity;
     }
+
+    expect(_specializations).to.not.have.ownProperty(
+      _specificEntitySpecification.name,
+      'It was not possible to specify a new Entity called "' +
+      _specificEntitySpecification.name + '" because duplicates are not allowed'
+    );
+
+    _specializations[_specificEntitySpecification.name] = SpecificEntity;
+    directSpecializations[_specificEntitySpecification.name] = SpecificEntity;
 
     return SpecificEntity;
   };

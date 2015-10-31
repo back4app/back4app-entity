@@ -928,6 +928,11 @@ describe('Entity', function () {
         MyAbstractEntity.apply(this, Array.prototype.slice.call(arguments));
       }
 
+      var MyConcreteEntity = MyAbstractEntity.specify({
+        name: 'MyConcreteEntity',
+        isAbstract: false
+      });
+
       expect(function () {
         entity = new MyAbstractEntity();
       }).to.throw(AssertionError);
@@ -937,6 +942,27 @@ describe('Entity', function () {
       }).to.throw(AssertionError);
 
       entity = new MyAbstractEntityProxy();
+
+      entity = new MyConcreteEntity();
+
+      var MyAbstractEntity2 = null;
+
+      expect(function () {
+        MyAbstractEntity2 = MyConcreteEntity.specify({
+          name: 'MyAbstractEntity2',
+          isAbstract: true
+        });
+      }).to.throw(AssertionError);
+
+      MyAbstractEntity2 = MyAbstractEntity.specify({
+        name: 'MyAbstractEntity2',
+        isAbstract: true
+      });
+
+      var MyConcreteEntity2 = MyConcreteEntity.specify({
+        name: 'MyConcreteEntity2',
+        isAbstract: false
+      });
     });
   });
 
