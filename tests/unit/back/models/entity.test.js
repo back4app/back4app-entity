@@ -959,7 +959,9 @@ describe('Entity', function () {
         isAbstract: true
       });
 
-      var MyConcreteEntity2 = MyConcreteEntity.specify({
+      var MyConcreteEntity2 = null;
+
+      MyConcreteEntity2 = MyConcreteEntity.specify({
         name: 'MyConcreteEntity2',
         isAbstract: false
       });
