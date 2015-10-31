@@ -1046,6 +1046,18 @@ var _getNewFunction = function (CurrentEntity) {
  */
 Entity.new = _getNewFunction(Entity);
 
+/**
+ * Private function used to get the create function specific for the current
+ * Entity class.
+ * @name module:back4app-entity/models.Entity~_getCreateFunction
+ * @function
+ * @param {!Class} CurrentEntity The current entity class for which the new
+ * function will be created.
+ * @returns {function} The new function.
+ * @private
+ * @example
+ * Entity.create = _getCreateFunction(Entity);
+ */
 var _getCreateFunction = function (CurrentEntity) {
   return function (attributeValues) {
     expect(arguments).to.have.length.below(
@@ -1080,6 +1092,28 @@ var _getCreateFunction = function (CurrentEntity) {
   };
 };
 
+/**
+ * Creates a new Entity object from passed attribute values, validates it and
+ * saves it in the storage.
+ * @memberof module:back4app-entity/models.Entity
+ * @name create
+ * @function
+ * @param {?Object.<!string, ?Object>} [attributeValues] It has to be passed as
+ * a dictionary of attribute's name and values to initialize a new Entity.
+ * @returns {Promise.<module:back4app-entity/models.Entity|Error>} Promise that
+ * returns the created Entity object if succeed and the Error if failed.
+ * @example
+ * MyEntity
+ *   .create({
+ *     myAttribute: myAttributeValue
+ *   })
+ *   .then(function (myEntity) {
+ *     console.log(myEntity);
+ *   })
+ *   .catch(function (error) {
+ *     console.log(error);
+ *   });
+ */
 Entity.create = _getCreateFunction(Entity);
 
 /**
