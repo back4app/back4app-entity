@@ -153,6 +153,35 @@ describe('Entity', function () {
     });
   });
 
+  describe('.adapterName', function () {
+    it(
+      'expect to exist as a static property and contain the right adapter name',
+      function () {
+        expect(Entity).to.have.property('adapterName')
+          .that.equals('default');
+        expect(C1).to.have.property('adapterName')
+          .that.equals('default');
+        expect(C11).to.have.property('adapterName')
+          .that.equals('default');
+        expect(C2).to.have.property('adapterName')
+          .that.equals('default');
+      }
+    );
+
+    it('expect to not be changed or deleted', function () {
+      expect(function () {
+        delete Entity.adapterName;
+      }).to.throw(Error);
+
+      expect(function () {
+        Entity.adapterName = 'willnotwork';
+      }).to.throw(Error);
+
+      expect(Entity).to.have.property('adapterName')
+        .that.equals('default');
+    });
+  });
+
   describe('.adapter', function () {
     it(
       'expect to exist as a static property and contain the right adapter',
