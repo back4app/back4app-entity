@@ -26,5 +26,12 @@ var C2 = module.exports = Entity.specify(
   ],
   {
     constructor: function () { return 'constructor'; }
+  },
+  {
+    isAbstract: false,
+    dataName: {
+      notDefault: 'notDefault',
+      default: 'C2'
+    }
   }
 );

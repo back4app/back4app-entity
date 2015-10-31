@@ -321,11 +321,13 @@ function EntitySpecification() {
     );
 
     for (var property in specification) {
-      expect(['name', 'attributes', 'methods', 'dataName']).to.include(
+      expect(
+        ['name', 'attributes', 'methods', 'isAbstract', 'dataName']
+      ).to.include(
         property,
         'Invalid property "' + property + '" when creating a new ' +
         'EntitySpecification (valid properties are "name", "attributes", ' +
-        '"methods" and "dataName")'
+        '"methods", "isAbstract" and "dataName")'
       );
     }
 
@@ -495,11 +497,11 @@ function EntitySpecification() {
             );
 
             _dataName[dataName] = options.dataName[dataName];
-
-            Object.preventExtensions(_dataName);
-            Object.seal(_dataName);
-            Object.freeze(_dataName);
           }
+
+          Object.preventExtensions(_dataName);
+          Object.seal(_dataName);
+          Object.freeze(_dataName);
         }
       }
     }

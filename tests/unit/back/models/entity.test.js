@@ -11,7 +11,6 @@ var ValidationError = models.errors.ValidationError;
 var Entity = models.Entity;
 var EntitySpecification = models.EntitySpecification;
 var attributes = models.attributes;
-var StringAttribute = attributes.types.StringAttribute;
 var methods = models.methods;
 var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
@@ -73,27 +72,35 @@ describe('Entity', function () {
       Entity.specify({
         name: 'MyEntity3',
         attributes: [],
-        methods: {}
+        methods: {},
+        isAbstract: null,
+        dataName: null
       });
 
       Entity.specify({
         name: 'MyEntity4',
         attributes: new attributes.AttributeDictionary(),
-        methods: new methods.MethodDictionary()
+        methods: new methods.MethodDictionary(),
+        isAbstract: false,
+        dataName: {}
       });
 
       Entity.specify(new EntitySpecification('MyEntity5'));
 
-      Entity.specify('MyEntity6', null, null);
+      Entity.specify('MyEntity6', null, null, null);
 
-      Entity.specify('MyEntity7', {}, {});
+      Entity.specify('MyEntity7', {}, {}, {});
 
-      Entity.specify('MyEntity8', [], {});
+      Entity.specify('MyEntity8', [], {}, {});
 
       Entity.specify(
         'MyEntity9',
         new attributes.AttributeDictionary(),
-        new methods.MethodDictionary()
+        new methods.MethodDictionary(),
+        {
+          isAbstract: null,
+          dataName: null
+        }
       );
 
       Entity.specify(
@@ -141,15 +148,19 @@ describe('Entity', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify(function () {}, {});
+        Entity.specify(function () {}, {}, {});
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify('MyEntity13', function () {}, {});
+        Entity.specify('MyEntity13', function () {}, {}, {});
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify('MyEntity14', {}, function () {});
+        Entity.specify('MyEntity14', {}, function () {}, {});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.specify('MyEntity14', {}, {}, function () {});
       }).to.throw(AssertionError);
     });
   });
@@ -264,7 +275,7 @@ describe('Entity', function () {
         expect(Entity.specification.attributes).to.have.property('id');
         expect(Entity.specification.isAbstract).to.equal(true);
       }
-    )
+    );
 
     it('expect to not be changed or deleted', function () {
       expect(function () {
