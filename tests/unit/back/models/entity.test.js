@@ -188,12 +188,14 @@ describe('Entity', function () {
       function () {
         expect(Entity).to.have.property('adapter')
           .that.equals(settings.ADAPTERS.default);
+        expect(Entity).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS[Entity.adapterName]);
         expect(C1).to.have.property('adapter')
-          .that.equals(settings.ADAPTERS.default);
+          .that.equals(settings.ADAPTERS[C1.adapterName]);
         expect(C11).to.have.property('adapter')
-          .that.equals(settings.ADAPTERS.default);
+          .that.equals(settings.ADAPTERS[C11.adapterName]);
         expect(C2).to.have.property('adapter')
-          .that.equals(settings.ADAPTERS.default);
+          .that.equals(settings.ADAPTERS[C2.adapterName]);
       }
     );
 
@@ -207,7 +209,7 @@ describe('Entity', function () {
       }).to.throw(Error);
 
       expect(Entity).to.have.property('adapter')
-        .that.be.an.instanceOf(MockAdapter);
+        .that.equals(settings.ADAPTERS[Entity.adapterName]);
     });
   });
 
