@@ -115,8 +115,8 @@ function EntitySpecification() {
   /**
    * Entity whose the current EntitySpecification instance belongs. Once this
    * property is assigned, it can not be assigned anymore.
-   * @name module:back4app-entity/models/EntitySpecification#Entity
-   * @type {!module:back4app-entity/models/Entity}
+   * @name module:back4app-entity/models.EntitySpecification#Entity
+   * @type {!module:back4app-entity/models.Entity}
    * @example
    * var myEntitySpecification = new EntitySpecification('MyEntity');
    * var MyEntity = Entity.specify(myEntitySpecification);
