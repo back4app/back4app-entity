@@ -11,6 +11,7 @@ var ValidationError = models.errors.ValidationError;
 var Entity = models.Entity;
 var EntitySpecification = models.EntitySpecification;
 var attributes = models.attributes;
+var StringAttribute = attributes.types.StringAttribute;
 var methods = models.methods;
 var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
@@ -255,6 +256,15 @@ describe('Entity', function () {
         expect(MyEntity.specification).to.equal(entitySpecification);
       }
     );
+
+    it(
+      'expect specification of Entity base class to have the correct settings',
+      function () {
+        expect(Entity.specification.name).to.equal('Entity');
+        expect(Entity.specification.attributes).to.have.property('id');
+        expect(Entity.specification.isAbstract).to.equal(true);
+      }
+    )
 
     it('expect to not be changed or deleted', function () {
       expect(function () {
