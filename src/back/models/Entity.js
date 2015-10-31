@@ -611,6 +611,15 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       );
     }
 
+    if (_specificEntitySpecification.isAbstract) {
+      expect(CurrentEntity.specification.isAbstract).to.equal(
+        true,
+        'It was not possible to specify a new Entity called "' +
+          _specificEntitySpecification.name + '" because an abstract Entity ' +
+        'cannot be specified by a concrete one'
+      );
+    }
+
     expect(_specializations).to.not.have.ownProperty(
       _specificEntitySpecification.name,
       'It was not possible to specify a new Entity called "' +
