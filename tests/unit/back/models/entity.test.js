@@ -571,6 +571,33 @@ describe('Entity', function () {
     });
   });
 
+  describe('#adapterName', function () {
+    it(
+      'expect to exist as an inner property and contain the right class',
+      function () {
+        expect(entity).to.have.property('adapterName')
+          .that.equals('default');
+        expect(entity).to.have.property('adapterName')
+          .that.equals(entity.Entity.adapterName);
+        expect(c1).to.have.property('adapterName')
+          .that.equals(c1.Entity.adapterName);
+        expect(c11).to.have.property('adapterName')
+          .that.equals(c11.Entity.adapterName);
+        expect(c2).to.have.property('adapterName')
+          .that.equals(c2.Entity.adapterName);
+      }
+    );
+
+    it('expect to not be changed', function () {
+      expect(function () {
+        entity.adapterName = null;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('adapterName')
+        .that.equals('default');
+    });
+  });
+
   describe('#Entity', function () {
     it(
       'expect to exist as an inner property and contain the right class',

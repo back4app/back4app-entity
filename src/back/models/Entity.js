@@ -19,7 +19,8 @@ module.exports = Entity;
 require('./index').Entity = Entity;
 
 /**
- * Base class for entities.
+ * Base class for entities. It is an abstract class and cannot be directly
+ * initialized.
  * @constructor
  * @abstract
  * @memberof module:back4app-entity/models
@@ -28,7 +29,7 @@ require('./index').Entity = Entity;
  * @example
  * var myEntity = new MyEntity();
  */
-function Entity(attributeValues/*, options*/) {
+function Entity(attributeValues) {
   /**
    * This is a read-only property to get the adapterName of an Entity instance.
    * @type {!string}
