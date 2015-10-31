@@ -137,56 +137,6 @@ describe('Entity', function () {
         Entity.specify('MyEntity14', {}, function () {});
       }).to.throw(AssertionError);
     });
-
-    describe('.id', function () {
-      it('expect not be undefined', function () {
-        expect(c1.id).to.not.equal(undefined);
-        expect(c11.id).to.not.equal(undefined);
-        expect(c2.id).to.not.equal(undefined);
-      });
-
-      it('expect to be valid', function () {
-        var c1Id = c1.id;
-        var c11Id = c11.id;
-        var c2Id = c2.id;
-
-        function isValid(id) {
-          var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
-            '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
-          return new RegExp(regex).test(id);
-        }
-
-        expect(isValid(c1Id)).to.equal(true);
-        expect(isValid(c11Id)).to.equal(true);
-        expect(isValid(c2Id)).to.equal(true);
-      });
-
-      it('expect to generate different ids', function () {
-        expect(c1.id).to.not.equal(c11.id);
-        expect(c1.id).to.not.equal(c2.id);
-        expect(c2.id).to.not.equal(c11.id);
-      });
-
-      it('expect to be given in the constructor', function () {
-        expect(new EntityProxy({
-          id: '00000000-0000-4000-a000-000000000000'
-        }))
-          .to.have.property('id')
-          .that.equals('00000000-0000-4000-a000-000000000000');
-      });
-
-      it('expect to validate if given id is valid', function () {
-        expect(function () {
-          entity = new EntityProxy({id: 'itisnotvalid'});
-        }).to.throw(Error);
-      });
-
-      it('expect to be not writable', function () {
-        expect(function () {
-          c1.id = '00000000-0000-4000-a000-000000000000';
-        }).to.throw(Error);
-      });
-    });
   });
 
   describe('.adapter', function () {
@@ -573,7 +523,7 @@ describe('Entity', function () {
 
   describe('#adapterName', function () {
     it(
-      'expect to exist as an inner property and contain the right class',
+      'expect to exist as an inner property and contain the right name',
       function () {
         expect(entity).to.have.property('adapterName')
           .that.equals('default');
@@ -595,6 +545,33 @@ describe('Entity', function () {
 
       expect(entity).to.have.property('adapterName')
         .that.equals('default');
+    });
+  });
+
+  describe('#adapter', function () {
+    it(
+      'expect to exist as an inner property and contain the right class',
+      function () {
+        expect(entity).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+        expect(entity).to.have.property('adapter')
+          .that.equals(entity.Entity.adapter);
+        expect(c1).to.have.property('adapter')
+          .that.equals(c1.Entity.adapter);
+        expect(c11).to.have.property('adapter')
+          .that.equals(c11.Entity.adapter);
+        expect(c2).to.have.property('adapter')
+          .that.equals(c2.Entity.adapter);
+      }
+    );
+
+    it('expect to not be changed', function () {
+      expect(function () {
+        entity.adapter = null;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('adapter')
+        .that.equals(settings.ADAPTERS.default);
     });
   });
 
@@ -645,6 +622,56 @@ describe('Entity', function () {
 
       expect(entity).to.have.property('General')
         .that.equals(null);
+    });
+  });
+
+  describe('#id', function () {
+    it('expect not be undefined', function () {
+      expect(c1.id).to.not.equal(undefined);
+      expect(c11.id).to.not.equal(undefined);
+      expect(c2.id).to.not.equal(undefined);
+    });
+
+    it('expect to be valid', function () {
+      var c1Id = c1.id;
+      var c11Id = c11.id;
+      var c2Id = c2.id;
+
+      function isValid(id) {
+        var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
+          '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+        return new RegExp(regex).test(id);
+      }
+
+      expect(isValid(c1Id)).to.equal(true);
+      expect(isValid(c11Id)).to.equal(true);
+      expect(isValid(c2Id)).to.equal(true);
+    });
+
+    it('expect to generate different ids', function () {
+      expect(c1.id).to.not.equal(c11.id);
+      expect(c1.id).to.not.equal(c2.id);
+      expect(c2.id).to.not.equal(c11.id);
+    });
+
+    it('expect to be given in the constructor', function () {
+      expect(new EntityProxy({
+        id: '00000000-0000-4000-a000-000000000000'
+      }))
+        .to.have.property('id')
+        .that.equals('00000000-0000-4000-a000-000000000000');
+    });
+
+    it('expect to validate if given id is valid', function () {
+      expect(function () {
+        entity = new EntityProxy({id: 'itisnotvalid'});
+      }).to.throw(Error);
+    });
+
+    it('expect to be not writable', function () {
+      expect(function () {
+        c1.id = '00000000-0000-4000-a000-000000000000';
+      }).to.throw(Error);
     });
   });
 
