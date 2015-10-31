@@ -19,6 +19,10 @@ var EntityProxy = require('./EntityProxy');
 require('../../settings');
 
 describe('Entity', function () {
+  function WrongEntityProxy() {
+    Entity.apply(this, Array.prototype.slice.call(arguments));
+  }
+
   var entity;
 
   var C1;
@@ -36,6 +40,16 @@ describe('Entity', function () {
       entity = new EntityProxy(null);
 
       entity = new EntityProxy({});
+    });
+
+    it('expect to be not directly initialized', function () {
+      expect(function () {
+        new Entity();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        new WrongEntityProxy();
+      }).to.throw(AssertionError);
     });
 
     it('expect to not work with wrong arguments', function () {
