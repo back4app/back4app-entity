@@ -1073,6 +1073,16 @@ var _getCreateFunction = function (CurrentEntity) {
 
       var promise = CurrentEntity.adapter.insertObject(newEntity);
 
+      expect(promise).to.not.equal(
+        null,
+        'Function "create" of an Adapter specialization should return a Promise'
+      );
+
+      expect(typeof promise).to.equal(
+        'object',
+        'Function "create" of an Adapter specialization should return a Promise'
+      );
+
       expect(promise).to.respondTo(
         'then',
         'Function "create" of an Adapter specialization should return a Promise'

@@ -3,6 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var Promise = require('bluebird');
 var settings = require('../../../../src/back').settings;
 var classes = require('../../../../src/back/utils').classes;
 var models = require('../../../../src/back/models');
@@ -28,6 +29,7 @@ describe('Entity', function () {
   var C1;
   var C11;
   var C2;
+  var C3;
 
   var c1;
   var c11;
@@ -120,6 +122,7 @@ describe('Entity', function () {
       C1 = require('./C1');
       C11 = require('./C11');
       C2 = require('./C2');
+      C3 = require('./C3');
 
       c1 = new C1();
       c11 = new C11();
@@ -1058,5 +1061,134 @@ describe('Entity', function () {
 
       expect(myEntity50.isValid()).to.equal(true);
     });
+  });
+
+  describe('.create', function () {
+    it('expect to not work with wrong arguments', function (done) {
+      expect(function () {
+        C2.create(null, null);
+      }).to.throw(AssertionError);
+
+      C2
+        .create(function () {})
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+          done();
+        });
+    });
+
+    it('expect to work with right arguments', function (done) {
+      var promises = [];
+
+      promises.push(
+        C3.create()
+      );
+
+      promises.push(
+        C3.create(null)
+      );
+
+      promises.push(
+        C3.create({})
+      );
+
+      promises.push(
+        C3.create({
+          c3A1: {
+            myObjectAttributeName: 'myObjectAttributeValue'
+          }
+        })
+      );
+
+      Promise
+        .all(promises)
+        .then(function () {
+          done();
+        })
+        .catch(console.log);
+    });
+
+    it('expect to not work if not valid', function (done) {
+      C2
+        .create()
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(ValidationError);
+          done();
+        });
+    });
+
+    it(
+      'expect to not work if adapter does not return an object',
+      function (done) {
+        var insertObjectFunction = settings.ADAPTERS.default.insertObject;
+        settings.ADAPTERS.default.insertObject = function () {
+          return null;
+        };
+
+        C3
+          .create()
+          .catch(function (error) {
+            expect(error).to.be.an.instanceOf(AssertionError);
+            settings.ADAPTERS.default.insertObject = insertObjectFunction;
+            done();
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter does not return an object',
+      function (done) {
+        var insertObjectFunction = settings.ADAPTERS.default.insertObject;
+        settings.ADAPTERS.default.insertObject = function () {
+          return function () {};
+        };
+
+        C3
+          .create()
+          .catch(function (error) {
+            expect(error).to.be.an.instanceOf(AssertionError);
+            settings.ADAPTERS.default.insertObject = insertObjectFunction;
+            done();
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter does not return a Promise',
+      function (done) {
+        var insertObjectFunction = settings.ADAPTERS.default.insertObject;
+        settings.ADAPTERS.default.insertObject = function () {
+          return {};
+        };
+
+        C3
+          .create()
+          .catch(function (error) {
+            expect(error).to.be.an.instanceOf(AssertionError);
+            settings.ADAPTERS.default.insertObject = insertObjectFunction;
+            done();
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter throws an Error',
+      function (done) {
+        var myNewError = new Error('MyNewError');
+
+        var insertObjectFunction = settings.ADAPTERS.default.insertObject;
+        settings.ADAPTERS.default.insertObject = function () {
+          throw myNewError;
+        };
+
+        C3
+          .create()
+          .catch(function (error) {
+            expect(error).equal(myNewError);
+            settings.ADAPTERS.default.insertObject = insertObjectFunction;
+            done();
+          });
+      }
+    );
   });
 });

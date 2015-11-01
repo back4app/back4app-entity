@@ -1,5 +1,6 @@
 'use strict';
 
+var Promise = require('bluebird');
 var classes = require('../../../../src/back').utils.classes;
 var Adapter = require('../../../../src/back').adapters.Adapter;
 
@@ -19,4 +20,10 @@ function loadEntity() {}
 
 function loadEntityAttribute() {}
 
-function insertObject() {}
+function insertObject() {
+  var promise = new Promise(function (resolve) {
+    resolve();
+  });
+
+  return promise;
+}
