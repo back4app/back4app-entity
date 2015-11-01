@@ -476,6 +476,74 @@ describe('EntitySpecification', function () {
     );
   });
 
+  describe('#getDataName', function () {
+    it('expect to work with right arguments', function () {
+      expect(
+        (new EntitySpecification('MyEntity')).getDataName()
+      ).equal('MyEntity');
+
+      expect(
+        (new EntitySpecification('MyEntity')).getDataName(null)
+      ).equal('MyEntity');
+
+      expect(
+        (new EntitySpecification('MyEntity')).getDataName('default')
+      ).equal('MyEntity');
+
+      expect(
+        (new EntitySpecification({
+          name: 'MyEntity',
+          dataName: 'MyEntityDataName'
+        })).getDataName()).equal('MyEntityDataName');
+
+      expect(
+        (new EntitySpecification({
+          name: 'MyEntity',
+          dataName: 'MyEntityDataName'
+        })).getDataName(null)).equal('MyEntityDataName');
+
+      expect(
+        (new EntitySpecification({
+          name: 'MyEntity',
+          dataName: 'MyEntityDataName'
+        })).getDataName('default')).equal('MyEntityDataName');
+
+      expect(
+        (new EntitySpecification({
+          name: 'MyEntity',
+          dataName: {
+            default: 'MyEntityDataName'
+          }
+        })).getDataName()).equal('MyEntity');
+
+      expect(
+        (new EntitySpecification({
+          name: 'MyEntity',
+          dataName: {
+            default: 'MyEntityDataName'
+          }
+        })).getDataName(null)).equal('MyEntity');
+
+      expect(
+        (new EntitySpecification({
+          name: 'MyEntity',
+          dataName: {
+            default: 'MyEntityDataName'
+          }
+        })).getDataName('default')).equal('MyEntityDataName');
+    });
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        (new EntitySpecification('MyEntity')).getDataName(null, null);
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        (new EntitySpecification('MyEntity')).getDataName(function () {});
+      }).to.throw(AssertionError);
+    });
+  });
+
   context('loading members tests', function () {
     var MyEntity;
     var MyEntity2;
