@@ -7,8 +7,10 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
-var classes = require('../../../../src/back/utils').classes;
-var models = require('../../../../src/back/models');
+var entity = require('../../../../');
+var settings = entity.settings;
+var classes = entity.utils.classes;
+var models = entity.models;
 var Entity = models.Entity;
 var EntitySpecification = models.EntitySpecification;
 var attributes = models.attributes;
@@ -494,7 +496,7 @@ describe('EntitySpecification', function () {
 
         expect(function () {
           Entity.specify({
-            name: 'MyEntity',
+            name: 'MyEntity60',
             attributes: {
               attribute1: {}
             },
@@ -699,5 +701,41 @@ describe('EntitySpecification', function () {
       expect(MyEntity3.prototype).to.respondTo('method31');
       expect(MyEntity3.prototype.method31.call(null)).to.equal('method31');
     });
+
+    it('expect to not work if adapter send error on load entity', function () {
+      var loadEntityFunction = settings.ADAPTERS.default.loadEntity;
+      settings.ADAPTERS.default.loadEntity = function () {
+        throw new Error();
+      };
+
+      expect(function () {
+        Entity.specify('MyEntity70');
+      }).to.throw(Error);
+
+      settings.ADAPTERS.default.loadEntity = loadEntityFunction;
+    });
+
+    it(
+      'expect to not work if adapter send error on load attribute',
+      function () {
+        var loadEntityAttributeFunction =
+          settings.ADAPTERS.default.loadEntityAttribute;
+        settings.ADAPTERS.default.loadEntityAttribute = function () {
+          throw new Error();
+        };
+
+        expect(function () {
+          Entity.specify(
+            'MyEntity80',
+            {
+              a1: {}
+            }
+          );
+        }).to.throw(Error);
+
+        settings.ADAPTERS.default.loadEntityAttribute =
+          loadEntityAttributeFunction;
+      }
+    );
   });
 });
