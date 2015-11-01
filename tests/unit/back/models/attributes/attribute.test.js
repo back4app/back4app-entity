@@ -79,7 +79,8 @@ describe('Attribute', function () {
         });
 
         attribute = new AttributeProxy({
-          name: 'attribute'
+          name: 'attribute',
+          dataName: 'attributeDataName'
         });
 
         attribute = new AttributeProxy({
@@ -94,7 +95,8 @@ describe('Attribute', function () {
 
         attribute = new AttributeProxy({
           name: 'attribute',
-          multiplicity: '0..1'
+          multiplicity: '0..1',
+          dataName: 'attributeDataName'
         });
 
         attribute = new AttributeProxy({
@@ -106,17 +108,24 @@ describe('Attribute', function () {
         attribute = new AttributeProxy({
           name: 'attribute',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'attributeDataName'
+        });
+
+        attribute = new AttributeProxy({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: {
+            default: 'attributeDefaultDataName',
+            other: 'attributeOtherDataName'
+          }
         });
       }
     );
 
     it('expect to work with right arguments passing as arguments',
       function () {
-        attribute = new AttributeProxy(
-          'attribute'
-        );
-
         attribute = new AttributeProxy(
           'attribute'
         );
@@ -130,6 +139,22 @@ describe('Attribute', function () {
           'attribute',
           '0..1',
           'defaultValue'
+        );
+
+        attribute = new AttributeProxy(
+          'attribute',
+          '0..1',
+          'attributeDataName'
+        );
+
+        attribute = new AttributeProxy(
+          'attribute',
+          '0..1',
+          'defaultValue',
+          {
+            default: 'attributeDefaultDataName',
+            other: 'attributeOtherDataName'
+          }
         );
       }
     );
@@ -173,6 +198,7 @@ describe('Attribute', function () {
           name: 'attribute',
           multiplicity: '0..1',
           default: null,
+          dataName: null,
           doesNotExist: null
         });
       }).to.throw(AssertionError);
@@ -181,7 +207,8 @@ describe('Attribute', function () {
         attribute = new AttributeProxy({
           name: 'attribute',
           multiplicity: null,
-          default: null
+          default: null,
+          dataName: null
         });
       }).to.throw(AssertionError);
 
@@ -190,6 +217,15 @@ describe('Attribute', function () {
           name: 'attribute',
           multiplicity: 'willnotwork',
           default: null
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        attribute = new AttributeProxy({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: function () {}
         });
       }).to.throw(AssertionError);
     });
@@ -208,6 +244,12 @@ describe('Attribute', function () {
 
       expect(attribute).to.have.property('default')
         .that.equals('defaultValue');
+
+      expect(attribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDefaultDataName',
+          other: 'attributeOtherDataName'
+        });
     });
 
     it('expect to be not extensible', function () {
@@ -248,6 +290,16 @@ describe('Attribute', function () {
 
       expect(attribute).to.have.property('default')
         .that.equals('defaultValue');
+
+      expect(function () {
+        delete attribute.dataName;
+      }).to.throw(Error);
+
+      expect(attribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDefaultDataName',
+          other: 'attributeOtherDataName'
+        });
     });
 
     it('expect to not allow to change property', function () {
@@ -278,6 +330,16 @@ describe('Attribute', function () {
 
       expect(attribute).to.have.property('default')
         .that.equals('defaultValue');
+
+      expect(function () {
+        attribute.dataName = 'will not change';
+      }).to.throw(Error);
+
+      expect(attribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDefaultDataName',
+          other: 'attributeOtherDataName'
+        });
     });
 
     it('expect to have the right default values', function () {
@@ -287,6 +349,7 @@ describe('Attribute', function () {
       expect(attribute2.type).to.equal(AttributeProxy);
       expect(attribute2.multiplicity).to.equal('1');
       expect(attribute2.default).to.equal(null);
+      expect(attribute2.dataName).to.equal(null);
     });
   });
 
@@ -767,5 +830,16 @@ describe('Attribute', function () {
       c1.c1A4 = new Array(new C2());
       C1.attributes.c1A4.validate(c1);
     });
+  });
+
+  describe('#validateValue', function () {
+    it(
+      'expect to throw error if not implemented in specialized class',
+      function () {
+        expect(function () {
+          (new AttributeProxy('attributeProxy')).validateValue();
+        }).to.throw(Error);
+      }
+    );
   });
 });

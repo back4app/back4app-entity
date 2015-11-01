@@ -194,7 +194,8 @@ function Attribute() {
   var _type = this.constructor;
   var _multiplicity = '1';
   var _default = null;
-  var _dataName, dataName = null;
+  var _dataName = null;
+  var dataName = null;
 
   expect(arguments).to.have.length.within(
     1,
@@ -273,11 +274,11 @@ function Attribute() {
           );
 
           _dataName[dataName] = attribute.dataName[dataName];
-
-          Object.preventExtensions(_dataName);
-          Object.seal(_dataName);
-          Object.freeze(_dataName);
         }
+
+        Object.preventExtensions(_dataName);
+        Object.seal(_dataName);
+        Object.freeze(_dataName);
       }
     }
   } else {
@@ -329,11 +330,11 @@ function Attribute() {
           );
 
           _dataName[dataName] = arguments[3][dataName];
-
-          Object.preventExtensions(_dataName);
-          Object.seal(_dataName);
-          Object.freeze(_dataName);
         }
+
+        Object.preventExtensions(_dataName);
+        Object.seal(_dataName);
+        Object.freeze(_dataName);
       }
     }
   }
@@ -654,7 +655,7 @@ function validate(entity) {
  * Validates a value and throws a
  * {@link module:back4app-entity/models/errors.ValidationError} if
  * it is not validated. It shall be implemented in the specializations of
- * Attribute class.
+ * Attribute class. Otherwise, it wil throw an Error.
  * @name module:back4app-entity/models/attributes.Attribute#validateValue
  * @function
  * @param {*} value The value to be validated.
@@ -667,6 +668,16 @@ function validateValue() {
     'Attribute specialization');
 }
 
+/**
+ * Gets the data name of an Entity attribute to be used in an adapter.
+ * @name module:back4app-entity/models/attributes.Attribute#getDataName
+ * @function
+ * @param {?string} [adapterName] The name of the adapter of which the data
+ * name is wanted.
+ * @returns {string} The data name.
+ * @example
+ * var dataName = MyEntity.attributes.myAttribute.getDataName('default');
+ */
 function getDataName(adapterName) {
   expect(arguments).to.have.length.below(
     2,

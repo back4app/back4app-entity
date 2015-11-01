@@ -406,11 +406,11 @@ function EntitySpecification() {
           );
 
           _dataName[dataName] = specification.dataName[dataName];
-
-          Object.preventExtensions(_dataName);
-          Object.seal(_dataName);
-          Object.freeze(_dataName);
         }
+
+        Object.preventExtensions(_dataName);
+        Object.seal(_dataName);
+        Object.freeze(_dataName);
       }
     }
   } else {
@@ -774,7 +774,7 @@ EntitySpecification.prototype.getDataName = getDataName;
  * Gets the data name of an Entity to be used in an adapter.
  * @name module:back4app-entity/models.EntitySpecification#getDataName
  * @function
- * @param {?adapterName} [adapterName] The name of the adapter of which the data
+ * @param {?string} [adapterName] The name of the adapter of which the data
  * name is wanted.
  * @returns {string} The data name.
  * @example
