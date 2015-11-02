@@ -224,18 +224,26 @@ function parseDataValue(dataValue) {
   if (dataValue instanceof Array) {
     attributeValue = [];
     for (var i = 0; i < dataValue.length; i++) {
-      try {
-        attributeValue.push(new this.Entity(dataValue[i]));
-
-      } catch (error) {
-        attributeValue.push(dataValue[i]);
-      }
+      attributeValue.push(_parseDataValueItem(dataValue[i]));
     }
-  } else if (dataValue instanceof Object) {
-    try {
-      attributeValue = new this.Entity(dataValue);
-    } catch (error) {}
+  } else {
+    attributeValue = _parseDataValueItem(dataValue);
   }
 
   return attributeValue;
+
+  function _parseDataValueItem(dataValueItem) {
+    if (typeof dataValueItem === 'object' && dataValueItem !== null) {
+      try {
+        var dataValueItemCopy = objects.copy(dataValueItem);
+        var newFunction = models.Entity.new(dataValueItemCopy.Entity);
+        delete dataValueItemCopy.Entity;
+        return newFunction(dataValueItemCopy);
+      } catch (error) {
+        return dataValueItem;
+      }
+    } else {
+      return dataValueItem;
+    }
+  }
 }

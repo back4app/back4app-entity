@@ -7,6 +7,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var uuid = require('node-uuid');
 var classes = require('../../../../../../src/back/utils').classes;
 var models = require('../../../../../../').models;
 var ValidationError = models.errors.ValidationError;
@@ -472,6 +473,86 @@ describe('AssociationAttribute', function () {
           },
           myFunction
         ]);
+    });
+  });
+
+  describe('#parseDataValue', function () {
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        associationAttribute.parseDataValue();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        associationAttribute.parseDataValue(null, null);
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to return the correct data value', function () {
+      expect(associationAttribute.parseDataValue(null)).to.equal(null);
+
+      function myFunction() {}
+
+      expect(associationAttribute.parseDataValue(myFunction))
+        .to.equal(myFunction);
+
+      var id = uuid.v4();
+
+      var c2 = associationAttribute.parseDataValue({
+        Entity: 'C2',
+        id: id
+      });
+
+      expect(c2).to.be.an.instanceOf(C2);
+
+      expect(c2).to.deep.equal(new C2({
+        id:id
+      }));
+
+      expect(associationAttribute.parseDataValue({
+        Entity: 'Entity',
+        id: id
+      })).to.deep.equal({
+          Entity: 'Entity',
+          id:id
+        });
+
+      expect(associationAttribute.parseDataValue({
+        id: id
+      })).to.deep.equal({
+          id:id
+        });
+
+      var myArray = [];
+      myArray.push(1);
+      myArray.push(null);
+      myArray.push({
+        Entity: 'C2',
+        id: id
+      });
+      myArray.push({
+        Entity: 'Entity',
+        id: id
+      });
+      myArray.push({
+        id: id
+      });
+      myArray.push(myFunction);
+
+      expect(associationAttribute.parseDataValue(myArray)).to.deep.equal([
+        1,
+        null,
+        new C2({
+          id:id
+        }),
+        {
+          Entity: 'Entity',
+          id:id
+        },
+        {
+          id:id
+        },
+        myFunction
+      ]);
     });
   });
 });

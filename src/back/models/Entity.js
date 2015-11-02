@@ -1013,11 +1013,11 @@ var _getNewFunction = function (CurrentEntity) {
       'to be passed less than 2 arguments)'
     );
 
-    return function () {
-      expect(arguments).to.have.length(
-        0,
+    return function (attributeValues) {
+      expect(arguments).to.have.length.below(
+        2,
         'Invalid arguments length when creating a new Entity (it has ' +
-        'not to be passed any argument)'
+        'not to be passed less than 2 arguments)'
       );
 
       var EntityClass = CurrentEntity;
@@ -1026,7 +1026,7 @@ var _getNewFunction = function (CurrentEntity) {
         EntityClass = Entity.getSpecialization(entity);
       }
 
-      return new EntityClass();
+      return new EntityClass(attributeValues);
     };
   };
 };
