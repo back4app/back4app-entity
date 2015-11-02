@@ -707,10 +707,36 @@ function getDataName(adapterName) {
   }
 }
 
+/**
+ * Gets the data value of an Entity attribute to be used in an adapter. The
+ * default implementation only returns the given attributeValue. It has to be
+ * overriden in Attribute specializations if another behavior is needed.
+ * @name module:back4app-entity/models/attributes.Attribute#getDataValue
+ * @function
+ * @param {*} attributeValue The attribute value to be converted in data value.
+ * @returns {*} The data value.
+ * @example
+ * var dataValue = MyEntity.attributes.myAttribute.getDataValue(
+ *   myEntity.myAttribute
+ * );
+ */
 function getDataValue(attributeValue) {
   return attributeValue;
 }
 
+/**
+ * Parses the data value of an Entity attribute to be used in an adapter. The
+ * default implementation only returns the given dataValue. It has to be
+ * overriden in Attribute specializations if another behavior is needed.
+ * @name module:back4app-entity/models/attributes.Attribute#parseDataValue
+ * @function
+ * @param {*} dataValue The data value to be converted in attribute value.
+ * @returns {*} The attribute value.
+ * @example
+ * var attributeValue = MyEntity.attributes.myAttribute.parseDataValue(
+ *   myAttributeDataValueFromStorage
+ * );
+ */
 function parseDataValue(dataValue) {
   return dataValue;
 }
