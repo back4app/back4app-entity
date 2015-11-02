@@ -654,6 +654,15 @@ describe('Entity', function () {
       }
     );
 
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.adapterName;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('adapterName')
+        .that.equals('default');
+    });
+
     it('expect to not be changed', function () {
       expect(function () {
         entity.adapterName = null;
@@ -681,6 +690,15 @@ describe('Entity', function () {
       }
     );
 
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.adapter;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('adapter')
+        .that.equals(settings.ADAPTERS.default);
+    });
+
     it('expect to not be changed', function () {
       expect(function () {
         entity.adapter = null;
@@ -706,6 +724,15 @@ describe('Entity', function () {
       }
     );
 
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.Entity;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('Entity')
+        .that.equals(Entity);
+    });
+
     it('expect to not be changed', function () {
       expect(function () {
         entity.Entity = null;
@@ -730,6 +757,15 @@ describe('Entity', function () {
           .that.equals(Entity);
       }
     );
+
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.General;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('General')
+        .that.equals(null);
+    });
 
     it('expect to not be changed', function () {
       expect(function () {
@@ -782,6 +818,14 @@ describe('Entity', function () {
       expect(function () {
         entity = new EntityProxy({id: 'itisnotvalid'});
       }).to.throw(Error);
+    });
+
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete c1.id;
+      }).to.throw(Error);
+
+      expect(c1).to.have.property('id');
     });
 
     it('expect to be not writable', function () {
