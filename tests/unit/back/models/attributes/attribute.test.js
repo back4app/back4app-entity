@@ -940,4 +940,54 @@ describe('Attribute', function () {
       ).to.equal('objectAttributeNotDefaultDataName');
     });
   });
+
+  describe('#getDataValue', function () {
+    var dataValue;
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        dataValue = (new ObjectAttribute('objectAttribute')).getDataValue();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        dataValue = (new ObjectAttribute('objectAttribute')).getDataValue(
+          null,
+          null
+        );
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to return the right data value', function () {
+      var attributeValue = {};
+      expect(
+        (new ObjectAttribute('objectAttribute')).getDataValue(attributeValue)
+      ).to.equal(attributeValue);
+    });
+  });
+
+  describe('#parseDataValue', function () {
+    var attributeValue;
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        attributeValue =
+          (new ObjectAttribute('objectAttribute')).parseDataValue();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        attributeValue =
+          (new ObjectAttribute('objectAttribute')).parseDataValue(
+            null,
+            null
+          );
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to return the right attribute value', function () {
+      var dataValue = {};
+      expect(
+        (new ObjectAttribute('objectAttribute')).parseDataValue(dataValue)
+      ).to.equal(dataValue);
+    });
+  });
 });

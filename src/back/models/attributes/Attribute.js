@@ -721,6 +721,11 @@ function getDataName(adapterName) {
  * );
  */
 function getDataValue(attributeValue) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when getting the data value of an Attribute ' +
+    '(it has to be passed 1 argument)');
+
   return attributeValue;
 }
 
@@ -738,5 +743,10 @@ function getDataValue(attributeValue) {
  * );
  */
 function parseDataValue(dataValue) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when parsing the data value of an Attribute ' +
+    '(it has to be passed 1 argument)');
+
   return dataValue;
 }
