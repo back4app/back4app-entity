@@ -4,6 +4,7 @@ var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
 var Promise = require('bluebird');
+var uuid = require('node-uuid');
 var settings = require('../../../../src/back').settings;
 var classes = require('../../../../src/back/utils').classes;
 var models = require('../../../../src/back/models');
@@ -610,12 +611,28 @@ describe('Entity', function () {
         expect(C1.new()()).to.be.an.instanceof(C1);
         expect(C11.new()()).to.be.an.instanceof(C11);
         expect(C2.new()()).to.be.an.instanceof(C2);
+        expect(C2.new()({})).to.be.an.instanceof(C2);
+        expect(C2.new()({
+          id: uuid.v4()
+        })).to.be.an.instanceof(C2);
       }
     );
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
         Entity.new('C1', null);
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.new(null)();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.new()();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        C1.new()(function () {});
       }).to.throw(AssertionError);
     });
   });
