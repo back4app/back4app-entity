@@ -15,6 +15,7 @@ var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var AssociationAttribute = attributes.types.AssociationAttribute;
 var EntityProxy = require('../../EntityProxy');
+var C2 = require('../../C2');
 
 require('../../../../settings');
 
@@ -68,6 +69,24 @@ describe('AssociationAttribute', function () {
           default: null
         });
 
+        associationAttribute = new AssociationAttribute({
+          name: 'attribute',
+          Entity: Entity,
+          multiplicity: '0..1',
+          default: null,
+          dataName: 'attributeDataName'
+        });
+
+        associationAttribute = new AssociationAttribute({
+          name: 'attribute',
+          Entity: Entity,
+          multiplicity: '0..1',
+          default: null,
+          dataName: {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
+        });
       }
     );
 
@@ -89,6 +108,25 @@ describe('AssociationAttribute', function () {
           'MyEntity30',
           '0..1',
           { propertyTest: 'justATest' }
+        );
+
+        associationAttribute = new AssociationAttribute(
+          'attribute',
+          'MyEntity30',
+          '0..1',
+          { propertyTest: 'justATest' },
+          'attributeDataName'
+        );
+
+        associationAttribute = new AssociationAttribute(
+          'attribute',
+          'MyEntity30',
+          '0..1',
+          { propertyTest: 'justATest' },
+          {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
         );
       }
     );
@@ -112,7 +150,8 @@ describe('AssociationAttribute', function () {
       expect(function () {
         associationAttribute = new AssociationAttribute({
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -120,7 +159,8 @@ describe('AssociationAttribute', function () {
         associationAttribute = new AssociationAttribute({
           entity: 'associationAttribute',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -128,7 +168,8 @@ describe('AssociationAttribute', function () {
         associationAttribute = new AssociationAttribute({
           name: 'MyEntity30',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -137,7 +178,8 @@ describe('AssociationAttribute', function () {
           name: null,
           Entity: 'MyEntity30',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -146,7 +188,8 @@ describe('AssociationAttribute', function () {
           name: 'associationAttribute',
           Entity: null,
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -156,6 +199,7 @@ describe('AssociationAttribute', function () {
           Entity: 'MyEntity30',
           multiplicity: '0..1',
           default: null,
+          dataName: 'dataName',
           doesNotExist: null
         });
       }).to.throw(AssertionError);
@@ -166,7 +210,8 @@ describe('AssociationAttribute', function () {
           type: 'Association',
           Entity: 'MyEntity30',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -175,7 +220,18 @@ describe('AssociationAttribute', function () {
           name: 'attribute',
           Entity: 'MyEntity30',
           multiplicity: null,
-          default: null
+          default: null,
+          dataName: 'dataName'
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        associationAttribute = new AssociationAttribute({
+          name: 'attribute',
+          Entity: 'MyEntity30',
+          multiplicity: '1',
+          default: null,
+          dataName: function () {}
         });
       }).to.throw(AssertionError);
     });
@@ -204,6 +260,14 @@ describe('AssociationAttribute', function () {
 
       expect(associationAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest'});
+
+      expect(associationAttribute).to.have.property('dataName')
+        .that.deep.equals(
+        {
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        }
+      );
     });
 
     it('expect to be not extensible', function () {
@@ -251,6 +315,16 @@ describe('AssociationAttribute', function () {
 
       expect(associationAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        delete associationAttribute.dataName;
+      }).to.throw(Error);
+
+      expect(associationAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to not allow to change property', function () {
@@ -288,6 +362,16 @@ describe('AssociationAttribute', function () {
 
       expect(associationAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        associationAttribute.dataName = 'will not change';
+      }).to.throw(Error);
+
+      expect(associationAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to have the right default values', function () {
@@ -301,6 +385,7 @@ describe('AssociationAttribute', function () {
       expect(associationAttribute.Entity).to.equal(Entity);
       expect(associationAttribute.multiplicity).to.equal('1');
       expect(associationAttribute.default).to.equal(null);
+      expect(associationAttribute.dataName).to.equal(null);
     });
   });
 
@@ -322,6 +407,71 @@ describe('AssociationAttribute', function () {
       expect(function () {
         associationAttribute.validateValue(new EntityProxy());
       }).to.throw(ValidationError);
+    });
+  });
+
+  describe('#getDataValue', function () {
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        associationAttribute.getDataValue();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        associationAttribute.getDataValue(null, null);
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to return the correct data value', function () {
+      expect(associationAttribute.getDataValue(null)).to.equal(null);
+
+      expect(associationAttribute.getDataValue({})).to.deep.equal({});
+
+      function myFunction() {}
+
+      expect(associationAttribute.getDataValue(myFunction))
+        .to.equal(myFunction);
+
+      var entity = new EntityProxy();
+
+      expect(
+        associationAttribute.getDataValue(entity)
+      ).to.deep.equal({
+          Entity: 'Entity',
+          id: entity.id
+        });
+
+      var c2 = new C2();
+
+      expect(
+        associationAttribute.getDataValue(c2)
+      ).to.deep.equal({
+          Entity: 'C2',
+          id: c2.id
+        });
+
+      var myArray = [];
+
+      expect(associationAttribute.getDataValue(myArray))
+        .to.deep.equal(myArray);
+
+      myArray.push(1);
+      myArray.push(entity);
+      myArray.push(c2);
+      myArray.push(myFunction);
+
+      expect(associationAttribute.getDataValue(myArray))
+        .to.deep.equal([
+          1,
+          {
+            Entity: 'Entity',
+            id: entity.id
+          },
+          {
+            Entity: 'C2',
+            id: c2.id
+          },
+          myFunction
+        ]);
     });
   });
 });
