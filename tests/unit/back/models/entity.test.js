@@ -40,9 +40,9 @@ describe('Entity', function () {
     it('expect to instantiate new Entity without error', function () {
       entity = new EntityProxy();
 
-      entity = new EntityProxy(null);
+      entity = new EntityProxy(null, null);
 
-      entity = new EntityProxy({});
+      entity = new EntityProxy({}, {});
     });
 
     it('expect to be not directly initialized', function () {
@@ -57,7 +57,16 @@ describe('Entity', function () {
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
-        entity = new EntityProxy(null, null);
+        entity = new EntityProxy(null, null, null);
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        entity = new EntityProxy(
+          null,
+          {
+            isNew: null
+          }
+        );
       }).to.throw(AssertionError);
     });
   });
@@ -774,6 +783,71 @@ describe('Entity', function () {
 
       expect(entity).to.have.property('General')
         .that.equals(null);
+    });
+  });
+
+  describe('#isNew', function () {
+    it(
+      'expect to exist as an inner property and contain the right information',
+      function () {
+        expect(new C1()).to.have.property('isNew')
+          .that.equals(true);
+
+        expect(new C1({
+          id: uuid.v4()
+        })).to.have.property('isNew')
+          .that.equals(false);
+
+        expect(new C1(
+          {},
+          {isNew: true}
+        )).to.have.property('isNew')
+          .that.equals(true);
+
+        expect(new C1(
+          {},
+          {
+            isNew: false
+          }
+        )).to.have.property('isNew')
+          .that.equals(false);
+
+        expect(new C1(
+          {
+            id: uuid.v4()
+          },
+          {
+            isNew: true
+          }
+        )).to.have.property('isNew')
+          .that.equals(true);
+
+        expect(new C1(
+          {
+            id: uuid.v4()
+          },
+          {
+            isNew: false
+          }
+        )).to.have.property('isNew')
+          .that.equals(false);
+      }
+    );
+
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.isNew;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('isNew')
+        .that.equals(true);
+    });
+
+    it('expect can be changed', function () {
+      entity.isNew = false;
+
+      expect(entity).to.have.property('isNew')
+        .that.equals(false);
     });
   });
 

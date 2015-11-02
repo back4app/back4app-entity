@@ -26,10 +26,15 @@ require('./index').Entity = Entity;
  * @memberof module:back4app-entity/models
  * @param {?Object.<!string, ?Object>} [attributeValues] It has to be passed as
  * a dictionary of attribute's name and values to initialize a new Entity.
+ * @param {?Object} [options] These are the options when initializing a new
+ * Entity instance.
+ * @param {?Object} [options.isNew] Sets if the entity is a new one. Otherwise,
+ * the id will be checked. If an id was not given, the entity will be considered
+ * a new one.
  * @example
  * var myEntity = new MyEntity();
  */
-function Entity(attributeValues) {
+function Entity(attributeValues, options) {
   /**
    * This is a read-only property to get the adapterName of an Entity instance.
    * @type {!string}
@@ -76,7 +81,7 @@ function Entity(attributeValues) {
    * @example
    * console.log((new MyEntity()).isNew); // Logs "true"
    */
-  this.isNew = true;
+  this.isNew = null;
   /**
    * This is a read-only property to get the id of a new entity
    * instance. It is generated in according to UUID pattern type 4.
@@ -125,6 +130,23 @@ function Entity(attributeValues) {
     configurable: false
   });
 
+  var _isNew = true;
+  Object.defineProperty(this, 'isNew', {
+    get: function () {
+      return _isNew;
+    },
+    set: function (value) {
+      expect(value).to.be.a(
+        'boolean',
+        'Invalid value when setting isNew value (it has to be a boolean)'
+      );
+
+      _isNew = value;
+    },
+    enumerable: false,
+    configurable: false
+  });
+
   expect(this).to.be.an(
     'object',
     'The Entity\'s constructor can be only invoked from specialized ' +
@@ -149,10 +171,30 @@ function Entity(attributeValues) {
   );
 
   expect(arguments).to.have.length.below(
-    2,
+    3,
     'Invalid arguments length when creating "' +
     this.Entity.specification.name +
-    '" (it has to be passed less than 2 arguments)');
+    '" (it has to be passed less than 3 arguments)');
+
+  var isNewSet = false;
+  if (options) {
+    expect(options).to.be.an(
+      'object',
+      'Invalid argument "options" when creating a new "' +
+      this.Entity.specification.name + '" (it has to be an object)'
+    );
+
+    if (options.hasOwnProperty('isNew')) {
+      expect(options.isNew).to.be.a(
+        'boolean',
+        'Invalid argument "options.isNew" when creating a new "' +
+        this.Entity.specification.name + '" (it has to be a boolean)'
+      );
+
+      isNewSet = true;
+      this.isNew = options.isNew;
+    }
+  }
 
   if (attributeValues) {
     expect(attributeValues).to.be.an(
@@ -160,6 +202,10 @@ function Entity(attributeValues) {
       'Invalid argument "attributeValues" when creating a new "' +
       this.Entity.specification.name + '" (it has to be an object)'
     );
+
+    if (!isNewSet && attributeValues.hasOwnProperty('id')) {
+      this.isNew = false;
+    }
   }
 
   var attributes = this.Entity.attributes;
@@ -504,7 +550,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       'passed from 1 to 4 arguments)'
     );
 
-    var SpecificEntity = function (attributeValues) {
+    var SpecificEntity = function () {
 
       if (!this.hasOwnProperty('Entity') || !this.Entity) {
         Object.defineProperty(this, 'Entity', {
@@ -541,7 +587,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
         );
       }
 
-      CurrentEntity.call(this, attributeValues);
+      CurrentEntity.apply(this, Array.prototype.slice.call(arguments));
     };
 
     classes.generalize(CurrentEntity, SpecificEntity);
