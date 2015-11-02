@@ -61,6 +61,22 @@ describe('NumberAttribute', function () {
           default: null
         });
 
+        numberAttribute = new NumberAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: 'attributeDataName'
+        });
+
+        numberAttribute = new NumberAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
+        });
       }
     );
 
@@ -79,6 +95,23 @@ describe('NumberAttribute', function () {
           'attribute',
           '0..1',
           { propertyTest: 'justATest' }
+        );
+
+        numberAttribute = new NumberAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          'attributeDataName'
+        );
+
+        numberAttribute = new NumberAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
         );
       }
     );
@@ -101,7 +134,8 @@ describe('NumberAttribute', function () {
       expect(function () {
         numberAttribute = new NumberAttribute({
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -109,7 +143,8 @@ describe('NumberAttribute', function () {
         numberAttribute = new NumberAttribute({
           name: null,
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -118,6 +153,7 @@ describe('NumberAttribute', function () {
           name: 'attribute',
           multiplicity: '0..1',
           default: null,
+          dataName: 'dataName',
           doesNotExist: null
         });
       }).to.throw(AssertionError);
@@ -127,7 +163,8 @@ describe('NumberAttribute', function () {
           name: 'attribute',
           type: 'Number',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -135,7 +172,17 @@ describe('NumberAttribute', function () {
         numberAttribute = new NumberAttribute({
           name: 'attribute',
           multiplicity: null,
-          default: null
+          default: null,
+          dataName: 'dataName'
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        numberAttribute = new NumberAttribute({
+          name: 'attribute',
+          multiplicity: '1',
+          default: null,
+          dataName: function () {}
         });
       }).to.throw(AssertionError);
     });
@@ -161,6 +208,14 @@ describe('NumberAttribute', function () {
 
       expect(numberAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest'});
+
+      expect(numberAttribute).to.have.property('dataName')
+        .that.deep.equals(
+        {
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        }
+      );
     });
 
     it('expect to be not extensible', function () {
@@ -201,6 +256,16 @@ describe('NumberAttribute', function () {
 
       expect(numberAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        delete numberAttribute.dataName;
+      }).to.throw(Error);
+
+      expect(numberAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to not allow to change property', function () {
@@ -231,6 +296,16 @@ describe('NumberAttribute', function () {
 
       expect(numberAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        numberAttribute.dataName = 'will not change';
+      }).to.throw(Error);
+
+      expect(numberAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to have the right default values', function () {
@@ -240,6 +315,7 @@ describe('NumberAttribute', function () {
       expect(numberAttribute.type).to.equal(NumberAttribute);
       expect(numberAttribute.multiplicity).to.equal('1');
       expect(numberAttribute.default).to.equal(null);
+      expect(numberAttribute.dataName).to.equal(null);
     });
   });
 
