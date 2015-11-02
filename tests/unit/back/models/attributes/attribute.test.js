@@ -842,4 +842,102 @@ describe('Attribute', function () {
       }
     );
   });
+
+  describe('#getDataName', function () {
+    var dataName;
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        dataName = (new ObjectAttribute('objectAttribute')).getDataName(
+          null,
+          null
+        );
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        dataName = (new ObjectAttribute('objectAttribute')).getDataName(
+          {}
+        );
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to return right data name', function () {
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute'
+        })).getDataName()
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute'
+        })).getDataName('default')
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {}
+        })).getDataName()
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {}
+        })).getDataName('default')
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: 'objectAttributeDataName'
+        })).getDataName()
+      ).to.equal('objectAttributeDataName');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: 'objectAttributeDataName'
+        })).getDataName('default')
+      ).to.equal('objectAttributeDataName');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {
+            default: 'objectAttributeDefaultDataName'
+          }
+        })).getDataName()
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {
+            default: 'objectAttributeDefaultDataName'
+          }
+        })).getDataName('default')
+      ).to.equal('objectAttributeDefaultDataName');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {
+            default: 'objectAttributeDefaultDataName'
+          }
+        })).getDataName('notDefault')
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {
+            default: 'objectAttributeDefaultDataName',
+            notDefault: 'objectAttributeNotDefaultDataName'
+          }
+        })).getDataName('notDefault')
+      ).to.equal('objectAttributeNotDefaultDataName');
+    });
+  });
 });
