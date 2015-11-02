@@ -14,7 +14,7 @@ var C2 = module.exports = Entity.specify(
   'C2',
   [
     new ObjectAttribute(
-      'Entity',
+      '_Entity',
       '1',
       function () { return C2; }
     ),

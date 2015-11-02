@@ -865,7 +865,7 @@ describe('Entity', function () {
       expect(c11).to.have.property('c1A10').that.deep.equals(new C2());
       expect(c11).to.have.property('c11A1').that.equals(null);
 
-      expect(c2).to.have.property('Entity').that.equals(C2);
+      expect(c2).to.have.property('_Entity').that.equals(C2);
       expect(c2).to.have.property('c2A2').that.deep.equals({
         default: 'thisIsMyDefault'
       });

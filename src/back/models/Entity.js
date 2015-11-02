@@ -70,9 +70,17 @@ function Entity(attributeValues) {
    */
   this.General = null;
   /**
+   * This is a property to keep the information if the Entity instance is new
+   * and was not saved in the storage yet.
+   * @type {!boolean}
+   * @example
+   * console.log((new MyEntity()).isNew); // Logs "true"
+   */
+  this.isNew = true;
+  /**
    * This is a read-only property to get the id of a new entity
    * instance. It is generated in according to UUID pattern type 4.
-   * @type {!String}
+   * @type {!string}
    * @readonly
    * @example
    * var MyEntity = Entity.specify('MyEntity');
@@ -86,7 +94,7 @@ function Entity(attributeValues) {
       value: Entity,
       enumerable: false,
       writable: false,
-      configurable: true
+      configurable: false
     });
   }
 
@@ -100,21 +108,21 @@ function Entity(attributeValues) {
       );
     },
     enumerable: false,
-    configurable: true
+    configurable: false
   });
 
   Object.defineProperty(this, 'adapterName', {
     value: this.Entity.adapterName,
     writable: false,
     enumerable: false,
-    configurable: true
+    configurable: false
   });
 
   Object.defineProperty(this, 'adapter', {
     value: this.Entity.adapter,
     writable: false,
     enumerable: false,
-    configurable: true
+    configurable: false
   });
 
   expect(this).to.be.an(
@@ -503,7 +511,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
           value: SpecificEntity,
           enumerable: false,
           writable: false,
-          configurable: true
+          configurable: false
         });
       }
 
