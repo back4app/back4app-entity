@@ -10,6 +10,7 @@ var objects = require('../utils/objects');
 var Adapter = require('../adapters/Adapter');
 var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
+var AssociationAttribute = require('./attributes/types/AssociationAttribute');
 var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
 var uuid = require('node-uuid');
@@ -360,6 +361,7 @@ Entity.new = null;
 Entity.create = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
+Entity.prototype.save = save;
 
 Object.defineProperty(Entity, 'adapterName', {
   value: 'default',
@@ -1123,33 +1125,11 @@ var _getCreateFunction = function (CurrentEntity) {
     return new Promise(function (resolve, reject) {
       var newEntity = new CurrentEntity(attributeValues);
 
-      newEntity.validate();
-
-      var promise = CurrentEntity.adapter.insertObject(newEntity);
-
-      expect(promise).to.not.equal(
-        null,
-        'Function "create" of an Adapter specialization should return a Promise'
-      );
-
-      expect(typeof promise).to.equal(
-        'object',
-        'Function "create" of an Adapter specialization should return a Promise'
-      );
-
-      expect(promise).to.respondTo(
-        'then',
-        'Function "create" of an Adapter specialization should return a Promise'
-      );
-
-      expect(promise).to.respondTo(
-        'catch',
-        'Function "create" of an Adapter specialization should return a Promise'
-      );
-
-      promise
+      newEntity
+        .save({
+          forceCreate: true
+        })
         .then(function () {
-          newEntity.isNew = false;
           resolve(newEntity);
         })
         .catch(reject);
@@ -1253,4 +1233,126 @@ function isValid(attribute) {
     }
   }
   return true;
+}
+
+function save(options) {
+  var entity = this;
+
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when saving an Entity (it has to be passed ' +
+    'less than 2 arguments)'
+  );
+
+  return new Promise(function (resolve, reject) {
+    var isCreate = entity.isNew;
+    var forceCreate = false;
+    var forceUpdate = false;
+
+    if (options) {
+      expect(options).to.be.an(
+        'object',
+        'Invalid argument "options" when saving an Entity (it has to be an ' +
+        'object)'
+      );
+
+      if (options.hasOwnProperty('forceCreate')) {
+        expect(options.forceCreate).to.be.a(
+          'boolean',
+          'Invalid argument "options.forceCreate" when saving an Entity (it ' +
+          'has to be a boolean)'
+        );
+
+        if (options.forceCreate) {
+          forceCreate = true;
+        }
+      }
+
+      if (options.hasOwnProperty('forceUpdate')) {
+        expect(options.forceUpdate).to.be.a(
+          'boolean',
+          'Invalid argument "options.forceUpdate" when saving an Entity (it ' +
+          'has to be a boolean)'
+        );
+
+        if (options.forceUpdate) {
+          forceUpdate = true;
+        }
+      }
+
+      expect(forceCreate).to.not.equal(
+        forceUpdate,
+        'It is not possible to force create and update at same time when ' +
+        'saving an Entity'
+      );
+
+      if (forceCreate) {
+        isCreate = true;
+      } else if (forceUpdate) {
+        isCreate = false;
+      }
+    }
+
+    entity.validate();
+
+    var promises = [];
+
+    var attributes = entity.Entity.attributes;
+
+    for (var attribute in attributes) {
+      if (attributes[attribute] instanceof AssociationAttribute) {
+        if (entity.hasOwnProperty(attribute)) {
+          if (entity[attribute] instanceof Entity) {
+            promises.push(entity[attribute].save());
+          }
+        }
+      }
+    }
+
+    var promise = null;
+
+    if (isCreate) {
+      promise = entity.adapter.insertObject(entity);
+    } else {
+      promise = entity.adapter.updateObject(entity);
+    }
+
+    expect(promise).to.not.equal(
+      null,
+      'Function "insertObject" of an Adapter specialization should return ' +
+      'a Promise'
+    );
+
+    expect(typeof promise).to.equal(
+      'object',
+      'Function "insertObject" of an Adapter specialization should return ' +
+      'a Promise'
+    );
+
+    expect(promise).to.respondTo(
+      'then',
+      'Function "insertObject" of an Adapter specialization should return ' +
+      'a Promise'
+    );
+
+    expect(promise).to.respondTo(
+      'catch',
+      'Function "insertObject" of an Adapter specialization should return ' +
+      'a Promise'
+    );
+
+    promise
+      .then(function () {
+        entity.isNew = false;
+      });
+
+    promises.push(promise);
+
+    Promise
+      .all(promises)
+      .then(function () {
+        resolve();
+      })
+      .catch(reject);
+  });
 }

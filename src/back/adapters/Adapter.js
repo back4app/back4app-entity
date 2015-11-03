@@ -40,6 +40,7 @@ function Adapter() {
 Adapter.prototype.loadEntity = loadEntity;
 Adapter.prototype.loadEntityAttribute = loadEntityAttribute;
 Adapter.prototype.insertObject = insertObject;
+Adapter.prototype.updateObject = updateObject;
 
 /**
  * This method is called always that an Entity is specified. The adapter has to
@@ -90,6 +91,13 @@ function loadEntityAttribute() {
 function insertObject() {
   return new Promise(function () {
     throw new Error('Function "insertObject" has to be implemented in the ' +
+      'Adapter specialization');
+  });
+}
+
+function updateObject() {
+  return new Promise(function () {
+    throw new Error('Function "updateObject" has to be implemented in the ' +
       'Adapter specialization');
   });
 }

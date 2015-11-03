@@ -10,7 +10,7 @@ var ObjectAttribute = require('../../../../')
 
 require('../../settings');
 
-var C2 = module.exports = Entity.specify(
+module.exports = Entity.specify(
   'C2',
   [
     new ObjectAttribute(
