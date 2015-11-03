@@ -105,4 +105,21 @@ describe('Adapter', function () {
         });
     });
   });
+
+  describe('#updateObject', function () {
+    adapter = new AdapterProxy();
+
+    it('expect to exist as an instance member', function () {
+      expect(adapter).to.respondTo('updateObject');
+    });
+
+    it('expect to be implemented in concrete adapters', function (done) {
+      adapters.Adapter.prototype
+        .updateObject(new MyEntity())
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(Error);
+          done();
+        });
+    });
+  });
 });
