@@ -1401,11 +1401,13 @@ function save(options) {
         }
       }
 
-      expect(forceCreate).to.not.equal(
-        forceUpdate,
-        'It is not possible to force create and update at same time when ' +
-        'saving an Entity'
-      );
+      if (forceCreate) {
+        expect(forceCreate).to.not.equal(
+          forceUpdate,
+          'It is not possible to force create and update at same time when ' +
+          'saving an Entity'
+        );
+      }
 
       if (forceCreate) {
         isCreate = true;
@@ -1440,26 +1442,26 @@ function save(options) {
 
     expect(promise).to.not.equal(
       null,
-      'Function "insertObject" of an Adapter specialization should return ' +
-      'a Promise'
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
     );
 
     expect(typeof promise).to.equal(
       'object',
-      'Function "insertObject" of an Adapter specialization should return ' +
-      'a Promise'
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
     );
 
     expect(promise).to.respondTo(
       'then',
-      'Function "insertObject" of an Adapter specialization should return ' +
-      'a Promise'
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
     );
 
     expect(promise).to.respondTo(
       'catch',
-      'Function "insertObject" of an Adapter specialization should return ' +
-      'a Promise'
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
     );
 
     promise
