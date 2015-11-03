@@ -83,7 +83,7 @@ function loadEntityAttribute() {
  * @function
  * @param {!module:back4app-entity/models.Entity} entityObject The Entity object
  * to be inserted.
- * @returns {Promise.<undefined|Error>} Promise that returns nothis if succeed
+ * @returns {Promise.<undefined|Error>} Promise that returns nothing if succeed
  * and the Error if failed.
  * @example
  * myAdapter.insertObject(new MyEntity());
@@ -95,6 +95,19 @@ function insertObject() {
   });
 }
 
+/**
+ * This method is called always that an Entity object has to be updated in the
+ * storage. The adapter has to update the Entity object. It has to be
+ * implemented in the concrete adapters. Otherwise, it will throw Error.
+ * @name module:back4app-entity/adapters.Adapter#updateObject
+ * @function
+ * @param {!module:back4app-entity/models.Entity} entityObject The Entity object
+ * to be updated.
+ * @returns {Promise.<undefined|Error>} Promise that returns nothing if succeed
+ * and the Error if failed.
+ * @example
+ * myAdapter.updateObject(myEntity);
+ */
 function updateObject() {
   return new Promise(function () {
     throw new Error('Function "updateObject" has to be implemented in the ' +
