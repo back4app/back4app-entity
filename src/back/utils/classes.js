@@ -92,7 +92,7 @@ function isGeneral(GeneralClass, SpecificClass) {
   expect(SpecificClass).to.be.a(
     'function',
     'Invalid argument "SpecificClass" when checking if a class is general ' +
-    'of another (ut has to be a function)'
+    'of another (it has to be a function)'
   );
 
   var visitedClasses = [];

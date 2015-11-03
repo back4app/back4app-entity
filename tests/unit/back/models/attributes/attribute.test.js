@@ -19,6 +19,7 @@ var DateAttribute = attributes.types.DateAttribute;
 var NumberAttribute = attributes.types.NumberAttribute;
 var ObjectAttribute = attributes.types.ObjectAttribute;
 var StringAttribute = attributes.types.StringAttribute;
+var EntityProxy = require('../EntityProxy');
 var C1 = require('../C1');
 var C2 = require('../C2');
 
@@ -78,7 +79,8 @@ describe('Attribute', function () {
         });
 
         attribute = new AttributeProxy({
-          name: 'attribute'
+          name: 'attribute',
+          dataName: 'attributeDataName'
         });
 
         attribute = new AttributeProxy({
@@ -93,7 +95,8 @@ describe('Attribute', function () {
 
         attribute = new AttributeProxy({
           name: 'attribute',
-          multiplicity: '0..1'
+          multiplicity: '0..1',
+          dataName: 'attributeDataName'
         });
 
         attribute = new AttributeProxy({
@@ -105,17 +108,24 @@ describe('Attribute', function () {
         attribute = new AttributeProxy({
           name: 'attribute',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'attributeDataName'
+        });
+
+        attribute = new AttributeProxy({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: {
+            default: 'attributeDefaultDataName',
+            other: 'attributeOtherDataName'
+          }
         });
       }
     );
 
     it('expect to work with right arguments passing as arguments',
       function () {
-        attribute = new AttributeProxy(
-          'attribute'
-        );
-
         attribute = new AttributeProxy(
           'attribute'
         );
@@ -129,6 +139,22 @@ describe('Attribute', function () {
           'attribute',
           '0..1',
           'defaultValue'
+        );
+
+        attribute = new AttributeProxy(
+          'attribute',
+          '0..1',
+          'attributeDataName'
+        );
+
+        attribute = new AttributeProxy(
+          'attribute',
+          '0..1',
+          'defaultValue',
+          {
+            default: 'attributeDefaultDataName',
+            other: 'attributeOtherDataName'
+          }
         );
       }
     );
@@ -172,6 +198,7 @@ describe('Attribute', function () {
           name: 'attribute',
           multiplicity: '0..1',
           default: null,
+          dataName: null,
           doesNotExist: null
         });
       }).to.throw(AssertionError);
@@ -180,7 +207,8 @@ describe('Attribute', function () {
         attribute = new AttributeProxy({
           name: 'attribute',
           multiplicity: null,
-          default: null
+          default: null,
+          dataName: null
         });
       }).to.throw(AssertionError);
 
@@ -189,6 +217,15 @@ describe('Attribute', function () {
           name: 'attribute',
           multiplicity: 'willnotwork',
           default: null
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        attribute = new AttributeProxy({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: function () {}
         });
       }).to.throw(AssertionError);
     });
@@ -207,6 +244,12 @@ describe('Attribute', function () {
 
       expect(attribute).to.have.property('default')
         .that.equals('defaultValue');
+
+      expect(attribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDefaultDataName',
+          other: 'attributeOtherDataName'
+        });
     });
 
     it('expect to be not extensible', function () {
@@ -247,6 +290,16 @@ describe('Attribute', function () {
 
       expect(attribute).to.have.property('default')
         .that.equals('defaultValue');
+
+      expect(function () {
+        delete attribute.dataName;
+      }).to.throw(Error);
+
+      expect(attribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDefaultDataName',
+          other: 'attributeOtherDataName'
+        });
     });
 
     it('expect to not allow to change property', function () {
@@ -277,6 +330,16 @@ describe('Attribute', function () {
 
       expect(attribute).to.have.property('default')
         .that.equals('defaultValue');
+
+      expect(function () {
+        attribute.dataName = 'will not change';
+      }).to.throw(Error);
+
+      expect(attribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDefaultDataName',
+          other: 'attributeOtherDataName'
+        });
     });
 
     it('expect to have the right default values', function () {
@@ -286,6 +349,7 @@ describe('Attribute', function () {
       expect(attribute2.type).to.equal(AttributeProxy);
       expect(attribute2.multiplicity).to.equal('1');
       expect(attribute2.default).to.equal(null);
+      expect(attribute2.dataName).to.equal(null);
     });
   });
 
@@ -655,10 +719,10 @@ describe('Attribute', function () {
         objectAttribute.getDefaultValue(function () {});
       }).to.throw(AssertionError);
 
-      objectAttribute.getDefaultValue(new Entity());
+      objectAttribute.getDefaultValue(new EntityProxy());
 
       expect(function () {
-        objectAttribute.getDefaultValue(new Entity(), new Entity());
+        objectAttribute.getDefaultValue(new EntityProxy(), new EntityProxy());
       }).to.throw(AssertionError);
     });
 
@@ -668,21 +732,25 @@ describe('Attribute', function () {
         '1',
         null
       );
-      expect(objectAttribute.getDefaultValue(new Entity())).to.equal(null);
+      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.equal(null);
 
       objectAttribute = new ObjectAttribute(
         'objectAttribute',
         '1',
         {}
       );
-      expect(objectAttribute.getDefaultValue(new Entity())).to.deep.equal({});
+      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.deep.equal(
+        {}
+      );
 
       objectAttribute = new ObjectAttribute(
         'objectAttribute',
         '1',
         function () { return this.Entity.specification.name; }
       );
-      expect(objectAttribute.getDefaultValue(new Entity())).to.equal('Entity');
+      expect(objectAttribute.getDefaultValue(new EntityProxy())).to.equal(
+        'Entity'
+      );
     });
   });
 
@@ -761,6 +829,165 @@ describe('Attribute', function () {
       C1.attributes.c1A4.validate(c1);
       c1.c1A4 = new Array(new C2());
       C1.attributes.c1A4.validate(c1);
+    });
+  });
+
+  describe('#validateValue', function () {
+    it(
+      'expect to throw error if not implemented in specialized class',
+      function () {
+        expect(function () {
+          (new AttributeProxy('attributeProxy')).validateValue();
+        }).to.throw(Error);
+      }
+    );
+  });
+
+  describe('#getDataName', function () {
+    var dataName;
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        dataName = (new ObjectAttribute('objectAttribute')).getDataName(
+          null,
+          null
+        );
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        dataName = (new ObjectAttribute('objectAttribute')).getDataName(
+          {}
+        );
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to return right data name', function () {
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute'
+        })).getDataName()
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute'
+        })).getDataName('default')
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {}
+        })).getDataName()
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {}
+        })).getDataName('default')
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: 'objectAttributeDataName'
+        })).getDataName()
+      ).to.equal('objectAttributeDataName');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: 'objectAttributeDataName'
+        })).getDataName('default')
+      ).to.equal('objectAttributeDataName');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {
+            default: 'objectAttributeDefaultDataName'
+          }
+        })).getDataName()
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {
+            default: 'objectAttributeDefaultDataName'
+          }
+        })).getDataName('default')
+      ).to.equal('objectAttributeDefaultDataName');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {
+            default: 'objectAttributeDefaultDataName'
+          }
+        })).getDataName('notDefault')
+      ).to.equal('objectAttribute');
+
+      expect(
+        (new ObjectAttribute({
+          name: 'objectAttribute',
+          dataName: {
+            default: 'objectAttributeDefaultDataName',
+            notDefault: 'objectAttributeNotDefaultDataName'
+          }
+        })).getDataName('notDefault')
+      ).to.equal('objectAttributeNotDefaultDataName');
+    });
+  });
+
+  describe('#getDataValue', function () {
+    var dataValue;
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        dataValue = (new ObjectAttribute('objectAttribute')).getDataValue();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        dataValue = (new ObjectAttribute('objectAttribute')).getDataValue(
+          null,
+          null
+        );
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to return the right data value', function () {
+      var attributeValue = {};
+      expect(
+        (new ObjectAttribute('objectAttribute')).getDataValue(attributeValue)
+      ).to.equal(attributeValue);
+    });
+  });
+
+  describe('#parseDataValue', function () {
+    var attributeValue;
+
+    it('expect to not work with wrong arguments', function () {
+      expect(function () {
+        attributeValue =
+          (new ObjectAttribute('objectAttribute')).parseDataValue();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        attributeValue =
+          (new ObjectAttribute('objectAttribute')).parseDataValue(
+            null,
+            null
+          );
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to return the right attribute value', function () {
+      var dataValue = {};
+      expect(
+        (new ObjectAttribute('objectAttribute')).parseDataValue(dataValue)
+      ).to.equal(dataValue);
     });
   });
 });

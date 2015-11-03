@@ -10,10 +10,10 @@ var AssertionError = chai.AssertionError;
 var classes = require('../../../../../../src/back/utils').classes;
 var models = require('../../../../../../').models;
 var ValidationError = models.errors.ValidationError;
-var Entity = models.Entity;
 var attributes = models.attributes;
 var Attribute = attributes.Attribute;
 var ObjectAttribute = attributes.types.ObjectAttribute;
+var EntityProxy = require('../../EntityProxy');
 
 require('../../../../settings');
 
@@ -62,6 +62,22 @@ describe('ObjectAttribute', function () {
           default: null
         });
 
+        objectAttribute = new ObjectAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: 'attributeDataName'
+        });
+
+        objectAttribute = new ObjectAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
+        });
       }
     );
 
@@ -80,6 +96,23 @@ describe('ObjectAttribute', function () {
           'attribute',
           '0..1',
           { propertyTest: 'justATest' }
+        );
+
+        objectAttribute = new ObjectAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          'attributeDataName'
+        );
+
+        objectAttribute = new ObjectAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
         );
       }
     );
@@ -102,7 +135,8 @@ describe('ObjectAttribute', function () {
       expect(function () {
         objectAttribute = new ObjectAttribute({
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -110,7 +144,8 @@ describe('ObjectAttribute', function () {
         objectAttribute = new ObjectAttribute({
           name: null,
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -119,6 +154,7 @@ describe('ObjectAttribute', function () {
           name: 'attribute',
           multiplicity: '0..1',
           default: null,
+          dataName: 'dataName',
           doesNotExist: null
         });
       }).to.throw(AssertionError);
@@ -128,7 +164,8 @@ describe('ObjectAttribute', function () {
           name: 'attribute',
           type: 'Object',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -136,7 +173,17 @@ describe('ObjectAttribute', function () {
         objectAttribute = new ObjectAttribute({
           name: 'attribute',
           multiplicity: null,
-          default: null
+          default: null,
+          dataName: 'dataName'
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        objectAttribute = new ObjectAttribute({
+          name: 'attribute',
+          multiplicity: '1',
+          default: null,
+          dataName: function () {}
         });
       }).to.throw(AssertionError);
     });
@@ -167,6 +214,14 @@ describe('ObjectAttribute', function () {
 
       expect(objectAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest'});
+
+      expect(objectAttribute).to.have.property('dataName')
+        .that.deep.equals(
+        {
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        }
+      );
     });
 
     it('expect to be not extensible', function () {
@@ -207,6 +262,16 @@ describe('ObjectAttribute', function () {
 
       expect(objectAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        delete objectAttribute.dataName;
+      }).to.throw(Error);
+
+      expect(objectAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to not allow to change property', function () {
@@ -237,6 +302,16 @@ describe('ObjectAttribute', function () {
 
       expect(objectAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        objectAttribute.dataName = 'will not change';
+      }).to.throw(Error);
+
+      expect(objectAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to have the right default values', function () {
@@ -246,6 +321,7 @@ describe('ObjectAttribute', function () {
       expect(objectAttribute.type).to.equal(ObjectAttribute);
       expect(objectAttribute.multiplicity).to.equal('1');
       expect(objectAttribute.default).to.equal(null);
+      expect(objectAttribute.dataName).to.equal(null);
     });
   });
 
@@ -253,7 +329,7 @@ describe('ObjectAttribute', function () {
     it('expect to work correctly', function () {
       objectAttribute.validateValue({});
       objectAttribute.validateValue(new Date());
-      objectAttribute.validateValue(new Entity());
+      objectAttribute.validateValue(new EntityProxy());
       expect(function () {
         objectAttribute.validateValue(1);
       }).to.throw(ValidationError);

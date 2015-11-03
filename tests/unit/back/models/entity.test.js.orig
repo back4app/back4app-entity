@@ -2,6 +2,7 @@
 
 var chai = require('chai');
 var expect = chai.expect;
+var Promise = require('bluebird');
 var AssertionError = chai.AssertionError;
 var Promise = require('bluebird');
 var uuid = require('node-uuid');
@@ -16,8 +17,12 @@ var attributes = models.attributes;
 var methods = models.methods;
 var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
-var EntityProxy = require('./EntityProxy');
+<<<<<<< HEAD
 var sinon = require('sinon');
+
+=======
+var EntityProxy = require('./EntityProxy');
+>>>>>>> origin/b4a-152
 
 require('../../settings');
 
@@ -38,7 +43,6 @@ describe('Entity', function () {
   var c2;
 
   context('interface tests', function () {
-
     it('expect to instantiate new Entity without error', function () {
       entity = new EntityProxy();
 
@@ -1200,6 +1204,33 @@ describe('Entity', function () {
     });
   });
 
+<<<<<<< HEAD
+  describe('#delete', function () {
+    var EntityMock = Entity.specify({name: 'EntityMock'});
+
+    it('expects to delete an instance', function () {
+      //mock adapter
+      var mock = sinon.mock(settings.ADAPTERS.default);
+
+      var instance = new EntityMock(
+        {id: '00000000-0000-4000-a000-000000000111'}
+      );
+
+      var promise = Promise.resolve();
+
+      mock.expects('deleteObject').once()
+        .withExactArgs(instance)
+        .returns(promise);
+
+      //call method
+      instance.delete();
+
+      mock.verify();
+
+      mock.restore();
+
+    });
+=======
   describe('.create', function () {
     it('expect to not work with wrong arguments', function (done) {
       expect(function () {
@@ -1638,32 +1669,6 @@ describe('Entity', function () {
           });
       }
     );
-  });
-
-  describe('#delete', function () {
-    var EntityMock = Entity.specify({name: 'EntityMock'});
-
-    it('expects to delete an instance', function () {
-      //mock adapter
-      var mock = sinon.mock(settings.ADAPTERS.default);
-
-      var instance = new EntityMock(
-        {id: '00000000-0000-4000-a000-000000000111'}
-      );
-
-      var promise = Promise.resolve();
-
-      mock.expects('deleteObject').once()
-        .withExactArgs(instance)
-        .returns(promise);
-
-      //call method
-      instance.delete();
-
-      mock.verify();
-
-      mock.restore();
-
-    });
+>>>>>>> origin/b4a-152
   });
 });

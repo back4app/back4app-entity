@@ -361,8 +361,11 @@ Entity.new = null;
 Entity.create = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
+<<<<<<< HEAD
 Entity.prototype.delete = deleteInstance;
+=======
 Entity.prototype.save = save;
+>>>>>>> origin/b4a-152
 
 Object.defineProperty(Entity, 'adapterName', {
   value: 'default',
@@ -1236,6 +1239,35 @@ function isValid(attribute) {
   return true;
 }
 
+<<<<<<< HEAD
+
+/**
+ * deletes an entity.
+ * @name module:back4app-entity/models.Entity#isValid
+ * @function
+ * @param {}
+ * @returns {boolean} The validation result.
+ * @example
+ * myEntity.delete(); // Deletes the instance of an Entity.
+ *
+ */
+function deleteInstance() {
+  var _this = this;
+
+  expect(arguments).to.have.length(
+    0,
+    'Invalid arguments length when deleting a "' +
+    this.Entity.specification.name +
+    '" instance (it has to be passed 0 arguments)');
+
+  return new Promise(function (resolve, reject) {
+
+    var promise = _this.adapter.deleteObject(_this);
+
+    expect(promise).to.respondTo(
+      'then',
+      'Function "delete" of an Adapter specialization should return a Promise'
+=======
 /**
  * Saves an Entity object. Validates it and saves it in the storage.
  * @name module:back4app-entity/models.Entity#save
@@ -1357,10 +1389,23 @@ function save(options) {
       'then',
       'Functions "insertObject" and "updateObject" of an Adapter ' +
       'specialization should return a Promise'
+>>>>>>> origin/b4a-152
     );
 
     expect(promise).to.respondTo(
       'catch',
+<<<<<<< HEAD
+      'Function "delete" of an Adapter specialization should return a Promise'
+    );
+
+    promise
+      .then(resolve)
+      .catch(reject);
+  });
+}
+
+
+=======
       'Functions "insertObject" and "updateObject" of an Adapter ' +
       'specialization should return a Promise'
     );
@@ -1380,42 +1425,4 @@ function save(options) {
       .catch(reject);
   });
 }
-
-/**
- * deletes an entity.
- * @name module:back4app-entity/models.Entity#isValid
- * @function
- * @param {}
- * @returns {boolean} The validation result.
- * @example
- * myEntity.delete(); // Deletes the instance of an Entity.
- *
- */
-function deleteInstance() {
-  var _this = this;
-
-  expect(arguments).to.have.length(
-    0,
-    'Invalid arguments length when deleting a "' +
-    this.Entity.specification.name +
-    '" instance (it has to be passed 0 arguments)');
-
-  return new Promise(function (resolve, reject) {
-
-    var promise = _this.adapter.deleteObject(_this);
-
-    expect(promise).to.respondTo(
-      'then',
-      'Function "delete" of an Adapter specialization should return a Promise'
-    );
-
-    expect(promise).to.respondTo(
-      'catch',
-      'Function "delete" of an Adapter specialization should return a Promise'
-    );
-
-    promise
-      .then(resolve)
-      .catch(reject);
-  });
-}
+>>>>>>> origin/b4a-152

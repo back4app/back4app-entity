@@ -61,6 +61,10 @@ module.exports = Entity.specify({
     c1A6M: c1A6M,
     c1M1: c1M1,
     c1M2: c1M2
+  },
+  isAbstract: false,
+  dataName: {
+    default: 'C1'
   }
 });
 

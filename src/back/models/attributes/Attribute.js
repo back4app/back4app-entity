@@ -5,7 +5,6 @@
 'use strict';
 
 var expect = require('chai').expect;
-var classes = require('../../utils/classes');
 var objects = require('../../utils/objects');
 var errors = require('../errors');
 var ValidationError = errors.ValidationError;
@@ -54,6 +53,7 @@ module.exports = Attribute;
  * @memberof module:back4app-entity/models/attributes
  * @name Attribute
  * @constructor
+ * @abstract
  * @param {!string} name It is the name of the attribute.
  * @param {!string} [multiplicity='1'] It is the multiplicity of the attribute.
  * It is optional and if not passed it will assume '1' as the default value.
@@ -190,17 +190,12 @@ function Attribute() {
     'classes\' constructors'
   );
 
-  expect(classes.isGeneral(Attribute, this.constructor)).to.equal(
-    true,
-    'The Attribute\'s constructor can be only invoked from specialized' +
-    'classes\' constructors'
-  );
-
   var _name = null;
   var _type = this.constructor;
   var _multiplicity = '1';
   var _default = null;
-  var _dataName, dataName = null;
+  var _dataName = null;
+  var dataName = null;
 
   expect(arguments).to.have.length.within(
     1,
@@ -279,11 +274,11 @@ function Attribute() {
           );
 
           _dataName[dataName] = attribute.dataName[dataName];
-
-          Object.preventExtensions(_dataName);
-          Object.seal(_dataName);
-          Object.freeze(_dataName);
         }
+
+        Object.preventExtensions(_dataName);
+        Object.seal(_dataName);
+        Object.freeze(_dataName);
       }
     }
   } else {
@@ -335,11 +330,11 @@ function Attribute() {
           );
 
           _dataName[dataName] = arguments[3][dataName];
-
-          Object.preventExtensions(_dataName);
-          Object.seal(_dataName);
-          Object.freeze(_dataName);
         }
+
+        Object.preventExtensions(_dataName);
+        Object.seal(_dataName);
+        Object.freeze(_dataName);
       }
     }
   }
@@ -660,7 +655,7 @@ function validate(entity) {
  * Validates a value and throws a
  * {@link module:back4app-entity/models/errors.ValidationError} if
  * it is not validated. It shall be implemented in the specializations of
- * Attribute class.
+ * Attribute class. Otherwise, it wil throw an Error.
  * @name module:back4app-entity/models/attributes.Attribute#validateValue
  * @function
  * @param {*} value The value to be validated.
@@ -673,6 +668,16 @@ function validateValue() {
     'Attribute specialization');
 }
 
+/**
+ * Gets the data name of an Entity attribute to be used in an adapter.
+ * @name module:back4app-entity/models/attributes.Attribute#getDataName
+ * @function
+ * @param {?string} [adapterName] The name of the adapter of which the data
+ * name is wanted.
+ * @returns {string} The data name.
+ * @example
+ * var dataName = MyEntity.attributes.myAttribute.getDataName('default');
+ */
 function getDataName(adapterName) {
   expect(arguments).to.have.length.below(
     2,
@@ -702,10 +707,46 @@ function getDataName(adapterName) {
   }
 }
 
+/**
+ * Gets the data value of an Entity attribute to be used in an adapter. The
+ * default implementation only returns the given attributeValue. It has to be
+ * overriden in Attribute specializations if another behavior is needed.
+ * @name module:back4app-entity/models/attributes.Attribute#getDataValue
+ * @function
+ * @param {*} attributeValue The attribute value to be converted in data value.
+ * @returns {*} The data value.
+ * @example
+ * var dataValue = MyEntity.attributes.myAttribute.getDataValue(
+ *   myEntity.myAttribute
+ * );
+ */
 function getDataValue(attributeValue) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when getting the data value of an Attribute ' +
+    '(it has to be passed 1 argument)');
+
   return attributeValue;
 }
 
+/**
+ * Parses the data value of an Entity attribute to be used in an adapter. The
+ * default implementation only returns the given dataValue. It has to be
+ * overriden in Attribute specializations if another behavior is needed.
+ * @name module:back4app-entity/models/attributes.Attribute#parseDataValue
+ * @function
+ * @param {*} dataValue The data value to be converted in attribute value.
+ * @returns {*} The attribute value.
+ * @example
+ * var attributeValue = MyEntity.attributes.myAttribute.parseDataValue(
+ *   myAttributeDataValueFromStorage
+ * );
+ */
 function parseDataValue(dataValue) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when parsing the data value of an Attribute ' +
+    '(it has to be passed 1 argument)');
+
   return dataValue;
 }

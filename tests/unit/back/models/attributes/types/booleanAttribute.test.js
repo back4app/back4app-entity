@@ -61,6 +61,22 @@ describe('BooleanAttribute', function () {
           default: null
         });
 
+        booleanAttribute = new BooleanAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: 'attributeDataName'
+        });
+
+        booleanAttribute = new BooleanAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
+        });
       }
     );
 
@@ -79,6 +95,23 @@ describe('BooleanAttribute', function () {
           'attribute',
           '0..1',
           { propertyTest: 'justATest' }
+        );
+
+        booleanAttribute = new BooleanAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          'attributeDataName'
+        );
+
+        booleanAttribute = new BooleanAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
         );
       }
     );
@@ -101,7 +134,8 @@ describe('BooleanAttribute', function () {
       expect(function () {
         booleanAttribute = new BooleanAttribute({
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -109,7 +143,8 @@ describe('BooleanAttribute', function () {
         booleanAttribute = new BooleanAttribute({
           name: null,
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -118,6 +153,7 @@ describe('BooleanAttribute', function () {
           name: 'attribute',
           multiplicity: '0..1',
           default: null,
+          dataName: 'dataName',
           doesNotExist: null
         });
       }).to.throw(AssertionError);
@@ -127,7 +163,8 @@ describe('BooleanAttribute', function () {
           name: 'attribute',
           type: 'Boolean',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -135,7 +172,17 @@ describe('BooleanAttribute', function () {
         booleanAttribute = new BooleanAttribute({
           name: 'attribute',
           multiplicity: null,
-          default: null
+          default: null,
+          dataName: 'dataName'
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        booleanAttribute = new BooleanAttribute({
+          name: 'attribute',
+          multiplicity: '1',
+          default: null,
+          dataName: function () {}
         });
       }).to.throw(AssertionError);
     });
@@ -166,6 +213,14 @@ describe('BooleanAttribute', function () {
 
       expect(booleanAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest'});
+
+      expect(booleanAttribute).to.have.property('dataName')
+        .that.deep.equals(
+        {
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        }
+      );
     });
 
     it('expect to be not extensible', function () {
@@ -206,6 +261,16 @@ describe('BooleanAttribute', function () {
 
       expect(booleanAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        delete booleanAttribute.dataName;
+      }).to.throw(Error);
+
+      expect(booleanAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to not allow to change property', function () {
@@ -236,6 +301,16 @@ describe('BooleanAttribute', function () {
 
       expect(booleanAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        booleanAttribute.dataName = 'will not change';
+      }).to.throw(Error);
+
+      expect(booleanAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to have the right default values', function () {
@@ -245,6 +320,7 @@ describe('BooleanAttribute', function () {
       expect(booleanAttribute.type).to.equal(BooleanAttribute);
       expect(booleanAttribute.multiplicity).to.equal('1');
       expect(booleanAttribute.default).to.equal(null);
+      expect(booleanAttribute.dataName).to.equal(null);
     });
   });
 
