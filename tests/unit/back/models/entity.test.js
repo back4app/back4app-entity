@@ -1640,8 +1640,71 @@ describe('Entity', function () {
     );
   });
 
+  describe('#save using sinon mock', function () {
+    var EntityMock = Entity.specify(
+      {name: 'EntityMock1', attributes: {name:{type: 'String'}}}
+    );
+    var instance = new EntityMock({name: 'Jack'});
+    var mock = sinon.mock(settings.ADAPTERS.default);
+
+    it('expect to save instance with insertObject as argument', function () {
+
+      var promise = Promise.resolve();
+
+      mock.expects('insertObject').once()
+        .withExactArgs(instance)
+        .returns(promise);
+
+      instance.save();
+
+      mock.verify();
+
+      mock.restore();
+
+    });
+
+    it('expect to update instance with updateObject as argument', function () {
+
+      var promise = Promise.resolve();
+
+      instance.name = 'Paul';
+
+      mock.expects('updateObject').once()
+        .withExactArgs(instance)
+        .returns(promise);
+
+      instance.save();
+
+      mock.verify();
+
+      mock.restore();
+
+    });
+  });
+
+  describe('#create using sinon mock', function () {
+    var EntityMock = Entity.specify(
+      {name: 'EntityMock3', attributes: {name:{type: 'String'}}}
+    );
+    var mock = sinon.mock(settings.ADAPTERS.default);
+
+    it('expect to create class with insertObject as argument', function () {
+      var promise = Promise.resolve();
+
+      mock.expects('insertObject').once()
+        .returns(promise);
+
+      EntityMock.create({name: 'Jack'});
+
+      mock.verify();
+
+      mock.restore();
+
+    });
+  });
+
   describe('#delete', function () {
-    var EntityMock = Entity.specify({name: 'EntityMock'});
+    var EntityMock = Entity.specify({name: 'EntityMock2'});
 
     it('expects to delete an instance', function () {
       //mock adapter
