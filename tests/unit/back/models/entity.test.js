@@ -1370,4 +1370,271 @@ describe('Entity', function () {
       }
     );
   });
+
+  describe('#save', function () {
+    C3 = require('./C3');
+    var c3 = new C3();
+
+    it('expect to not work with wrong arguments', function (done) {
+      expect(function () {
+        c3.save(null, null);
+      }).to.throw(AssertionError);
+
+      var promises = [];
+
+      promises.push(c3
+        .save(function () {})
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+        }));
+
+      promises.push(c3
+        .save({
+          forceCreate: true,
+          forceUpdate: true
+        })
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+        }));
+
+      promises.push(c3
+        .save({
+          forceCreate: {}
+        })
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+        }));
+
+      promises.push(c3
+        .save({
+          forceUpdate: {}
+        })
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+        }));
+
+      Promise.all(promises).then(function () {
+        done();
+      });
+    });
+
+    it('expect to work with right arguments', function (done) {
+      var promises = [];
+
+      promises.push(
+        c3.save()
+      );
+
+      promises.push(
+        c3.save(null)
+      );
+
+      promises.push(
+        c3.save({})
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: false,
+          forceUpate: false
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: true,
+          forceUpate: false
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: false,
+          forceUpate: true
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: true
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceUpate: true
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceUpate: false
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: false
+        })
+      );
+
+      var myC31 = new C3();
+      var myC32 = new C3({
+        c3A2: myC31
+      });
+      var myc3 = new C3({
+        c3A2: myC32
+      });
+
+      promises.push(
+        myc3
+          .save()
+          .then(function () {
+            expect(myc3.isNew).to.equal(false);
+            expect(myC31.isNew).to.equal(false);
+            expect(myC32.isNew).to.equal(false);
+          }
+        )
+      );
+
+      Promise
+        .all(promises)
+        .then(function () {
+          done();
+        })
+        .catch(console.log);
+    });
+
+    it('expect to not work if not valid', function (done) {
+      var myC2 = new C2();
+      myC2._Entity = function () {};
+      myC2
+        .save()
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(ValidationError);
+          done();
+        });
+    });
+
+    it('expect to not work if associations not valid', function (done) {
+      var promises = [];
+
+      var myC33 = new C3();
+      var myC34 = new C3({
+        c3A2: myC33
+      });
+      myC33.c3A1 = null;
+      var myC35 = new C3({
+        c3A2: myC34
+      });
+
+      promises.push(
+        myC35
+          .save()
+          .catch(function (error) {
+            expect(error).to.be.instanceOf(ValidationError);
+            expect(myC33.isNew).to.equal(true);
+            expect(myC34.isNew).to.equal(true);
+            expect(myC35.isNew).to.equal(true);
+          })
+      );
+
+      Promise
+        .all(promises)
+        .then(function () {
+          done();
+        })
+        .catch(console.log);
+    });
+
+    it(
+      'expect to not work if adapter does not return an object',
+      function (done) {
+        c3
+          .save()
+          .then(function () {
+            var updateObjectFunction = settings.ADAPTERS.default.updateObject;
+            settings.ADAPTERS.default.updateObject = function () {
+              return null;
+            };
+
+            c3
+              .save()
+              .catch(function (error) {
+                expect(error).to.be.an.instanceOf(AssertionError);
+                settings.ADAPTERS.default.updateObject = updateObjectFunction;
+                done();
+              });
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter does not return an object',
+      function (done) {
+        c3
+          .save()
+          .then(function () {
+            var updateObjectFunction = settings.ADAPTERS.default.updateObject;
+            settings.ADAPTERS.default.updateObject = function () {
+              return function () {};
+            };
+
+            c3
+              .save()
+              .catch(function (error) {
+                expect(error).to.be.an.instanceOf(AssertionError);
+                settings.ADAPTERS.default.updateObject = updateObjectFunction;
+                done();
+              });
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter does not return a Promise',
+      function (done) {
+        c3
+          .save()
+          .then(function () {
+            var updateObjectFunction = settings.ADAPTERS.default.updateObject;
+            settings.ADAPTERS.default.updateObject = function () {
+              return {};
+            };
+
+            c3
+              .save()
+              .catch(function (error) {
+                expect(error).to.be.an.instanceOf(AssertionError);
+                settings.ADAPTERS.default.updateObject = updateObjectFunction;
+                done();
+              });
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter throws an error',
+      function (done) {
+        var myNewError = new Error('MyNewError');
+
+        c3
+          .save()
+          .then(function () {
+            var updateObjectFunction = settings.ADAPTERS.default.updateObject;
+            settings.ADAPTERS.default.updateObject = function () {
+              throw myNewError;
+            };
+
+            c3
+              .save()
+              .catch(function (error) {
+                expect(error).to.equal(myNewError);
+                settings.ADAPTERS.default.updateObject = updateObjectFunction;
+                done();
+              });
+          });
+      }
+    );
+  });
 });

@@ -15,12 +15,21 @@ classes.generalize(Adapter, MockAdapter);
 MockAdapter.prototype.loadEntity = loadEntity;
 MockAdapter.prototype.loadEntityAttribute = loadEntityAttribute;
 MockAdapter.prototype.insertObject = insertObject;
+MockAdapter.prototype.updateObject = updateObject;
 
 function loadEntity() {}
 
 function loadEntityAttribute() {}
 
 function insertObject() {
+  var promise = new Promise(function (resolve) {
+    resolve();
+  });
+
+  return promise;
+}
+
+function updateObject() {
   var promise = new Promise(function (resolve) {
     resolve();
   });
