@@ -173,7 +173,9 @@ AssociationAttribute.prototype.getDataValue = getDataValue;
 AssociationAttribute.prototype.parseDataValue = parseDataValue;
 
 function validateValue(value) {
-  if (!(value instanceof this.Entity)) {
+  if (value instanceof this.Entity) {
+    value.validate();
+  } else {
     throw new ValidationError(
       'this attribute\'s value should be a "' +
       this.Entity.specification.name +

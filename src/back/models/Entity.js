@@ -1149,6 +1149,7 @@ var _getCreateFunction = function (CurrentEntity) {
 
       promise
         .then(function () {
+          newEntity.isNew = false;
           resolve(newEntity);
         })
         .catch(reject);
