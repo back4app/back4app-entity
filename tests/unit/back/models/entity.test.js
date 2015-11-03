@@ -2,6 +2,7 @@
 
 var chai = require('chai');
 var expect = chai.expect;
+var Promise = require('bluebird');
 var AssertionError = chai.AssertionError;
 var settings = require('../../../../src/back').settings;
 var classes = require('../../../../src/back/utils').classes;
@@ -15,6 +16,7 @@ var methods = models.methods;
 var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
 var sinon = require('sinon');
+
 
 require('../../settings');
 
@@ -856,29 +858,29 @@ describe('Entity', function () {
     });
   });
 
-  describe('#delete', function() {
+  describe('#delete', function () {
+    var EntityMock = Entity.specify({name: 'EntityMock'});
+
     it('expects to delete an instance', function () {
-      var mockAdapter = sinon.mock({
-        deleteObject: function (entity) {
-          return new Promise(function  (resolve, reject) {
-            resolve();
-          });
-        }
-      });
+      //mock adapter
+      var mock = sinon.mock(settings.ADAPTERS.default);
 
-      mockAdapter.expects("deleteObject").once().withExactArgs('00000000-0000-4000-a000-000000000111');
+      var instance = new EntityMock(
+        {id: '00000000-0000-4000-a000-000000000111'}
+      );
 
-      settings.ADAPTERS.default = mockAdapter;
+      var promise = Promise.resolve();
 
-      var EntityMock = Entity.specify({name: 'EntityMock'});
+      mock.expects('deleteObject').once()
+        .withExactArgs(instance)
+        .returns(promise);
 
-      var myEntity = new EntityMock({id: '00000000-0000-4000-a000-000000000111'});
+      //call method
+      instance.delete();
 
-      myEntity.delete();
+      mock.verify();
 
-      mockAdapter.verify();
-
-      mockAdapter.restore();
+      mock.restore();
 
     });
   });
