@@ -1138,7 +1138,7 @@ var _getCreateFunction = function (CurrentEntity) {
 };
 
 /**
- * Creates a new Entity object from passed attribute values, validates it and
+ * Creates a new Entity object from passed attribute values. Validates it and
  * saves it in the storage.
  * @memberof module:back4app-entity/models.Entity
  * @name create
@@ -1235,6 +1235,27 @@ function isValid(attribute) {
   return true;
 }
 
+/**
+ * Saves an Entity object. Validates it and saves it in the storage.
+ * @name module:back4app-entity/models.Entity#save
+ * @function
+ * @param {?Object} [options] The options to be used in the save process.
+ * @param {?boolean} [options.forceCreate] This option is used to force the
+ * object to be created in the storage.
+ * @param {?boolean} [options.forceUpdate] This option is used to force the
+ * object to be updated in the storage.
+ * @returns {Promise.<undefined|Error>} Promise that returns nothing if succeed
+ * and the Error if failed.
+ * @example
+ * myEntity
+ *   .save()
+ *   .then(function () {
+ *     console.log('saved');
+ *   })
+ *   .catch(function (error) {
+ *     console.log(error);
+ *   });
+ */
 function save(options) {
   var entity = this;
 
