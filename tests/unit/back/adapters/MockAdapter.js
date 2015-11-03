@@ -1,5 +1,6 @@
 'use strict';
 
+var Promise = require('bluebird');
 var classes = require('../../../../src/back').utils.classes;
 var Adapter = require('../../../../src/back').adapters.Adapter;
 
@@ -11,17 +12,23 @@ function MockAdapter() {
 
 classes.generalize(Adapter, MockAdapter);
 
-Adapter.prototype.loadEntity = loadEntity;
-Adapter.prototype.loadEntityAttribute = loadEntityAttribute;
-Adapter.prototype.insertObject = insertObject;
-Adapter.prototype.getObject = getObject;
-Adapter.prototype.findObjects = findObjects;
+MockAdapter.prototype.loadEntity = loadEntity;
+MockAdapter.prototype.loadEntityAttribute = loadEntityAttribute;
+MockAdapter.prototype.insertObject = insertObject;
+MockAdapter.prototype.getObject = getObject;
+MockAdapter.prototype.findObjects = findObjects;
 
 function loadEntity() {}
 
 function loadEntityAttribute() {}
 
-function insertObject() {}
+function insertObject() {
+  var promise = new Promise(function (resolve) {
+    resolve();
+  });
+
+  return promise;
+}
 
 function getObject() {}
 

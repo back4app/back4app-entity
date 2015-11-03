@@ -175,7 +175,9 @@ AssociationAttribute.prototype.getDataValue = getDataValue;
 AssociationAttribute.prototype.parseDataValue = parseDataValue;
 
 function validateValue(value) {
-  if (!(value instanceof this.Entity)) {
+  if (value instanceof this.Entity) {
+    value.validate();
+  } else {
     throw new ValidationError(
       'this attribute\'s value should be a "' +
       this.Entity.specification.name +
@@ -185,6 +187,11 @@ function validateValue(value) {
 }
 
 function getDataValue(attributeValue) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when getting the data value of an Attribute ' +
+    '(it has to be passed 1 argument)');
+
   var dataValue = attributeValue;
 
   if (attributeValue instanceof models.Entity) {
@@ -211,23 +218,36 @@ function getDataValue(attributeValue) {
 }
 
 function parseDataValue(dataValue) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when parsing the data value of an Attribute ' +
+    '(it has to be passed 1 argument)');
+
   var attributeValue = dataValue;
 
   if (dataValue instanceof Array) {
     attributeValue = [];
     for (var i = 0; i < dataValue.length; i++) {
-      try {
-        attributeValue.push(new this.Entity(dataValue[i]));
-
-      } catch (error) {
-        attributeValue.push(dataValue[i]);
-      }
+      attributeValue.push(_parseDataValueItem(dataValue[i]));
     }
-  } else if (dataValue instanceof Object) {
-    try {
-      attributeValue = new this.Entity(dataValue);
-    } catch (error) {}
+  } else {
+    attributeValue = _parseDataValueItem(dataValue);
   }
 
   return attributeValue;
+
+  function _parseDataValueItem(dataValueItem) {
+    if (typeof dataValueItem === 'object' && dataValueItem !== null) {
+      try {
+        var dataValueItemCopy = objects.copy(dataValueItem);
+        var newFunction = models.Entity.new(dataValueItemCopy.Entity);
+        delete dataValueItemCopy.Entity;
+        return newFunction(dataValueItemCopy);
+      } catch (error) {
+        return dataValueItem;
+      }
+    } else {
+      return dataValueItem;
+    }
+  }
 }

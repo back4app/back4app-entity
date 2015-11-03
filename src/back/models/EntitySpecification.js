@@ -115,8 +115,8 @@ function EntitySpecification() {
   /**
    * Entity whose the current EntitySpecification instance belongs. Once this
    * property is assigned, it can not be assigned anymore.
-   * @name module:back4app-entity/models/EntitySpecification#Entity
-   * @type {!module:back4app-entity/models/Entity}
+   * @name module:back4app-entity/models.EntitySpecification#Entity
+   * @type {!module:back4app-entity/models.Entity}
    * @example
    * var myEntitySpecification = new EntitySpecification('MyEntity');
    * var MyEntity = Entity.specify(myEntitySpecification);
@@ -321,11 +321,13 @@ function EntitySpecification() {
     );
 
     for (var property in specification) {
-      expect(['name', 'attributes', 'methods', 'dataName']).to.include(
+      expect(
+        ['name', 'attributes', 'methods', 'isAbstract', 'dataName']
+      ).to.include(
         property,
         'Invalid property "' + property + '" when creating a new ' +
         'EntitySpecification (valid properties are "name", "attributes", ' +
-        '"methods" and "dataName")'
+        '"methods", "isAbstract" and "dataName")'
       );
     }
 
@@ -404,11 +406,11 @@ function EntitySpecification() {
           );
 
           _dataName[dataName] = specification.dataName[dataName];
-
-          Object.preventExtensions(_dataName);
-          Object.seal(_dataName);
-          Object.freeze(_dataName);
         }
+
+        Object.preventExtensions(_dataName);
+        Object.seal(_dataName);
+        Object.freeze(_dataName);
       }
     }
   } else {
@@ -495,11 +497,11 @@ function EntitySpecification() {
             );
 
             _dataName[dataName] = options.dataName[dataName];
-
-            Object.preventExtensions(_dataName);
-            Object.seal(_dataName);
-            Object.freeze(_dataName);
           }
+
+          Object.preventExtensions(_dataName);
+          Object.seal(_dataName);
+          Object.freeze(_dataName);
         }
       }
     }
@@ -608,21 +610,6 @@ function EntitySpecification() {
         'failed to load entity attribute "' + attribute.name + '" because ' +
         'there is a method with same name in a child of current Entity'
       );
-    }
-
-    var dataName = attribute.getDataName(_Entity.adapterName);
-
-    for (var entityAttribute in _attributes) {
-      if (entityAttribute !== attribute.name) {
-        expect(
-          _attributes[entityAttribute].getDataName(_Entity.adapterName)
-        ).to.not.equal(
-          dataName,
-          'failed to load entity attribute "' + attribute.name + '" because ' +
-          'there is another attribute with same dataName "' + dataName + '" ' +
-          'for adapter "' + _Entity.adapterName + '" in the current Entity'
-        );
-      }
     }
 
     _Entity.adapter.loadEntityAttribute(_Entity, attribute);
@@ -783,6 +770,16 @@ function EntitySpecification() {
 
 EntitySpecification.prototype.getDataName = getDataName;
 
+/**
+ * Gets the data name of an Entity to be used in an adapter.
+ * @name module:back4app-entity/models.EntitySpecification#getDataName
+ * @function
+ * @param {?string} [adapterName] The name of the adapter of which the data
+ * name is wanted.
+ * @returns {string} The data name.
+ * @example
+ * var dataName = MyEntity.specification.getDataName('default');
+ */
 function getDataName(adapterName) {
   expect(arguments).to.have.length.below(
     2,
