@@ -1232,6 +1232,8 @@ describe('Entity', function () {
           c3A1: {
             myObjectAttributeName: 'myObjectAttributeValue'
           }
+        }).then(function (c3) {
+          expect(c3.isNew).to.equal(false);
         })
       );
 

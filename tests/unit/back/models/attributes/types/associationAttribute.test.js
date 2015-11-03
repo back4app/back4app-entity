@@ -408,6 +408,17 @@ describe('AssociationAttribute', function () {
       expect(function () {
         associationAttribute.validateValue(new EntityProxy());
       }).to.throw(ValidationError);
+      expect(function () {
+        (new AssociationAttribute(
+          'associationAttribute',
+          'C2'
+        )).validateValue(new C2({ _Entity: function () {} }));
+      }).to.throw(ValidationError);
+
+      (new AssociationAttribute(
+        'associationAttribute',
+        'C2'
+      )).validateValue(new C2({ _Entity: {} }));
     });
   });
 
