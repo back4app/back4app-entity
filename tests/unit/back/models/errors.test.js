@@ -186,6 +186,105 @@ describe('errors', function () {
     });
   });
 
+  describe('NotFetchedError', function () {
+    var notFetchedError;
+
+    it('expect to work with right parameters', function () {
+      notFetchedError = new errors.NotFetchedError();
+      notFetchedError = new errors.NotFetchedError(
+        null,
+        null,
+        null
+      );
+      notFetchedError = new errors.NotFetchedError(
+        'MyEntity'
+      );
+      notFetchedError = new errors.NotFetchedError(
+        'MyEntity',
+        'myAttribute'
+      );
+      notFetchedError = new errors.NotFetchedError(
+        'MyEntity',
+        'myAttribute',
+        new Error()
+      );
+    });
+
+    it('expect have properties storing right values', function () {
+      expect(notFetchedError).to.have.property('entity')
+        .that.equals('MyEntity');
+
+      expect(notFetchedError).to.have.property('attribute')
+        .that.equals('myAttribute');
+
+      expect(notFetchedError).to.have.property('innerError')
+        .that.deep.equals(new Error());
+    });
+
+    it('expect to not work with wrong parameters', function () {
+      expect(function () {
+        notFetchedError = new errors.NotFetchedError({});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        notFetchedError = new errors.NotFetchedError(
+          null,
+          {}
+        );
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        notFetchedError = new errors.NotFetchedError(
+          null,
+          null,
+          {}
+        );
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        notFetchedError = new errors.NotFetchedError(
+          null,
+          null,
+          null,
+          null
+        );
+      }).to.throw(AssertionError);
+    });
+
+    it('expect to be an Error', function () {
+      expect(new errors.NotFetchedError())
+        .to.be.an.instanceof(Error);
+    });
+
+    it('expect to have the right name', function () {
+      expect(new errors.NotFetchedError()).to.have.property('name')
+        .that.equals('NotFetchedError');
+    });
+
+    it('expect to have the right message', function () {
+      expect(new errors.NotFetchedError(
+        'MyEntity',
+        'myAttribute',
+        null
+      )).to.have.property('message')
+        .that.equals('Error when getting an attribute called ' +
+        '"myAttribute" of an entity called "MyEntity": this ' +
+        'attribute was not fetched yet');
+    });
+
+    it('expect to concatenate the stack of the inner error', function () {
+      var error = new Error();
+      notFetchedError = new errors.NotFetchedError(
+        null,
+        null,
+        error
+      );
+      expect(notFetchedError)
+        .to.have.property('stack')
+        .that.contains(error.stack);
+    });
+  });
+
   describe('ValidationError', function () {
     var validationError;
 

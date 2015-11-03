@@ -18,6 +18,7 @@ module.exports.EntityNotFoundError = EntityNotFoundError;
 module.exports.AttributeTypeNotFoundError = AttributeTypeNotFoundError;
 module.exports.ValidationError = ValidationError;
 module.exports.AdapterNotFoundError = AdapterNotFoundError;
+module.exports.NotFetchedError = NotFetchedError;
 
 /**
  * Error class to be used when an Entity was referenced and the platform was not
@@ -136,6 +137,93 @@ function AttributeTypeNotFoundError(type, innerError) {
 }
 
 util.inherits(AttributeTypeNotFoundError, Error);
+
+/**
+ * Error class to be used when an attribute value was not fetched yet and it
+ * was required.
+ * @constructor
+ * @extends Error
+ * @param {?string} [entity] The entity whose attribute is not fetched.
+ * @param {?string} [attribute] The attribute that is not fetched.
+ * @param {?Error} [innerError] The inner error.
+ * @memberof module:back4app-entity/models/errors
+ * @example
+ * try
+ * {
+ *   throw new NotFetchedError(
+ *     'MyEntity',
+ *     'myAttribute',
+ *     null
+ *   );
+ * } catch(e) {
+ *   console.log(e.message); // Logs "Error when getting an attribute called
+ *                           // "myAttribute" of an entity called "MyEntity":
+ *                           // this attribute was not fetched yet"
+ * }
+ */
+function NotFetchedError(
+  entity,
+  attribute,
+  innerError
+) {
+  /**
+   * The name of the entity whose attribute is not fetched.
+   * @type {?string}
+   */
+  this.entity = entity;
+  /**
+   * The name of the attribute that was not fetched.
+   * @type {?string}
+   */
+  this.attribute = attribute;
+  /**
+   * The inner error that generated the current error.
+   * @type {?Error}
+   */
+  this.innerError = innerError;
+
+  expect(arguments).to.have.length.below(
+    4,
+    'Invalid arguments length when creating a new ' +
+    'NotFetchedError (it has to be passed less than 4 arguments)'
+  );
+
+  this.name = 'NotFetchedError';
+
+  this.message = 'Error when getting an attribute';
+  if (attribute) {
+    expect(attribute).to.be.a(
+      'string',
+      'Invalid argument "attribute" when creating a new ValidationError (it ' +
+      'has to be a string)'
+    );
+    this.message += ' called "' + attribute + '"';
+  }
+
+  this.message += ' of an entity';
+  if (entity) {
+    expect(entity).to.be.a(
+      'string',
+      'Invalid argument "entity" when creating a new ValidationError (it has ' +
+      'to be a string)'
+    );
+    this.message += ' called "' + entity + '"';
+  }
+
+  this.message += ': this attribute was not fetched yet';
+
+  this.stack = (new Error(this.message)).stack;
+  if (innerError) {
+    expect(innerError).to.be.an.instanceof(
+      Error,
+      'Invalid argument "innerError" when creating a new ' +
+      'ValidationError (it has to be an Error)'
+    );
+    this.stack += '\n\n' + innerError.stack;
+  }
+}
+
+util.inherits(NotFetchedError, Error);
 
 /**
  * Error class to be used when an attribute value is not valid for the attribute
