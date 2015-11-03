@@ -1237,6 +1237,21 @@ describe('Entity', function () {
         })
       );
 
+      var myC31 = new C3();
+      var myC32 = new C3({
+        c3A2: myC31
+      });
+
+      promises.push(
+        C3.create({
+          c3A2: myC32
+        }).then(function (c3) {
+          expect(c3.isNew).to.equal(false);
+          expect(myC31.isNew).to.equal(false);
+          expect(myC32.isNew).to.equal(false);
+        })
+      );
+
       Promise
         .all(promises)
         .then(function () {
@@ -1252,6 +1267,33 @@ describe('Entity', function () {
           expect(error).to.be.an.instanceOf(ValidationError);
           done();
         });
+    });
+
+    it('expect to not work if associations not valid', function (done) {
+      var promises = [];
+
+      var myC33 = new C3();
+      var myC34 = new C3({
+        c3A2: myC33
+      });
+      myC33.c3A1 = null;
+
+      promises.push(
+        C3.create({
+          c3A2: myC34
+        }).catch(function (error) {
+          expect(error).to.be.instanceOf(ValidationError);
+          expect(myC33.isNew).to.equal(true);
+          expect(myC34.isNew).to.equal(true);
+        })
+      );
+
+      Promise
+        .all(promises)
+        .then(function () {
+          done();
+        })
+        .catch(console.log);
     });
 
     it(
