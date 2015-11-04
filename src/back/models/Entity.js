@@ -1504,67 +1504,71 @@ function save(options) {
       }
     }
 
-    entity.validate();
+    if (isCreate || entity.isDirty()) {
+      entity.validate();
 
-    var promises = [];
+      var promises = [];
 
-    var attributes = entity.Entity.attributes;
+      var attributes = entity.Entity.attributes;
 
-    for (var attribute in attributes) {
-      if (attributes[attribute] instanceof AssociationAttribute) {
-        if (entity.hasOwnProperty(attribute)) {
-          if (entity[attribute] instanceof Entity) {
-            promises.push(entity[attribute].save());
+      for (var attribute in attributes) {
+        if (attributes[attribute] instanceof AssociationAttribute) {
+          if (entity.hasOwnProperty(attribute)) {
+            if (entity[attribute] instanceof Entity) {
+              promises.push(entity[attribute].save());
+            }
           }
         }
       }
-    }
 
-    var promise = null;
+      var promise = null;
 
-    if (isCreate) {
-      promise = entity.adapter.insertObject(entity);
+      if (isCreate) {
+        promise = entity.adapter.insertObject(entity);
+      } else {
+        promise = entity.adapter.updateObject(entity);
+      }
+
+      expect(promise).to.not.equal(
+        null,
+        'Functions "insertObject" and "updateObject" of an Adapter ' +
+        'specialization should return a Promise'
+      );
+
+      expect(typeof promise).to.equal(
+        'object',
+        'Functions "insertObject" and "updateObject" of an Adapter ' +
+        'specialization should return a Promise'
+      );
+
+      expect(promise).to.respondTo(
+        'then',
+        'Functions "insertObject" and "updateObject" of an Adapter ' +
+        'specialization should return a Promise'
+      );
+
+      expect(promise).to.respondTo(
+        'catch',
+        'Functions "insertObject" and "updateObject" of an Adapter ' +
+        'specialization should return a Promise'
+      );
+
+      promise
+        .then(function () {
+          entity.isNew = false;
+          entity.clean();
+        });
+
+      promises.push(promise);
+
+      Promise
+        .all(promises)
+        .then(function () {
+          resolve();
+        })
+        .catch(reject);
     } else {
-      promise = entity.adapter.updateObject(entity);
+      resolve();
     }
-
-    expect(promise).to.not.equal(
-      null,
-      'Functions "insertObject" and "updateObject" of an Adapter ' +
-      'specialization should return a Promise'
-    );
-
-    expect(typeof promise).to.equal(
-      'object',
-      'Functions "insertObject" and "updateObject" of an Adapter ' +
-      'specialization should return a Promise'
-    );
-
-    expect(promise).to.respondTo(
-      'then',
-      'Functions "insertObject" and "updateObject" of an Adapter ' +
-      'specialization should return a Promise'
-    );
-
-    expect(promise).to.respondTo(
-      'catch',
-      'Functions "insertObject" and "updateObject" of an Adapter ' +
-      'specialization should return a Promise'
-    );
-
-    promise
-      .then(function () {
-        entity.isNew = false;
-        entity.clean();
-      });
-
-    promises.push(promise);
-
-    Promise
-      .all(promises)
-      .then(function () {
-        resolve();
-      })
-      .catch(reject);
   });
 }

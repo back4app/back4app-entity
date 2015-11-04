@@ -1551,8 +1551,10 @@ describe('Entity', function () {
       'expect to not work if adapter does not return an object',
       function (done) {
         c3
-          .save()
+          .save({ forceInsert: true })
           .then(function () {
+            c3.c3A1 = {};
+
             var updateObjectFunction = settings.ADAPTERS.default.updateObject;
             settings.ADAPTERS.default.updateObject = function () {
               return null;
@@ -1573,8 +1575,10 @@ describe('Entity', function () {
       'expect to not work if adapter does not return an object',
       function (done) {
         c3
-          .save()
+          .save({ forceInsert: true })
           .then(function () {
+            c3.c3A1 = {};
+
             var updateObjectFunction = settings.ADAPTERS.default.updateObject;
             settings.ADAPTERS.default.updateObject = function () {
               return function () {};
@@ -1595,8 +1599,10 @@ describe('Entity', function () {
       'expect to not work if adapter does not return a Promise',
       function (done) {
         c3
-          .save()
+          .save({ forceInsert: true })
           .then(function () {
+            c3.c3A1 = {};
+
             var updateObjectFunction = settings.ADAPTERS.default.updateObject;
             settings.ADAPTERS.default.updateObject = function () {
               return {};
@@ -1619,8 +1625,10 @@ describe('Entity', function () {
         var myNewError = new Error('MyNewError');
 
         c3
-          .save()
+          .save({ forceInsert: true })
           .then(function () {
+            c3.c3A1 = {};
+
             var updateObjectFunction = settings.ADAPTERS.default.updateObject;
             settings.ADAPTERS.default.updateObject = function () {
               throw myNewError;
