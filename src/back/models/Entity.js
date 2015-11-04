@@ -266,7 +266,9 @@ function Entity(attributeValues, options) {
 
     if (attributeValues && attributeValues.hasOwnProperty(attribute)) {
       attributeValue = attributeValues[attribute];
-      _attributeStorageValues[attribute] = attributeValue;
+      if (!this.isNew) {
+        _attributeStorageValues[attribute] = attributeValue;
+      }
     }
 
     _defineAttribute(attribute, attributeValue);
@@ -1383,7 +1385,9 @@ function validate(attribute) {
   }
 
   for (attribute in attributes) {
-    attributes[attribute].validate(this);
+    if (this.isDirty(attribute)) {
+      attributes[attribute].validate(this);
+    }
   }
 }
 
