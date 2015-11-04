@@ -329,6 +329,7 @@ function Entity(attributeValues, options) {
    * @function
    * @param {?string} [attribute] The name of the attribute to be checked. If no
    * attribute is passed, all attributes will be checked.
+   * @returns {boolean} True if is dirty and false otherwise.
    * @example
    * console.log(myEntity.isDirty('myAttribute')); // Validates attribute
    *                                               // "myAttribute" of
@@ -386,9 +387,49 @@ function Entity(attributeValues, options) {
     return false;
   }
 
+  /**
+   * Cleans an Entity attribute.
+   * @name module:back4app-entity/models.Entity#clean
+   * @function
+   * @param {?string} [attribute] The name of the attribute to be cleaned. If no
+   * attribute is passed, all attributes will be cleaned.
+   * @example
+   * myEntity.clean('myAttribute'); // Cleans attribute "myAttribute" of
+   *                                // Entity "myEntity"
+   * @example
+   * myEntity.clean();              // Cleans all attributes of "myEntity"
+   */
   function clean(attribute) {
-    _attributeStorageValues[attribute] = this[attribute];
-    _attributeIsSet[attribute] = false;
+    expect(arguments).to.have.length.below(
+      2,
+      'Invalid arguments length when cleaning an Entity attribute (it has ' +
+      'to be passed less than 2 arguments)'
+    );
+
+    var attributes = this.Entity.attributes;
+
+    if (attribute) {
+      expect(attribute).to.be.a(
+        'string',
+        'Invalid argument "attribute" when cleaning an Entity attribute (it ' +
+        'has to be a string)'
+      );
+
+      expect(attributes).to.have.ownProperty(
+        attribute,
+        'Invalid argument "attribute" when cleaning an Entity attribute ' +
+        '(this attribute does not exist in the Entity)'
+      );
+
+      var newAttributes = {};
+      newAttributes[attribute] = attributes[attribute];
+      attributes = newAttributes;
+    }
+
+    for (var attributeName in attributes) {
+      _attributeStorageValues[attributeName] = this[attributeName];
+      _attributeIsSet[attributeName] = false;
+    }
   }
 
   Object.preventExtensions(this);
