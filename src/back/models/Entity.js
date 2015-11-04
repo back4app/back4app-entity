@@ -1546,6 +1546,7 @@ function save(options) {
     promise
       .then(function () {
         entity.isNew = false;
+        entity.clean();
       });
 
     promises.push(promise);
