@@ -17,6 +17,8 @@ MockAdapter.prototype.loadEntityAttribute = loadEntityAttribute;
 MockAdapter.prototype.insertObject = insertObject;
 MockAdapter.prototype.updateObject = updateObject;
 MockAdapter.prototype.deleteObject = deleteObject;
+MockAdapter.prototype.getObject = getObject;
+MockAdapter.prototype.findObjects = findObjects;
 
 function loadEntity() {}
 
@@ -39,3 +41,7 @@ function updateObject() {
 }
 
 function deleteObject() {}
+
+function getObject() {}
+
+function findObjects() {}

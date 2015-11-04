@@ -359,6 +359,8 @@ Entity.specify = null;
 Entity.getSpecialization = null;
 Entity.new = null;
 Entity.create = null;
+Entity.get = null;
+Entity.find = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
 Entity.prototype.delete = deleteInstance;
@@ -803,6 +805,8 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
     SpecificEntity.create = _getCreateFunction(SpecificEntity);
+    SpecificEntity.get = _getGetFunction(SpecificEntity);
+    SpecificEntity.find = _getFindFunction(SpecificEntity);
 
     if (_specificEntitySpecification.Entity) {
       expect(_specificEntitySpecification.Entity).to.equal(
@@ -1161,6 +1165,102 @@ var _getCreateFunction = function (CurrentEntity) {
  *   });
  */
 Entity.create = _getCreateFunction(Entity);
+
+/**
+ * Private function used to get the `get` function specific for the current
+ * Entity class.
+ * @name module:back4app-entity/models.Entity~_getGetFunction
+ * @function
+ * @param {!Class} CurrentEntity The current entity class for which the new
+ * function will be created.
+ * @returns {function} The get function.
+ * @private
+ * @example
+ * Entity.get = _getGetFunction(Entity);
+ */
+function _getGetFunction(CurrentEntity) {
+  return function (query) {
+    expect(arguments).to.have.length(
+      1,
+      'Invalid arguments length when getting an Entity ' +
+      '(it has to be passed 1 argument)'
+    );
+
+    expect(query).to.be.an(
+      'object',
+      'Invalid argument when getting an Entity (it has to be an object)'
+    );
+
+    return Promise.try(function () {
+      var adapter = CurrentEntity.adapter;
+      return adapter.getObject(CurrentEntity, query);
+    });
+  };
+}
+
+/**
+ * Gets an entity based on the configured adapter.
+ * @memberof module:back4app-entity/models.Entity
+ * @name get
+ * @function
+ * @param {?object} [query] The query used to limit the search.
+ * @returns {Promise}
+ * @example
+ * MyEntity.get({name: 'John'})
+ *   .then(function(result) {
+ *     console.log(result);
+ *   });
+ */
+Entity.get = _getGetFunction(Entity);
+
+/**
+ * Private function used to get the `find` function specific for the current
+ * Entity class.
+ * @name module:back4app-entity/models.Entity~_getFindFunction
+ * @function
+ * @param {!Class} CurrentEntity The current entity class for which the new
+ * function will be created.
+ * @returns {function} The find function.
+ * @private
+ * @example
+ * Entity.find = _getFindFunction(Entity);
+ */
+function _getFindFunction(CurrentEntity) {
+  return function (query) {
+    expect(arguments).to.have.length(
+      1,
+      'Invalid arguments length when finding an Entity ' +
+      '(it has to be passed 1 argument)'
+    );
+
+    expect(query).to.be.an(
+      'object',
+      'Invalid argument when finding an Entity (it has to be an object)'
+    );
+
+    return Promise.try(function () {
+      var adapter = CurrentEntity.adapter;
+      return adapter.findObjects(CurrentEntity, query);
+    });
+  };
+}
+
+/**
+ * Find entities based on the configured adapter.
+ * @memberof module:back4app-entity/models.Entity
+ * @name find
+ * @function
+ * @param {?object} [query] The query used to limit the search.
+ * @returns {Promise}
+ * @example
+ * MyEntity.find({name: 'John'})
+ *   .then(function(results) {
+ *     for (var i=0; i<results.length; i++) {
+ *       console.log(results[i]);
+ *     }
+ *   });
+ */
+Entity.find = _getFindFunction(Entity);
 
 /**
  * Validates an entity and throws a

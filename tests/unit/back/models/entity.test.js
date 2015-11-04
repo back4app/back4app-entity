@@ -16,6 +16,7 @@ var attributes = models.attributes;
 var methods = models.methods;
 var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
+var sinon = require('sinon');
 var EntityProxy = require('./EntityProxy');
 var sinon = require('sinon');
 
@@ -1197,6 +1198,52 @@ describe('Entity', function () {
       myEntity50.a1 = {};
 
       expect(myEntity50.isValid()).to.equal(true);
+    });
+  });
+
+  describe('#get()', function () {
+    var MyEntity60 = Entity.specify({
+      name: 'MyEntity60'
+    });
+
+    it('should call `getObject` method on adapter', function () {
+      // mock adapter
+      var mock = sinon.mock(settings.ADAPTERS.default);
+
+      var instance = new MyEntity60();
+      var promise = Promise.resolve(instance);
+      mock.expects('getObject').once().withExactArgs(MyEntity60, {id: '0000'})
+        .returns(promise);
+
+      // call method
+      MyEntity60.get({id: '0000'});
+
+      // check for mocked calls
+      mock.verify();
+      mock.restore();
+    });
+  });
+
+  describe('#find()', function () {
+    var MyEntity70 = Entity.specify({
+      name: 'MyEntity70'
+    });
+
+    it('should call `findObjects` method on adapter', function () {
+      // mock adapter
+      var mock = sinon.mock(settings.ADAPTERS.default);
+
+      var instance = new MyEntity70();
+      var promise = Promise.resolve([instance]);
+      mock.expects('findObjects').once().withExactArgs(MyEntity70, {age: 20})
+        .returns(promise);
+
+      // call method
+      MyEntity70.find({age: 20});
+
+      // check for mocked calls
+      mock.verify();
+      mock.restore();
     });
   });
 
