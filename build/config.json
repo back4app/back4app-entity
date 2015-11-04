@@ -11,6 +11,7 @@
   ],
 
   "paths": {
+    "bluebird": "vendor/bluebird",
     "chai": "vendor/chai",
     "node-uuid": "vendor/uuid",
     "path": "vendor/path",
