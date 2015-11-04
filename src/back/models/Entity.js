@@ -305,7 +305,8 @@ function Entity(attributeValues, options) {
         if (
           _cleanSet &&
           !_attributeStorageValues.hasOwnProperty(attributeName) &&
-          !_attributeIsSet[attributeName]
+          !_attributeIsSet[attributeName] &&
+          attributeName !== 'id'
         ) {
           throw new errors.NotFetchedError(
             entity.Entity.specification.name,
@@ -364,6 +365,10 @@ function Entity(attributeValues, options) {
       var newAttributes = {};
       newAttributes[attribute] = attributes[attribute];
       attributes = newAttributes;
+    }
+
+    if (this.isNew) {
+      return true;
     }
 
     for (var attributeName in attributes) {

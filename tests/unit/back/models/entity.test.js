@@ -1637,4 +1637,242 @@ describe('Entity', function () {
       }
     );
   });
+
+  describe('dirty/clean', function () {
+    it(
+      'expect to have option in constructor to instantiate clean',
+      function () {
+        C3 = require('./C3');
+
+        var c3 = new C3(
+          {},
+          {
+            clean: true
+          }
+        );
+
+        c3 = new C3(
+          {},
+          {
+            clean: false
+          }
+        );
+
+        expect(function () {
+          c3 = new C3(
+            {},
+            {
+              clean: {}
+            }
+          );
+        }).to.throw(AssertionError);
+      }
+    );
+
+    it('expect to correctly control the dirty/clean state', function (done) {
+      var c3 = new C3();
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(true);
+
+      c3 = new C3({}, { isNew: true });
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(true);
+
+      c3 = new C3({}, { isNew: false });
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(true);
+
+      c3 = new C3(
+        {
+          id: uuid.v4(),
+          c3A1: {},
+          c3A2: null
+        },
+        { isNew: true }
+      );
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(true);
+
+      c3 = new C3(
+        {
+          id: uuid.v4(),
+          c3A1: {},
+          c3A2: null
+        },
+        { isNew: false }
+      );
+      expect(c3.isDirty()).to.equal(false);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(false);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3 = new C3(
+        {
+          c3A1: {},
+          c3A2: null
+        },
+        { isNew: false }
+      );
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(false);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3 = new C3(
+        {
+          id: uuid.v4(),
+          c3A2: null
+        },
+        { isNew: false }
+      );
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3 = new C3({}, {clean: true});
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(true);
+
+      c3 = new C3({}, { isNew: true, clean: true });
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(true);
+
+      c3 = new C3({}, { isNew: false, clean: true });
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(false);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3 = new C3(
+        {
+          id: uuid.v4(),
+          c3A1: {},
+          c3A2: null
+        },
+        { isNew: true, clean: true }
+      );
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(true);
+
+      c3 = new C3(
+        {
+          id: uuid.v4(),
+          c3A1: {},
+          c3A2: null
+        },
+        { isNew: false, clean: true }
+      );
+      expect(c3.isDirty()).to.equal(false);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(false);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3 = new C3(
+        {
+          c3A1: {},
+          c3A2: null
+        },
+        { isNew: false, clean: true }
+      );
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(true);
+      expect(c3.isDirty('c3A1')).to.equal(false);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3 = new C3(
+        {
+          id: uuid.v4(),
+          c3A2: null
+        },
+        { isNew: false, clean: true }
+      );
+      expect(c3.isDirty()).to.equal(false);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(false);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3.c3A2 = null;
+      expect(c3.isDirty()).to.equal(false);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(false);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3.c3A1 = {};
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3.clean('c3A1');
+      expect(c3.isDirty()).to.equal(false);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(false);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3.c3A1 = {};
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3.clean();
+      expect(c3.isDirty()).to.equal(false);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(false);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3.c3A1 = {};
+      expect(c3.isDirty()).to.equal(true);
+      expect(c3.isDirty('id')).to.equal(false);
+      expect(c3.isDirty('c3A1')).to.equal(true);
+      expect(c3.isDirty('c3A2')).to.equal(false);
+
+      c3
+        .save()
+        .then(function () {
+          expect(c3.isDirty()).to.equal(false);
+          expect(c3.isDirty('id')).to.equal(false);
+          expect(c3.isDirty('c3A1')).to.equal(false);
+          expect(c3.isDirty('c3A2')).to.equal(false);
+
+          c3 = new C3(
+            {
+              id: uuid.v4(),
+              c3A1: function () {},
+              c3A2: null
+            },
+            { isNew: false, clean: true }
+          );
+          expect(c3.isDirty()).to.equal(false);
+          expect(c3.isDirty('id')).to.equal(false);
+          expect(c3.isDirty('c3A1')).to.equal(false);
+          expect(c3.isDirty('c3A2')).to.equal(false);
+
+          c3.validate();
+
+          c3.c3A1 = function () {};
+
+          expect(function () {
+            c3.validate();
+          }).to.throw(ValidationError);
+
+          done();
+        });
+    });
+  });
 });
