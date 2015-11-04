@@ -29,18 +29,13 @@ require('./index').Entity = Entity;
  * a dictionary of attribute's name and values to initialize a new Entity.
  * @param {?Object} [options] These are the options when initializing a new
  * Entity instance.
- * @param {?boolean} [options.isNew] Sets if the entity is a new one. Otherwise,
+ * @param {?Object} [options.isNew] Sets if the entity is a new one. Otherwise,
  * the id will be checked. If an id was not given, the entity will be considered
  * a new one.
- * @param {?boolean} [options.clean] Flag used to create a clean new instance of
- * an Entity with no attribute set, except the given attributes. The attributes
- * not given will be in a "not fetched" state.
  * @example
  * var myEntity = new MyEntity();
  */
 function Entity(attributeValues, options) {
-  var entity = this;
-
   /**
    * This is a read-only property to get the adapterName of an Entity instance.
    * @type {!string}
@@ -100,12 +95,6 @@ function Entity(attributeValues, options) {
    */
   this.id = null;
 
-  var _attributeStorageValues = {};
-  var _attributeIsSet = {};
-
-  this.isDirty = isDirty;
-  this.clean = clean;
-
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     Object.defineProperty(this, 'Entity', {
       value: Entity,
@@ -159,20 +148,6 @@ function Entity(attributeValues, options) {
     configurable: false
   });
 
-  Object.defineProperty(this, 'isDirty', {
-    value: isDirty,
-    writable: false,
-    enumerable: false,
-    configurable: false
-  });
-
-  Object.defineProperty(this, 'clean', {
-    value: clean,
-    writable: false,
-    enumerable: false,
-    configurable: false
-  });
-
   expect(this).to.be.an(
     'object',
     'The Entity\'s constructor can be only invoked from specialized ' +
@@ -202,9 +177,7 @@ function Entity(attributeValues, options) {
     this.Entity.specification.name +
     '" (it has to be passed less than 3 arguments)');
 
-  var _isNewSet = false;
-  var _cleanSet = false;
-
+  var isNewSet = false;
   if (options) {
     expect(options).to.be.an(
       'object',
@@ -219,23 +192,8 @@ function Entity(attributeValues, options) {
         this.Entity.specification.name + '" (it has to be a boolean)'
       );
 
+      isNewSet = true;
       this.isNew = options.isNew;
-
-      if (options.isNew) {
-        _isNewSet = true;
-      }
-    }
-
-    if (options.hasOwnProperty('clean')) {
-      expect(options.clean).to.be.a(
-        'boolean',
-        'Invalid argument "options.clean" when creating a new "' +
-        this.Entity.specification.name + '" (it has to be a boolean)'
-      );
-
-      if (options.clean) {
-        _cleanSet = true;
-      }
     }
   }
 
@@ -246,7 +204,7 @@ function Entity(attributeValues, options) {
       this.Entity.specification.name + '" (it has to be an object)'
     );
 
-    if (!_isNewSet && attributeValues.hasOwnProperty('id')) {
+    if (!isNewSet && attributeValues.hasOwnProperty('id')) {
       this.isNew = false;
     }
   }
@@ -266,19 +224,19 @@ function Entity(attributeValues, options) {
 
     if (attributeValues && attributeValues.hasOwnProperty(attribute)) {
       attributeValue = attributeValues[attribute];
-      if (!this.isNew) {
-        _attributeStorageValues[attribute] = attributeValue;
-      }
     }
 
-    _defineAttribute(attribute, attributeValue);
+    Object.defineProperty(this, attribute, {
+      value: attributeValue,
+      enumerable: true,
+      writable: true,
+      configurable: attribute === 'id'
+    });
   }
 
   for (attribute in attributes) {
-    if (!_cleanSet || attribute === 'id') {
-      if (this[attribute] === null && attributes[attribute].default !== null) {
-        this[attribute] = attributes[attribute].getDefaultValue(this);
-      }
+    if (this[attribute] === null && attributes[attribute].default !== null) {
+      this[attribute] = attributes[attribute].getDefaultValue(this);
     }
   }
 
@@ -296,150 +254,6 @@ function Entity(attributeValues, options) {
     writable: false,
     configurable: false
   });
-
-  function _defineAttribute(attributeName, attributeValue) {
-    _attributeIsSet[attributeName] = false;
-
-    Object.defineProperty(entity, attributeName, {
-      get: function () {
-        if (
-          _cleanSet &&
-          !_attributeStorageValues.hasOwnProperty(attributeName) &&
-          !_attributeIsSet[attributeName] &&
-          attributeName !== 'id'
-        ) {
-          throw new errors.NotFetchedError(
-            entity.Entity.specification.name,
-            attributeName,
-            null
-          );
-        } else {
-          return attributeValue;
-        }
-      },
-      set: function (value) {
-        _attributeIsSet[attributeName] = true;
-        attributeValue = value;
-      },
-      enumerable: true,
-      configurable: attributeName === 'id'
-    });
-  }
-
-  /**
-   * Checks if an Entity attribute is dirty.
-   * @name module:back4app-entity/models.Entity#isDirty
-   * @function
-   * @param {?string} [attribute] The name of the attribute to be checked. If no
-   * attribute is passed, all attributes will be checked.
-   * @returns {boolean} True if is dirty and false otherwise.
-   * @example
-   * console.log(myEntity.isDirty('myAttribute')); // Validates attribute
-   *                                               // "myAttribute" of
-   *                                               // Entity "myEntity"
-   * @example
-   * console.log(myEntity.isDirty()); // Checks all attributes of "myEntity"
-   */
-  function isDirty(attribute) {
-    expect(arguments).to.have.length.below(
-      2,
-      'Invalid arguments length when checking if an Entity attribute is ' +
-      'dirty (it has to be passed less than 2 arguments)'
-    );
-
-    var attributes = this.Entity.attributes;
-
-    if (attribute) {
-      expect(attribute).to.be.a(
-        'string',
-        'Invalid argument "attribute" when checking if an Entity attribute ' +
-        'is dirty (it has to be a string)'
-      );
-
-      expect(attributes).to.have.ownProperty(
-        attribute,
-        'Invalid argument "attribute" when checking an Entity attribute ' +
-        'is dirty (this attribute does not exist in the Entity)'
-      );
-
-      var newAttributes = {};
-      newAttributes[attribute] = attributes[attribute];
-      attributes = newAttributes;
-    }
-
-    if (this.isNew) {
-      return true;
-    }
-
-    for (var attributeName in attributes) {
-      if (_cleanSet) {
-        if (_attributeIsSet[attributeName]) {
-          if (
-            !_attributeStorageValues.hasOwnProperty(attributeName) ||
-            _attributeStorageValues[attributeName] !== this[attributeName]
-          ) {
-            return true;
-          }
-        }
-      } else {
-        if (
-          !_attributeStorageValues.hasOwnProperty(attributeName) ||
-          _attributeStorageValues[attributeName] !== this[attributeName]
-        ) {
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * Cleans an Entity attribute.
-   * @name module:back4app-entity/models.Entity#clean
-   * @function
-   * @param {?string} [attribute] The name of the attribute to be cleaned. If no
-   * attribute is passed, all attributes will be cleaned.
-   * @example
-   * myEntity.clean('myAttribute'); // Cleans attribute "myAttribute" of
-   *                                // Entity "myEntity"
-   * @example
-   * myEntity.clean();              // Cleans all attributes of "myEntity"
-   */
-  function clean(attribute) {
-    expect(arguments).to.have.length.below(
-      2,
-      'Invalid arguments length when cleaning an Entity attribute (it has ' +
-      'to be passed less than 2 arguments)'
-    );
-
-    var attributes = this.Entity.attributes;
-
-    if (attribute) {
-      expect(attribute).to.be.a(
-        'string',
-        'Invalid argument "attribute" when cleaning an Entity attribute (it ' +
-        'has to be a string)'
-      );
-
-      expect(attributes).to.have.ownProperty(
-        attribute,
-        'Invalid argument "attribute" when cleaning an Entity attribute ' +
-        '(this attribute does not exist in the Entity)'
-      );
-
-      var newAttributes = {};
-      newAttributes[attribute] = attributes[attribute];
-      attributes = newAttributes;
-    }
-
-    for (var attributeName in attributes) {
-      _attributeStorageValues[attributeName] = this[attributeName];
-      _attributeIsSet[attributeName] = false;
-    }
-  }
-
-  Object.preventExtensions(this);
 }
 
 /**
@@ -545,12 +359,13 @@ Entity.specify = null;
 Entity.getSpecialization = null;
 Entity.new = null;
 Entity.create = null;
-Entity.get = null;
-Entity.find = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
+<<<<<<< HEAD
 Entity.prototype.delete = deleteInstance;
+=======
 Entity.prototype.save = save;
+>>>>>>> origin/b4a-152
 
 Object.defineProperty(Entity, 'adapterName', {
   value: 'default',
@@ -991,8 +806,6 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
     SpecificEntity.create = _getCreateFunction(SpecificEntity);
-    SpecificEntity.get = _getGetFunction(SpecificEntity);
-    SpecificEntity.find = _getFindFunction(SpecificEntity);
 
     if (_specificEntitySpecification.Entity) {
       expect(_specificEntitySpecification.Entity).to.equal(
@@ -1353,108 +1166,12 @@ var _getCreateFunction = function (CurrentEntity) {
 Entity.create = _getCreateFunction(Entity);
 
 /**
- * Private function used to get the `get` function specific for the current
- * Entity class.
- * @name module:back4app-entity/models.Entity~_getGetFunction
- * @function
- * @param {!Class} CurrentEntity The current entity class for which the new
- * function will be created.
- * @returns {function} The get function.
- * @private
- * @example
- * Entity.get = _getGetFunction(Entity);
- */
-function _getGetFunction(CurrentEntity) {
-  return function (query) {
-    expect(arguments).to.have.length(
-      1,
-      'Invalid arguments length when getting an Entity ' +
-      '(it has to be passed 1 argument)'
-    );
-
-    expect(query).to.be.an(
-      'object',
-      'Invalid argument when getting an Entity (it has to be an object)'
-    );
-
-    return Promise.try(function () {
-      var adapter = CurrentEntity.adapter;
-      return adapter.getObject(CurrentEntity, query);
-    });
-  };
-}
-
-/**
- * Gets an entity based on the configured adapter.
- * @memberof module:back4app-entity/models.Entity
- * @name get
- * @function
- * @param {?object} [query] The query used to limit the search.
- * @returns {Promise}
- * @example
- * MyEntity.get({name: 'John'})
- *   .then(function(result) {
- *     console.log(result);
- *   });
- */
-Entity.get = _getGetFunction(Entity);
-
-/**
- * Private function used to get the `find` function specific for the current
- * Entity class.
- * @name module:back4app-entity/models.Entity~_getFindFunction
- * @function
- * @param {!Class} CurrentEntity The current entity class for which the new
- * function will be created.
- * @returns {function} The find function.
- * @private
- * @example
- * Entity.find = _getFindFunction(Entity);
- */
-function _getFindFunction(CurrentEntity) {
-  return function (query) {
-    expect(arguments).to.have.length(
-      1,
-      'Invalid arguments length when finding an Entity ' +
-      '(it has to be passed 1 argument)'
-    );
-
-    expect(query).to.be.an(
-      'object',
-      'Invalid argument when finding an Entity (it has to be an object)'
-    );
-
-    return Promise.try(function () {
-      var adapter = CurrentEntity.adapter;
-      return adapter.findObjects(CurrentEntity, query);
-    });
-  };
-}
-
-/**
- * Find entities based on the configured adapter.
- * @memberof module:back4app-entity/models.Entity
- * @name find
- * @function
- * @param {?object} [query] The query used to limit the search.
- * @returns {Promise}
- * @example
- * MyEntity.find({name: 'John'})
- *   .then(function(results) {
- *     for (var i=0; i<results.length; i++) {
- *       console.log(results[i]);
- *     }
- *   });
- */
-Entity.find = _getFindFunction(Entity);
-
-/**
  * Validates an entity and throws a
  * {@link module:back4app-entity/models/errors.ValidationError} if it is not
  * validated.
  * @name module:back4app-entity/models.Entity#validate
  * @function
- * @param {?string} [attribute] The name of the attribute to be validated. If no
+ * @param {?string} attribute The name of the attribute to be validated. If no
  * attribute is passed, all attributes will be validated.
  * @throws {module:back4app-entity/models/errors.ValidationError}
  * @example
@@ -1491,9 +1208,7 @@ function validate(attribute) {
   }
 
   for (attribute in attributes) {
-    if (this.isDirty(attribute)) {
-      attributes[attribute].validate(this);
-    }
+    attributes[attribute].validate(this);
   }
 }
 
@@ -1501,7 +1216,7 @@ function validate(attribute) {
  * Validates an entity and returns a boolean indicating if it is valid.
  * @name module:back4app-entity/models.Entity#isValid
  * @function
- * @param {?string} [attribute] The name of the attribute to be validated. If no
+ * @param {?string} attribute The name of the attribute to be validated. If no
  * attribute is passed, all attributes will be validated.
  * @returns {boolean} The validation result.
  * @example
@@ -1524,6 +1239,35 @@ function isValid(attribute) {
   return true;
 }
 
+<<<<<<< HEAD
+
+/**
+ * deletes an entity.
+ * @name module:back4app-entity/models.Entity#isValid
+ * @function
+ * @param {}
+ * @returns {boolean} The validation result.
+ * @example
+ * myEntity.delete(); // Deletes the instance of an Entity.
+ *
+ */
+function deleteInstance() {
+  var _this = this;
+
+  expect(arguments).to.have.length(
+    0,
+    'Invalid arguments length when deleting a "' +
+    this.Entity.specification.name +
+    '" instance (it has to be passed 0 arguments)');
+
+  return new Promise(function (resolve, reject) {
+
+    var promise = _this.adapter.deleteObject(_this);
+
+    expect(promise).to.respondTo(
+      'then',
+      'Function "delete" of an Adapter specialization should return a Promise'
+=======
 /**
  * Saves an Entity object. Validates it and saves it in the storage.
  * @name module:back4app-entity/models.Entity#save
@@ -1605,105 +1349,52 @@ function save(options) {
       }
     }
 
-    if (isCreate || entity.isDirty()) {
-      entity.validate();
+    entity.validate();
 
-      var promises = [];
+    var promises = [];
 
-      var attributes = entity.Entity.attributes;
+    var attributes = entity.Entity.attributes;
 
-      for (var attribute in attributes) {
-        if (attributes[attribute] instanceof AssociationAttribute) {
-          if (entity.hasOwnProperty(attribute)) {
-            if (entity[attribute] instanceof Entity) {
-              promises.push(entity[attribute].save());
-            }
+    for (var attribute in attributes) {
+      if (attributes[attribute] instanceof AssociationAttribute) {
+        if (entity.hasOwnProperty(attribute)) {
+          if (entity[attribute] instanceof Entity) {
+            promises.push(entity[attribute].save());
           }
         }
       }
-
-      var promise = null;
-
-      if (isCreate) {
-        promise = entity.adapter.insertObject(entity);
-      } else {
-        promise = entity.adapter.updateObject(entity);
-      }
-
-      expect(promise).to.not.equal(
-        null,
-        'Functions "insertObject" and "updateObject" of an Adapter ' +
-        'specialization should return a Promise'
-      );
-
-      expect(typeof promise).to.equal(
-        'object',
-        'Functions "insertObject" and "updateObject" of an Adapter ' +
-        'specialization should return a Promise'
-      );
-
-      expect(promise).to.respondTo(
-        'then',
-        'Functions "insertObject" and "updateObject" of an Adapter ' +
-        'specialization should return a Promise'
-      );
-
-      expect(promise).to.respondTo(
-        'catch',
-        'Functions "insertObject" and "updateObject" of an Adapter ' +
-        'specialization should return a Promise'
-      );
-
-      promise
-        .then(function () {
-          entity.isNew = false;
-          entity.clean();
-        });
-
-      promises.push(promise);
-
-      Promise
-        .all(promises)
-        .then(function () {
-          resolve();
-        })
-        .catch(reject);
-    } else {
-      resolve();
     }
-  });
-}
 
-/**
- * deletes an entity.
- * @name module:back4app-entity/models.Entity#isValid
- * @function
- * @param {}
- * @returns {boolean} The validation result.
- * @example
- * myEntity.delete(); // Deletes the instance of an Entity.
- *
- */
-function deleteInstance() {
-  var _this = this;
+    var promise = null;
 
-  expect(arguments).to.have.length(
-    0,
-    'Invalid arguments length when deleting a "' +
-    this.Entity.specification.name +
-    '" instance (it has to be passed 0 arguments)');
+    if (isCreate) {
+      promise = entity.adapter.insertObject(entity);
+    } else {
+      promise = entity.adapter.updateObject(entity);
+    }
 
-  return new Promise(function (resolve, reject) {
+    expect(promise).to.not.equal(
+      null,
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
+    );
 
-    var promise = _this.adapter.deleteObject(_this);
+    expect(typeof promise).to.equal(
+      'object',
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
+    );
 
     expect(promise).to.respondTo(
       'then',
-      'Function "delete" of an Adapter specialization should return a Promise'
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
+>>>>>>> origin/b4a-152
     );
 
     expect(promise).to.respondTo(
       'catch',
+<<<<<<< HEAD
       'Function "delete" of an Adapter specialization should return a Promise'
     );
 
@@ -1712,3 +1403,26 @@ function deleteInstance() {
       .catch(reject);
   });
 }
+
+
+=======
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
+    );
+
+    promise
+      .then(function () {
+        entity.isNew = false;
+      });
+
+    promises.push(promise);
+
+    Promise
+      .all(promises)
+      .then(function () {
+        resolve();
+      })
+      .catch(reject);
+  });
+}
+>>>>>>> origin/b4a-152

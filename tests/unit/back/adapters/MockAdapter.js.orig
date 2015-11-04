@@ -12,18 +12,27 @@ function MockAdapter() {
 
 classes.generalize(Adapter, MockAdapter);
 
+<<<<<<< HEAD
+Adapter.prototype.loadEntity = loadEntity;
+Adapter.prototype.loadEntityAttribute = loadEntityAttribute;
+Adapter.prototype.insertObject = insertObject;
+Adapter.prototype.deleteObject = deleteObject;
+=======
 MockAdapter.prototype.loadEntity = loadEntity;
 MockAdapter.prototype.loadEntityAttribute = loadEntityAttribute;
 MockAdapter.prototype.insertObject = insertObject;
 MockAdapter.prototype.updateObject = updateObject;
-MockAdapter.prototype.deleteObject = deleteObject;
-MockAdapter.prototype.getObject = getObject;
-MockAdapter.prototype.findObjects = findObjects;
+>>>>>>> origin/b4a-152
 
 function loadEntity() {}
 
 function loadEntityAttribute() {}
 
+<<<<<<< HEAD
+function insertObject() {}
+
+function deleteObject() {}
+=======
 function insertObject() {
   var promise = new Promise(function (resolve) {
     resolve();
@@ -39,9 +48,4 @@ function updateObject() {
 
   return promise;
 }
-
-function deleteObject() {}
-
-function getObject() {}
-
-function findObjects() {}
+>>>>>>> origin/b4a-152

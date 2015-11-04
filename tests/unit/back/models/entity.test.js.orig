@@ -2,25 +2,27 @@
 
 var chai = require('chai');
 var expect = chai.expect;
+var Promise = require('bluebird');
 var AssertionError = chai.AssertionError;
 var Promise = require('bluebird');
 var uuid = require('node-uuid');
-var mockery = require('mockery');
-var sinon = require('sinon');
-
-var EntityProxy = require('./EntityProxy');
-var MockAdapter = require('../adapters/MockAdapter');
-
-var back4appEntity = require('../../../../src/back');
-var settings = back4appEntity.settings;
-var classes = back4appEntity.utils.classes;
-var models = back4appEntity.models;
+var settings = require('../../../../src/back').settings;
+var classes = require('../../../../src/back/utils').classes;
+var models = require('../../../../src/back/models');
+var EntityNotFoundError = models.errors.EntityNotFoundError;
+var ValidationError = models.errors.ValidationError;
 var Entity = models.Entity;
 var EntitySpecification = models.EntitySpecification;
 var attributes = models.attributes;
 var methods = models.methods;
-var EntityNotFoundError = models.errors.EntityNotFoundError;
-var ValidationError = models.errors.ValidationError;
+var MockAdapter = require('../adapters/MockAdapter');
+var mockery = require('mockery');
+<<<<<<< HEAD
+var sinon = require('sinon');
+
+=======
+var EntityProxy = require('./EntityProxy');
+>>>>>>> origin/b4a-152
 
 require('../../settings');
 
@@ -41,7 +43,6 @@ describe('Entity', function () {
   var c2;
 
   context('interface tests', function () {
-
     it('expect to instantiate new Entity without error', function () {
       entity = new EntityProxy();
 
@@ -1203,52 +1204,33 @@ describe('Entity', function () {
     });
   });
 
-  describe('#get()', function () {
-    var MyEntity60 = Entity.specify({
-      name: 'MyEntity60'
-    });
+<<<<<<< HEAD
+  describe('#delete', function () {
+    var EntityMock = Entity.specify({name: 'EntityMock'});
 
-    it('should call `getObject` method on adapter', function () {
-      // mock adapter
+    it('expects to delete an instance', function () {
+      //mock adapter
       var mock = sinon.mock(settings.ADAPTERS.default);
 
-      var instance = new MyEntity60();
-      var promise = Promise.resolve(instance);
-      mock.expects('getObject').once().withExactArgs(MyEntity60, {id: '0000'})
+      var instance = new EntityMock(
+        {id: '00000000-0000-4000-a000-000000000111'}
+      );
+
+      var promise = Promise.resolve();
+
+      mock.expects('deleteObject').once()
+        .withExactArgs(instance)
         .returns(promise);
 
-      // call method
-      MyEntity60.get({id: '0000'});
+      //call method
+      instance.delete();
 
-      // check for mocked calls
       mock.verify();
+
       mock.restore();
+
     });
-  });
-
-  describe('#find()', function () {
-    var MyEntity70 = Entity.specify({
-      name: 'MyEntity70'
-    });
-
-    it('should call `findObjects` method on adapter', function () {
-      // mock adapter
-      var mock = sinon.mock(settings.ADAPTERS.default);
-
-      var instance = new MyEntity70();
-      var promise = Promise.resolve([instance]);
-      mock.expects('findObjects').once().withExactArgs(MyEntity70, {age: 20})
-        .returns(promise);
-
-      // call method
-      MyEntity70.find({age: 20});
-
-      // check for mocked calls
-      mock.verify();
-      mock.restore();
-    });
-  });
-
+=======
   describe('.create', function () {
     it('expect to not work with wrong arguments', function (done) {
       expect(function () {
@@ -1602,10 +1584,8 @@ describe('Entity', function () {
       'expect to not work if adapter does not return an object',
       function (done) {
         c3
-          .save({ forceInsert: true })
+          .save()
           .then(function () {
-            c3.c3A1 = {};
-
             var updateObjectFunction = settings.ADAPTERS.default.updateObject;
             settings.ADAPTERS.default.updateObject = function () {
               return null;
@@ -1626,10 +1606,8 @@ describe('Entity', function () {
       'expect to not work if adapter does not return an object',
       function (done) {
         c3
-          .save({ forceInsert: true })
+          .save()
           .then(function () {
-            c3.c3A1 = {};
-
             var updateObjectFunction = settings.ADAPTERS.default.updateObject;
             settings.ADAPTERS.default.updateObject = function () {
               return function () {};
@@ -1650,10 +1628,8 @@ describe('Entity', function () {
       'expect to not work if adapter does not return a Promise',
       function (done) {
         c3
-          .save({ forceInsert: true })
+          .save()
           .then(function () {
-            c3.c3A1 = {};
-
             var updateObjectFunction = settings.ADAPTERS.default.updateObject;
             settings.ADAPTERS.default.updateObject = function () {
               return {};
@@ -1676,10 +1652,8 @@ describe('Entity', function () {
         var myNewError = new Error('MyNewError');
 
         c3
-          .save({ forceInsert: true })
+          .save()
           .then(function () {
-            c3.c3A1 = {};
-
             var updateObjectFunction = settings.ADAPTERS.default.updateObject;
             settings.ADAPTERS.default.updateObject = function () {
               throw myNewError;
@@ -1695,332 +1669,6 @@ describe('Entity', function () {
           });
       }
     );
-  });
-
-  describe('#save using sinon mock', function () {
-    var EntityMock = Entity.specify(
-      {name: 'EntityMock1', attributes: {name:{type: 'String'}}}
-    );
-    var instance = new EntityMock({name: 'Jack'});
-    var mock = sinon.mock(settings.ADAPTERS.default);
-
-    it('expect to save instance with insertObject as argument', function () {
-
-      var promise = Promise.resolve();
-
-      mock.expects('insertObject').once()
-        .withExactArgs(instance)
-        .returns(promise);
-
-      instance.save();
-
-      mock.verify();
-
-      mock.restore();
-
-    });
-
-    it('expect to update instance with updateObject as argument', function () {
-
-      var promise = Promise.resolve();
-
-      instance.name = 'Paul';
-
-      mock.expects('updateObject').once()
-        .withExactArgs(instance)
-        .returns(promise);
-
-      instance.save();
-
-      mock.verify();
-
-      mock.restore();
-
-    });
-  });
-
-  describe('#create using sinon mock', function () {
-    var EntityMock = Entity.specify(
-      {name: 'EntityMock3', attributes: {name:{type: 'String'}}}
-    );
-    var mock = sinon.mock(settings.ADAPTERS.default);
-
-    it('expect to create class with insertObject as argument', function () {
-      var promise = Promise.resolve();
-
-      mock.expects('insertObject').once()
-        .returns(promise);
-
-      EntityMock.create({name: 'Jack'});
-
-      mock.verify();
-
-      mock.restore();
-
-    });
-  });
-
-  describe('#delete', function () {
-    var EntityMock = Entity.specify({name: 'EntityMock2'});
-
-    it('expects to delete an instance', function () {
-      //mock adapter
-      var mock = sinon.mock(settings.ADAPTERS.default);
-
-      var instance = new EntityMock(
-        {id: '00000000-0000-4000-a000-000000000111'}
-      );
-
-      var promise = Promise.resolve();
-
-      mock.expects('deleteObject').once()
-        .withExactArgs(instance)
-        .returns(promise);
-
-      //call method
-      instance.delete();
-
-      mock.verify();
-
-      mock.restore();
-    });
-  });
-
-  describe('dirty/clean', function () {
-    it(
-      'expect to have option in constructor to instantiate clean',
-      function () {
-        C3 = require('./C3');
-
-        var c3 = new C3(
-          {},
-          {
-            clean: true
-          }
-        );
-
-        c3 = new C3(
-          {},
-          {
-            clean: false
-          }
-        );
-
-        expect(function () {
-          c3 = new C3(
-            {},
-            {
-              clean: {}
-            }
-          );
-        }).to.throw(AssertionError);
-      }
-    );
-
-    it('expect to correctly control the dirty/clean state', function (done) {
-      var c3 = new C3();
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(true);
-
-      c3 = new C3({}, { isNew: true });
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(true);
-
-      c3 = new C3({}, { isNew: false });
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(true);
-
-      c3 = new C3(
-        {
-          id: uuid.v4(),
-          c3A1: {},
-          c3A2: null
-        },
-        { isNew: true }
-      );
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(true);
-
-      c3 = new C3(
-        {
-          id: uuid.v4(),
-          c3A1: {},
-          c3A2: null
-        },
-        { isNew: false }
-      );
-      expect(c3.isDirty()).to.equal(false);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(false);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3 = new C3(
-        {
-          c3A1: {},
-          c3A2: null
-        },
-        { isNew: false }
-      );
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(false);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3 = new C3(
-        {
-          id: uuid.v4(),
-          c3A2: null
-        },
-        { isNew: false }
-      );
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3 = new C3({}, {clean: true});
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(true);
-
-      c3 = new C3({}, { isNew: true, clean: true });
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(true);
-
-      c3 = new C3({}, { isNew: false, clean: true });
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(false);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3 = new C3(
-        {
-          id: uuid.v4(),
-          c3A1: {},
-          c3A2: null
-        },
-        { isNew: true, clean: true }
-      );
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(true);
-
-      c3 = new C3(
-        {
-          id: uuid.v4(),
-          c3A1: {},
-          c3A2: null
-        },
-        { isNew: false, clean: true }
-      );
-      expect(c3.isDirty()).to.equal(false);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(false);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3 = new C3(
-        {
-          c3A1: {},
-          c3A2: null
-        },
-        { isNew: false, clean: true }
-      );
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(true);
-      expect(c3.isDirty('c3A1')).to.equal(false);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3 = new C3(
-        {
-          id: uuid.v4(),
-          c3A2: null
-        },
-        { isNew: false, clean: true }
-      );
-      expect(c3.isDirty()).to.equal(false);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(false);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3.c3A2 = null;
-      expect(c3.isDirty()).to.equal(false);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(false);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3.c3A1 = {};
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3.clean('c3A1');
-      expect(c3.isDirty()).to.equal(false);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(false);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3.c3A1 = {};
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3.clean();
-      expect(c3.isDirty()).to.equal(false);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(false);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3.c3A1 = {};
-      expect(c3.isDirty()).to.equal(true);
-      expect(c3.isDirty('id')).to.equal(false);
-      expect(c3.isDirty('c3A1')).to.equal(true);
-      expect(c3.isDirty('c3A2')).to.equal(false);
-
-      c3
-        .save()
-        .then(function () {
-          expect(c3.isDirty()).to.equal(false);
-          expect(c3.isDirty('id')).to.equal(false);
-          expect(c3.isDirty('c3A1')).to.equal(false);
-          expect(c3.isDirty('c3A2')).to.equal(false);
-
-          c3 = new C3(
-            {
-              id: uuid.v4(),
-              c3A1: function () {},
-              c3A2: null
-            },
-            { isNew: false, clean: true }
-          );
-          expect(c3.isDirty()).to.equal(false);
-          expect(c3.isDirty('id')).to.equal(false);
-          expect(c3.isDirty('c3A1')).to.equal(false);
-          expect(c3.isDirty('c3A2')).to.equal(false);
-
-          c3.validate();
-
-          c3.c3A1 = function () {};
-
-          expect(function () {
-            c3.validate();
-          }).to.throw(ValidationError);
-
-          done();
-        });
-    });
+>>>>>>> origin/b4a-152
   });
 });
