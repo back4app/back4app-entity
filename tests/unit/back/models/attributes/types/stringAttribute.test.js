@@ -61,6 +61,22 @@ describe('StringAttribute', function () {
           default: null
         });
 
+        stringAttribute = new StringAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: 'attributeDataName'
+        });
+
+        stringAttribute = new StringAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
+        });
       }
     );
 
@@ -80,6 +96,23 @@ describe('StringAttribute', function () {
           '0..1',
           { propertyTest: 'justATest' }
         );
+
+        stringAttribute = new StringAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          'attributeDataName'
+        );
+
+        stringAttribute = new StringAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
+        );
       }
     );
 
@@ -88,6 +121,7 @@ describe('StringAttribute', function () {
         stringAttribute = new StringAttribute(
           'attribute',
           '0..1',
+          null,
           null,
           null
         );
@@ -100,7 +134,8 @@ describe('StringAttribute', function () {
       expect(function () {
         stringAttribute = new StringAttribute({
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -108,7 +143,8 @@ describe('StringAttribute', function () {
         stringAttribute = new StringAttribute({
           name: null,
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -117,6 +153,7 @@ describe('StringAttribute', function () {
           name: 'attribute',
           multiplicity: '0..1',
           default: null,
+          dataName: 'dataName',
           doesNotExist: null
         });
       }).to.throw(AssertionError);
@@ -126,7 +163,8 @@ describe('StringAttribute', function () {
           name: 'attribute',
           type: 'String',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -134,7 +172,17 @@ describe('StringAttribute', function () {
         stringAttribute = new StringAttribute({
           name: 'attribute',
           multiplicity: null,
-          default: null
+          default: null,
+          dataName: 'dataName'
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        stringAttribute = new StringAttribute({
+          name: 'attribute',
+          multiplicity: '1',
+          default: null,
+          dataName: function () {}
         });
       }).to.throw(AssertionError);
     });
@@ -165,6 +213,14 @@ describe('StringAttribute', function () {
 
       expect(stringAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest'});
+
+      expect(stringAttribute).to.have.property('dataName')
+        .that.deep.equals(
+        {
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        }
+      );
     });
 
     it('expect to be not extensible', function () {
@@ -205,6 +261,16 @@ describe('StringAttribute', function () {
 
       expect(stringAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        delete stringAttribute.dataName;
+      }).to.throw(Error);
+
+      expect(stringAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to not allow to change property', function () {
@@ -235,6 +301,16 @@ describe('StringAttribute', function () {
 
       expect(stringAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        stringAttribute.dataName = 'will not change';
+      }).to.throw(Error);
+
+      expect(stringAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to have the right default values', function () {
@@ -244,6 +320,7 @@ describe('StringAttribute', function () {
       expect(stringAttribute.type).to.equal(StringAttribute);
       expect(stringAttribute.multiplicity).to.equal('1');
       expect(stringAttribute.default).to.equal(null);
+      expect(stringAttribute.dataName).to.equal(null);
     });
   });
 
@@ -258,10 +335,10 @@ describe('StringAttribute', function () {
         stringAttribute.validateValue(1);
       }).to.throw(ValidationError);
       expect(function () {
-        stringAttribute.validateValue(function () {});
+        stringAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        stringAttribute.validateValue(null);
+        stringAttribute.validateValue(function () {});
       }).to.throw(ValidationError);
       expect(function () {
         stringAttribute.validateValue(false);

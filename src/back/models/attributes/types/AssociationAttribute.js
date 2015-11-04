@@ -29,12 +29,20 @@ module.exports = AssociationAttribute;
  * value.
  * @param {?Object} [attribute.default] It is
  * the default expression of the attribute.
+ * @param {?(string|Object.<!string, !string>)} [attribute.dataName] It is the
+ * name to be used to stored the attribute data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * attribute's name will be used instead.
  * @example
  * var associationAttribute = new AssociationAttribute({
  *   name: 'associationAttribute',
  *   entity: 'MyEntity',
  *   multiplicity: '0..1',
- *   default: null
+ *   default: null,
+ *   dataName: {
+ *     mongodb: 'mongodbAttribute'
+ *   }
  * });
  */
 /**
@@ -50,12 +58,20 @@ module.exports = AssociationAttribute;
  * It is optional and if not passed it will assume '1' as the default value.
  * @param {?Object} [default] It is the default
  * expression of the attribute.
+ * @param {?(string|Object.<!string, !string>)} [dataName] It is the name to be
+ * used to stored the attribute data in the repository. It can be given as a
+ * string that will be used by all adapters or as a dictionary specifying the
+ * data name for each adapter. If dataName is not given, the attribute's name
+ * will be used instead.
  * @example
  * var associationAttribute = new AssociationAttribute(
  *   'associationAttribute',
  *   'MyEntity',
  *   '0..1',
- *   null
+ *   null,
+ *   {
+ *     mongodb: 'mongodbAttribute'
+ *   }
  * );
  */
 function AssociationAttribute() {
@@ -98,9 +114,9 @@ function AssociationAttribute() {
 
   expect(argumentsArray).to.have.length.within(
     1,
-    4,
+    5,
     'Invalid arguments length when creating an AssociationAttribute (it has ' +
-    'to be passed from 1 to 4 arguments)'
+    'to be passed from 1 to 5 arguments)'
   );
 
   if (argumentsArray.length === 1) {
@@ -155,13 +171,83 @@ classes.generalize(Attribute, AssociationAttribute);
 AssociationAttribute.typeName = 'Association';
 
 AssociationAttribute.prototype.validateValue = validateValue;
+AssociationAttribute.prototype.getDataValue = getDataValue;
+AssociationAttribute.prototype.parseDataValue = parseDataValue;
 
 function validateValue(value) {
-  if (!(value instanceof this.Entity)) {
+  if (value instanceof this.Entity) {
+    value.validate();
+  } else {
     throw new ValidationError(
       'this attribute\'s value should be a "' +
       this.Entity.specification.name +
       '"'
     );
+  }
+}
+
+function getDataValue(attributeValue) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when getting the data value of an Attribute ' +
+    '(it has to be passed 1 argument)');
+
+  var dataValue = attributeValue;
+
+  if (attributeValue instanceof models.Entity) {
+    dataValue = {
+      Entity: attributeValue.Entity.specification.name,
+      id: attributeValue.id
+    };
+  } else if (attributeValue instanceof Array) {
+    dataValue = [];
+
+    for (var i = 0; i < attributeValue.length; i++) {
+      if (attributeValue[i] instanceof models.Entity) {
+        dataValue.push({
+          Entity: attributeValue[i].Entity.specification.name,
+          id: attributeValue[i].id
+        });
+      } else {
+        dataValue.push(attributeValue[i]);
+      }
+    }
+  }
+
+  return dataValue;
+}
+
+function parseDataValue(dataValue) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when parsing the data value of an Attribute ' +
+    '(it has to be passed 1 argument)');
+
+  var attributeValue = dataValue;
+
+  if (dataValue instanceof Array) {
+    attributeValue = [];
+    for (var i = 0; i < dataValue.length; i++) {
+      attributeValue.push(_parseDataValueItem(dataValue[i]));
+    }
+  } else {
+    attributeValue = _parseDataValueItem(dataValue);
+  }
+
+  return attributeValue;
+
+  function _parseDataValueItem(dataValueItem) {
+    if (typeof dataValueItem === 'object' && dataValueItem !== null) {
+      try {
+        var dataValueItemCopy = objects.copy(dataValueItem);
+        var newFunction = models.Entity.new(dataValueItemCopy.Entity);
+        delete dataValueItemCopy.Entity;
+        return newFunction(dataValueItemCopy);
+      } catch (error) {
+        return dataValueItem;
+      }
+    } else {
+      return dataValueItem;
+    }
   }
 }

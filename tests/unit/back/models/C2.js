@@ -10,13 +10,13 @@ var ObjectAttribute = require('../../../../')
 
 require('../../settings');
 
-var C2 = module.exports = Entity.specify(
+module.exports = Entity.specify(
   'C2',
   [
     new ObjectAttribute(
-      'Entity',
+      '_Entity',
       '1',
-      function () { return C2; }
+      function () { return {}; }
     ),
     new ObjectAttribute({
       name: 'c2A2',
@@ -26,5 +26,12 @@ var C2 = module.exports = Entity.specify(
   ],
   {
     constructor: function () { return 'constructor'; }
+  },
+  {
+    isAbstract: false,
+    dataName: {
+      notDefault: 'notDefault',
+      default: 'C2'
+    }
   }
 );

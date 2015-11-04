@@ -19,7 +19,9 @@ module.exports = C1.specify({
   methods: {
     c1M1: c1M1,
     c11M: c11M
-  }
+  },
+  isAbstract: false,
+  dataName: 'C11'
 });
 
 function c1M1(c1M1P1, c1M1P2, c11M1P) {

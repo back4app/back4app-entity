@@ -1,7 +1,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var classes = require('../utils').classes;
+var Promise = require('bluebird');
 
 module.exports = Adapter;
 
@@ -35,10 +35,82 @@ function Adapter() {
     'The Adapter\'s constructor can be only invoked from specialized' +
     'classes\' constructors'
   );
+}
 
-  expect(classes.isGeneral(Adapter, this.constructor)).to.equal(
-    true,
-    'The Adapter\'s constructor can be only invoked from specialized' +
-    'classes\' constructors'
-  );
+Adapter.prototype.loadEntity = loadEntity;
+Adapter.prototype.loadEntityAttribute = loadEntityAttribute;
+Adapter.prototype.insertObject = insertObject;
+Adapter.prototype.updateObject = updateObject;
+
+/**
+ * This method is called always that an Entity is specified. The adapter has to
+ * load the new specified Entity. It has to be implemented in the concrete
+ * adapters. Otherwise, it will throw Error.
+ * @name module:back4app-entity/adapters.Adapter#loadEntity
+ * @function
+ * @param {!Class} Entity The Entity class to be loaded.
+ * @example
+ * myAdapter.loadEntity(MyEntity);
+ */
+function loadEntity() {
+  throw new Error('Function "loadEntity" has to be implemented in the ' +
+    'Adapter specialization');
+}
+
+/**
+ * This method is called always that an Entity's attribute is loaded in an
+ * EntitySpecification. The adapter has to load the new specified Attribute. It
+ * has to be implemented in the concrete adapters. Otherwise, it will throw
+ * Error.
+ * @name module:back4app-entity/adapters.Adapter#loadEntityAttribute
+ * @function
+ * @param {!Class} Entity The Entity class whose Attribute has to be loaded.
+ * @param {!module:back4app-entity/models/attributes.Attribute} attribute The
+ * attribute to be loaded.
+ * @example
+ * myAdapter.loadEntityAttribute(MyEntity, myEntityAttribute);
+ */
+function loadEntityAttribute() {
+  throw new Error('Function "loadAttribute" has to be implemented in the ' +
+    'Adapter specialization');
+}
+
+/**
+ * This method is called always that an Entity object has to be inserted in the
+ * storage. The adapter has to insert the new Entity object. It has to be
+ * implemented in the concrete adapters. Otherwise, it will throw Error.
+ * @name module:back4app-entity/adapters.Adapter#insertObject
+ * @function
+ * @param {!module:back4app-entity/models.Entity} entityObject The Entity object
+ * to be inserted.
+ * @returns {Promise.<undefined|Error>} Promise that returns nothing if succeed
+ * and the Error if failed.
+ * @example
+ * myAdapter.insertObject(new MyEntity());
+ */
+function insertObject() {
+  return new Promise(function () {
+    throw new Error('Function "insertObject" has to be implemented in the ' +
+      'Adapter specialization');
+  });
+}
+
+/**
+ * This method is called always that an Entity object has to be updated in the
+ * storage. The adapter has to update the Entity object. It has to be
+ * implemented in the concrete adapters. Otherwise, it will throw Error.
+ * @name module:back4app-entity/adapters.Adapter#updateObject
+ * @function
+ * @param {!module:back4app-entity/models.Entity} entityObject The Entity object
+ * to be updated.
+ * @returns {Promise.<undefined|Error>} Promise that returns nothing if succeed
+ * and the Error if failed.
+ * @example
+ * myAdapter.updateObject(myEntity);
+ */
+function updateObject() {
+  return new Promise(function () {
+    throw new Error('Function "updateObject" has to be implemented in the ' +
+      'Adapter specialization');
+  });
 }

@@ -3,12 +3,14 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var Promise = require('bluebird');
 var settings = require('../settings');
 var classes = require('../utils/classes');
 var objects = require('../utils/objects');
 var Adapter = require('../adapters/Adapter');
 var EntitySpecification = require('./EntitySpecification');
 var AttributeDictionary = require('./attributes/AttributeDictionary');
+var AssociationAttribute = require('./attributes/types/AssociationAttribute');
 var MethodDictionary = require('./methods').MethodDictionary;
 var errors = require('./errors');
 var uuid = require('node-uuid');
@@ -17,25 +19,47 @@ module.exports = Entity;
 
 require('./index').Entity = Entity;
 
-
 /**
- * Base class for entities.
+ * Base class for entities. It is an abstract class and cannot be directly
+ * initialized.
  * @constructor
+ * @abstract
  * @memberof module:back4app-entity/models
  * @param {?Object.<!string, ?Object>} [attributeValues] It has to be passed as
  * a dictionary of attribute's name and values to initialize a new Entity.
+ * @param {?Object} [options] These are the options when initializing a new
+ * Entity instance.
+ * @param {?Object} [options.isNew] Sets if the entity is a new one. Otherwise,
+ * the id will be checked. If an id was not given, the entity will be considered
+ * a new one.
  * @example
- * var entity = new Entity();
+ * var myEntity = new MyEntity();
  */
-function Entity(attributeValues) {
+function Entity(attributeValues, options) {
+  /**
+   * This is a read-only property to get the adapterName of an Entity instance.
+   * @type {!string}
+   * @readonly
+   * @example
+   * var myDefaultAdapterName = myEntity.adapterName;
+   */
+  this.adapterName = null;
+  /**
+   * This is a read-only property to get the adapter of an Entity instance.
+   * @type {!module:back4app-entity/adapters.Adapter}
+   * @readonly
+   * @example
+   * var myDefaultAdapter = myEntity.adapter;
+   */
+  this.adapter = null;
   /**
    * This is a read-only property to get the Entity Class of an instance.
    * @name module:back4app-entity/models.Entity#Entity
    * @type {!Class}
    * @readonly
    * @example
-   * var entity = new Entity();
-   * console.log(entity.Entity == Entity); // Logs "true"
+   * var myEntity = new MyEntity();
+   * console.log(myEntity.Entity == MyEntity); // Logs "true"
    */
   if (!this.hasOwnProperty('Entity') || !this.Entity) {
     this.Entity = null;
@@ -52,9 +76,17 @@ function Entity(attributeValues) {
    */
   this.General = null;
   /**
+   * This is a property to keep the information if the Entity instance is new
+   * and was not saved in the storage yet.
+   * @type {!boolean}
+   * @example
+   * console.log((new MyEntity()).isNew); // Logs "true"
+   */
+  this.isNew = null;
+  /**
    * This is a read-only property to get the id of a new entity
    * instance. It is generated in according to UUID pattern type 4.
-   * @type {!String}
+   * @type {!string}
    * @readonly
    * @example
    * var MyEntity = Entity.specify('MyEntity');
@@ -68,7 +100,7 @@ function Entity(attributeValues) {
       value: Entity,
       enumerable: false,
       writable: false,
-      configurable: true
+      configurable: false
     });
   }
 
@@ -82,14 +114,88 @@ function Entity(attributeValues) {
       );
     },
     enumerable: false,
-    configurable: true
+    configurable: false
   });
 
+  Object.defineProperty(this, 'adapterName', {
+    value: this.Entity.adapterName,
+    writable: false,
+    enumerable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(this, 'adapter', {
+    value: this.Entity.adapter,
+    writable: false,
+    enumerable: false,
+    configurable: false
+  });
+
+  var _isNew = true;
+  Object.defineProperty(this, 'isNew', {
+    get: function () {
+      return _isNew;
+    },
+    set: function (value) {
+      expect(value).to.be.a(
+        'boolean',
+        'Invalid value when setting isNew value (it has to be a boolean)'
+      );
+
+      _isNew = value;
+    },
+    enumerable: false,
+    configurable: false
+  });
+
+  expect(this).to.be.an(
+    'object',
+    'The Entity\'s constructor can be only invoked from specialized ' +
+    'classes\' constructors'
+  );
+
+  expect(this.constructor).to.be.a(
+    'function',
+    'The Entity\'s constructor can be only invoked from specialized ' +
+    'classes\' constructors'
+  );
+
+  expect(this.constructor).to.not.equal(
+    Entity,
+    'The Entity is an abstract class and cannot be directly initialized'
+  );
+
+  expect(this).to.be.instanceof(
+    Entity,
+    'The Entity\'s constructor can be only invoked from specialized ' +
+    'classes\' constructors'
+  );
+
   expect(arguments).to.have.length.below(
-    2,
+    3,
     'Invalid arguments length when creating "' +
     this.Entity.specification.name +
-    '" (it has to be passed less than 2 arguments)');
+    '" (it has to be passed less than 3 arguments)');
+
+  var isNewSet = false;
+  if (options) {
+    expect(options).to.be.an(
+      'object',
+      'Invalid argument "options" when creating a new "' +
+      this.Entity.specification.name + '" (it has to be an object)'
+    );
+
+    if (options.hasOwnProperty('isNew')) {
+      expect(options.isNew).to.be.a(
+        'boolean',
+        'Invalid argument "options.isNew" when creating a new "' +
+        this.Entity.specification.name + '" (it has to be a boolean)'
+      );
+
+      isNewSet = true;
+      this.isNew = options.isNew;
+    }
+  }
 
   if (attributeValues) {
     expect(attributeValues).to.be.an(
@@ -97,6 +203,10 @@ function Entity(attributeValues) {
       'Invalid argument "attributeValues" when creating a new "' +
       this.Entity.specification.name + '" (it has to be an object)'
     );
+
+    if (!isNewSet && attributeValues.hasOwnProperty('id')) {
+      this.isNew = false;
+    }
   }
 
   var attributes = this.Entity.attributes;
@@ -147,6 +257,14 @@ function Entity(attributeValues) {
 }
 
 /**
+ * This is a read-only property to get the adapterName of an Entity class.
+ * @type {!string}
+ * @readonly
+ * @example
+ * var myDefaultAdapterName = Entity.adapterName;
+ */
+Entity.adapterName = null;
+/**
  * This is a read-only property to get the adapter of an Entity class.
  * @type {!module:back4app-entity/adapters.Adapter}
  * @readonly
@@ -171,6 +289,14 @@ Entity.General = null;
  * var entitySpecification = Entity.specification;
  */
 Entity.specification = null;
+/**
+ * This is the data name of the current Entity Class.
+ * @type {!string}
+ * @readonly
+ * @example
+ * var entityDataName = Entity.dataName;
+ */
+Entity.dataName = null;
 /**
  * This is a dictionary with a consolidation of the Entity's attributes.
  * @type
@@ -232,8 +358,19 @@ Entity.specializations = null;
 Entity.specify = null;
 Entity.getSpecialization = null;
 Entity.new = null;
+Entity.create = null;
+Entity.get = null;
+Entity.find = null;
 Entity.prototype.validate = validate;
 Entity.prototype.isValid = isValid;
+Entity.prototype.save = save;
+
+Object.defineProperty(Entity, 'adapterName', {
+  value: 'default',
+  writable: false,
+  enumerable: true,
+  configurable: false
+});
 
 Object.defineProperty(Entity, 'adapter', {
   get: _getAdapter,
@@ -242,7 +379,7 @@ Object.defineProperty(Entity, 'adapter', {
       'Adapter property of an Entity class cannot be changed'
     );
   },
-  enumerable: false,
+  enumerable: true,
   configurable: false
 });
 
@@ -262,7 +399,11 @@ var _entityAttributes = new AttributeDictionary({
 
 var _entitySpecification = new EntitySpecification(
   'Entity',
-  _entityAttributes
+  _entityAttributes,
+  null,
+  {
+    isAbstract: true
+  }
 );
 
 Object.defineProperty(Entity, 'specification', {
@@ -273,6 +414,13 @@ Object.defineProperty(Entity, 'specification', {
 });
 
 _entitySpecification.Entity = Entity;
+
+Object.defineProperty(Entity, 'dataName', {
+  value: Entity.specification.getDataName(Entity.adapterName),
+  enumerable: true,
+  writable: false,
+  configurable: false
+});
 
 Object.defineProperty(Entity, 'attributes', {
   value: _entityAttributes,
@@ -343,12 +491,13 @@ function _getAdapter() {
   if (!_adapter) {
     try {
       expect(settings).to.have.ownProperty('ADAPTERS');
-      expect(settings.ADAPTERS).to.have.ownProperty('default');
-      expect(settings.ADAPTERS.default).to.be.an.instanceOf(Adapter);
-      _adapter = settings.ADAPTERS.default;
+      expect(settings.ADAPTERS).to.have.ownProperty(this.adapterName);
+      var adapter = settings.ADAPTERS[this.adapterName];
+      expect(adapter).to.be.an.instanceOf(Adapter);
+      _adapter = adapter;
     } catch (e) {
       if (e instanceof AssertionError) {
-        throw new errors.AdapterNotFoundError('default', e);
+        throw new errors.AdapterNotFoundError(this.adapterName, e);
       } else {
         throw e;
       }
@@ -400,37 +549,52 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
   return function () {
     expect(arguments).to.have.length.within(
       1,
-      3,
+      4,
       'Invalid arguments length when specifying an Entity (it has to be ' +
-      'passed from 1 to 3 arguments)'
+      'passed from 1 to 4 arguments)'
     );
 
-    var SpecificEntity = function (attributeValues) {
+    var SpecificEntity = function () {
 
       if (!this.hasOwnProperty('Entity') || !this.Entity) {
         Object.defineProperty(this, 'Entity', {
           value: SpecificEntity,
           enumerable: false,
           writable: false,
-          configurable: true
+          configurable: false
         });
       }
 
-      CurrentEntity.call(this, attributeValues);
+      if (SpecificEntity.specification.isAbstract) {
+        expect(this).to.be.an(
+          'object',
+          'The "' + SpecificEntity.specification.name + '"\'s constructor ' +
+          'can be only invoked from specialized classes\' constructors'
+        );
+
+        expect(this.constructor).to.be.a(
+          'function',
+          'The "' + SpecificEntity.specification.name + '"\'s constructor ' +
+          'can be only invoked from specialized classes\' constructors'
+        );
+
+        expect(this.constructor).to.not.equal(
+          SpecificEntity,
+          'The "' + SpecificEntity.specification.name + '" is an abstract ' +
+          'class and cannot be directly initialized'
+        );
+
+        expect(this).to.be.instanceof(
+          SpecificEntity,
+          'The "' + SpecificEntity.specification.name + '"\'s constructor ' +
+          'can be only invoked from specialized classes\' constructors'
+        );
+      }
+
+      CurrentEntity.apply(this, Array.prototype.slice.call(arguments));
     };
 
     classes.generalize(CurrentEntity, SpecificEntity);
-
-    Object.defineProperty(SpecificEntity, 'adapter', {
-      get: _getAdapter,
-      set: function () {
-        throw new Error(
-          'Adapter property of an Entity class cannot be changed'
-        );
-      },
-      enumerable: false,
-      configurable: false
-    });
 
     Object.defineProperty(SpecificEntity, 'General', {
       value: CurrentEntity,
@@ -466,6 +630,7 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
 
       var attributes = null;
       var methods = null;
+      var options = null;
 
       if (arguments.length > 1 && arguments[1]) {
         attributes = arguments[1];
@@ -487,24 +652,44 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
         );
       }
 
+      if (arguments.length > 3 && arguments[3]) {
+        options = arguments[3];
+
+        expect(options).to.be.an(
+          'object',
+          'Invalid property "options" when specifying an Entity (it has to ' +
+          'be an object)'
+        );
+      }
+
       _specificEntitySpecification = new EntitySpecification(
         name,
         attributes,
-        methods
+        methods,
+        options
       );
     }
 
-    expect(_specializations).to.not.have.ownProperty(
-      _specificEntitySpecification.name,
-      'It was not possible to specify a new Entity called "' +
-      _specificEntitySpecification.name + '" because duplicates are not allowed'
-    );
-
-    _specializations[_specificEntitySpecification.name] = SpecificEntity;
-    directSpecializations[_specificEntitySpecification.name] = SpecificEntity;
+    if (_specificEntitySpecification.isAbstract) {
+      expect(CurrentEntity.specification.isAbstract).to.equal(
+        true,
+        'It was not possible to specify a new Entity called "' +
+          _specificEntitySpecification.name + '" because an abstract Entity ' +
+        'cannot be specified by a concrete one'
+      );
+    }
 
     Object.defineProperty(SpecificEntity, 'specification', {
       value: _specificEntitySpecification,
+      enumerable: true,
+      writable: false,
+      configurable: false
+    });
+
+    Object.defineProperty(SpecificEntity, 'dataName', {
+      value: SpecificEntity.specification.getDataName(
+        SpecificEntity.adapterName
+      ),
       enumerable: true,
       writable: false,
       configurable: false
@@ -618,6 +803,9 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
       SpecificEntity
     );
     SpecificEntity.new = _getNewFunction(SpecificEntity);
+    SpecificEntity.create = _getCreateFunction(SpecificEntity);
+    SpecificEntity.get = _getGetFunction(SpecificEntity);
+    SpecificEntity.find = _getFindFunction(SpecificEntity);
 
     if (_specificEntitySpecification.Entity) {
       expect(_specificEntitySpecification.Entity).to.equal(
@@ -628,6 +816,15 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
     } else {
       _specificEntitySpecification.Entity = SpecificEntity;
     }
+
+    expect(_specializations).to.not.have.ownProperty(
+      _specificEntitySpecification.name,
+      'It was not possible to specify a new Entity called "' +
+      _specificEntitySpecification.name + '" because duplicates are not allowed'
+    );
+
+    _specializations[_specificEntitySpecification.name] = SpecificEntity;
+    directSpecializations[_specificEntitySpecification.name] = SpecificEntity;
 
     return SpecificEntity;
   };
@@ -653,7 +850,11 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   {
+ *     isAbstract: false,
+ *     dataName: 'MyEntityDataName'
+ *   }
  * ));
  */
 /**
@@ -679,20 +880,33 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * instance of {@link module:back4app-entity/models/methods.MethodDictionary}
  * or an object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {Object} [options] It is the optional properties of the new Entity
+ * being specified.
+ * @param {boolean} [options.isAbstract=false] It is a flag to indicate if
+ * the new Entity being specified is an abstract one.
+ * @param {?(string|Object.<!string, !string>)} [options.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify('MyEntity');
  * @example
- * var MyEntity = Entity.specify('MyEntity', null, null);
+ * var MyEntity = Entity.specify('MyEntity', null, null, null);
  * @example
- * var MyEntity = Entity.specify('MyEntity', {}, {});
+ * var MyEntity = Entity.specify('MyEntity', {}, {}, null);
  * @example
- * var MyEntity = Entity.specify('MyEntity', [], {});
+ * var MyEntity = Entity.specify('MyEntity', [], {}, null);
  * @example
  * var MyEntity = Entity.specify(
  *   'MyEntity',
  *   new AttributeDictionary(),
- *   new MethodDictionary()
+ *   new MethodDictionary(),
+ *   {
+ *     isAbstract: false,
+ *     dataName: 'MyEntityDataName'
+ *   }
  * );
  * @example
  * var MyEntity = Entity.specify(
@@ -704,7 +918,14 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   new MethodDictionary({
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
- *   })
+ *   }),
+ *   {
+ *     isAbstract: false,
+ *     dataName: {
+ *       default: 'MyEntityMongoDBDataName',
+ *       rest: 'MyEntityRESTDataName'
+ *     }
+ *   }
  * );
  */
 /**
@@ -732,6 +953,13 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * {@link module:back4app-entity/models/methods.MethodDictionary} or an
  * object, as specified in
  * {@link module:back4app-entity/models/methods.MethodDictionary}.
+ * @param {boolean} [specification.isAbstract=false] It is a flag to indicate if
+ * the new Entity being specified is an abstract one.
+ * @param {?(string|Object.<!string, !string>)} [specification.dataName] It is
+ * the name to be used to store the Entity data in the repository. It can be
+ * given as a string that will be used by all adapters or as a dictionary
+ * specifying the data name for each adapter. If dataName is not given, the
+ * Entity's name will be used instead.
  * @returns {Class} The new Entity Class.
  * @example
  * var MyEntity = Entity.specify({ name: 'MyEntity' });
@@ -739,7 +967,9 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  * var MyEntity = Entity.specify({
  *   name: 'MyEntity',
  *   attributes: {},
- *   methods: {}
+ *   methods: {},
+ *   isAbstract: false,
+ *   dataName: null
  * });
  * @example
  * var MyEntity = Entity.specify({
@@ -759,6 +989,11 @@ var _getSpecifyFunction = function (CurrentEntity, directSpecializations) {
  *   methods: {
  *     method1: function () { return 'method1'; },
  *     method2: function () { return 'method2'; }
+ *   },
+ *   isAbstract: false,
+ *   dataName: {
+ *     adapter1: 'MyEntityAdapter1DataName',
+ *     adapter2: 'MyEntityAdapter2DataName'
  *   }
  * });
  */
@@ -838,11 +1073,11 @@ var _getNewFunction = function (CurrentEntity) {
       'to be passed less than 2 arguments)'
     );
 
-    return function () {
-      expect(arguments).to.have.length(
-        0,
+    return function (attributeValues) {
+      expect(arguments).to.have.length.below(
+        2,
         'Invalid arguments length when creating a new Entity (it has ' +
-        'not to be passed any argument)'
+        'not to be passed less than 2 arguments)'
       );
 
       var EntityClass = CurrentEntity;
@@ -851,7 +1086,7 @@ var _getNewFunction = function (CurrentEntity) {
         EntityClass = Entity.getSpecialization(entity);
       }
 
-      return new EntityClass();
+      return new EntityClass(attributeValues);
     };
   };
 };
@@ -870,6 +1105,161 @@ var _getNewFunction = function (CurrentEntity) {
  * var c1 = c1NewFunction();
  */
 Entity.new = _getNewFunction(Entity);
+
+/**
+ * Private function used to get the create function specific for the current
+ * Entity class.
+ * @name module:back4app-entity/models.Entity~_getCreateFunction
+ * @function
+ * @param {!Class} CurrentEntity The current entity class for which the new
+ * function will be created.
+ * @returns {function} The new function.
+ * @private
+ * @example
+ * Entity.create = _getCreateFunction(Entity);
+ */
+var _getCreateFunction = function (CurrentEntity) {
+  return function (attributeValues) {
+    expect(arguments).to.have.length.below(
+      2,
+      'Invalid arguments length when creating a new "' +
+      CurrentEntity.specification.name +
+      '" instance (it has to be passed less than 2 arguments)');
+
+    return new Promise(function (resolve, reject) {
+      var newEntity = new CurrentEntity(attributeValues);
+
+      newEntity
+        .save({
+          forceCreate: true
+        })
+        .then(function () {
+          resolve(newEntity);
+        })
+        .catch(reject);
+    });
+  };
+};
+
+/**
+ * Creates a new Entity object from passed attribute values. Validates it and
+ * saves it in the storage.
+ * @memberof module:back4app-entity/models.Entity
+ * @name create
+ * @function
+ * @param {?Object.<!string, ?Object>} [attributeValues] It has to be passed as
+ * a dictionary of attribute's name and values to initialize a new Entity.
+ * @returns {Promise.<module:back4app-entity/models.Entity|Error>} Promise that
+ * returns the created Entity object if succeed and the Error if failed.
+ * @example
+ * MyEntity
+ *   .create({
+ *     myAttribute: myAttributeValue
+ *   })
+ *   .then(function (myEntity) {
+ *     console.log(myEntity);
+ *   })
+ *   .catch(function (error) {
+ *     console.log(error);
+ *   });
+ */
+Entity.create = _getCreateFunction(Entity);
+
+/**
+ * Private function used to get the `get` function specific for the current
+ * Entity class.
+ * @name module:back4app-entity/models.Entity~_getGetFunction
+ * @function
+ * @param {!Class} CurrentEntity The current entity class for which the new
+ * function will be created.
+ * @returns {function} The get function.
+ * @private
+ * @example
+ * Entity.get = _getGetFunction(Entity);
+ */
+function _getGetFunction(CurrentEntity) {
+  return function (query) {
+    expect(arguments).to.have.length(
+      1,
+      'Invalid arguments length when getting an Entity ' +
+      '(it has to be passed 1 argument)'
+    );
+
+    expect(query).to.be.an(
+      'object',
+      'Invalid argument when getting an Entity (it has to be an object)'
+    );
+
+    return Promise.try(function () {
+      var adapter = CurrentEntity.adapter;
+      return adapter.getObject(CurrentEntity, query);
+    });
+  };
+}
+
+/**
+ * Gets an entity based on the configured adapter.
+ * @memberof module:back4app-entity/models.Entity
+ * @name get
+ * @function
+ * @param {?object} [query] The query used to limit the search.
+ * @returns {Promise}
+ * @example
+ * MyEntity.get({name: 'John'})
+ *   .then(function(result) {
+ *     console.log(result);
+ *   });
+ */
+Entity.get = _getGetFunction(Entity);
+
+/**
+ * Private function used to get the `find` function specific for the current
+ * Entity class.
+ * @name module:back4app-entity/models.Entity~_getFindFunction
+ * @function
+ * @param {!Class} CurrentEntity The current entity class for which the new
+ * function will be created.
+ * @returns {function} The find function.
+ * @private
+ * @example
+ * Entity.find = _getFindFunction(Entity);
+ */
+function _getFindFunction(CurrentEntity) {
+  return function (query) {
+    expect(arguments).to.have.length(
+      1,
+      'Invalid arguments length when finding an Entity ' +
+      '(it has to be passed 1 argument)'
+    );
+
+    expect(query).to.be.an(
+      'object',
+      'Invalid argument when finding an Entity (it has to be an object)'
+    );
+
+    return Promise.try(function () {
+      var adapter = CurrentEntity.adapter;
+      return adapter.findObjects(CurrentEntity, query);
+    });
+  };
+}
+
+/**
+ * Find entities based on the configured adapter.
+ * @memberof module:back4app-entity/models.Entity
+ * @name find
+ * @function
+ * @param {?object} [query] The query used to limit the search.
+ * @returns {Promise}
+ * @example
+ * MyEntity.find({name: 'John'})
+ *   .then(function(results) {
+ *     for (var i=0; i<results.length; i++) {
+ *       console.log(results[i]);
+ *     }
+ *   });
+ */
+Entity.find = _getFindFunction(Entity);
 
 /**
  * Validates an entity and throws a
@@ -945,3 +1335,147 @@ function isValid(attribute) {
   return true;
 }
 
+/**
+ * Saves an Entity object. Validates it and saves it in the storage.
+ * @name module:back4app-entity/models.Entity#save
+ * @function
+ * @param {?Object} [options] The options to be used in the save process.
+ * @param {?boolean} [options.forceCreate] This option is used to force the
+ * object to be created in the storage.
+ * @param {?boolean} [options.forceUpdate] This option is used to force the
+ * object to be updated in the storage.
+ * @returns {Promise.<undefined|Error>} Promise that returns nothing if succeed
+ * and the Error if failed.
+ * @example
+ * myEntity
+ *   .save()
+ *   .then(function () {
+ *     console.log('saved');
+ *   })
+ *   .catch(function (error) {
+ *     console.log(error);
+ *   });
+ */
+function save(options) {
+  var entity = this;
+
+  expect(arguments).to.have.length.below(
+    2,
+    'Invalid arguments length when saving an Entity (it has to be passed ' +
+    'less than 2 arguments)'
+  );
+
+  return new Promise(function (resolve, reject) {
+    var isCreate = entity.isNew;
+    var forceCreate = false;
+    var forceUpdate = false;
+
+    if (options) {
+      expect(options).to.be.an(
+        'object',
+        'Invalid argument "options" when saving an Entity (it has to be an ' +
+        'object)'
+      );
+
+      if (options.hasOwnProperty('forceCreate')) {
+        expect(options.forceCreate).to.be.a(
+          'boolean',
+          'Invalid argument "options.forceCreate" when saving an Entity (it ' +
+          'has to be a boolean)'
+        );
+
+        if (options.forceCreate) {
+          forceCreate = true;
+        }
+      }
+
+      if (options.hasOwnProperty('forceUpdate')) {
+        expect(options.forceUpdate).to.be.a(
+          'boolean',
+          'Invalid argument "options.forceUpdate" when saving an Entity (it ' +
+          'has to be a boolean)'
+        );
+
+        if (options.forceUpdate) {
+          forceUpdate = true;
+        }
+      }
+
+      if (forceCreate) {
+        expect(forceCreate).to.not.equal(
+          forceUpdate,
+          'It is not possible to force create and update at same time when ' +
+          'saving an Entity'
+        );
+      }
+
+      if (forceCreate) {
+        isCreate = true;
+      } else if (forceUpdate) {
+        isCreate = false;
+      }
+    }
+
+    entity.validate();
+
+    var promises = [];
+
+    var attributes = entity.Entity.attributes;
+
+    for (var attribute in attributes) {
+      if (attributes[attribute] instanceof AssociationAttribute) {
+        if (entity.hasOwnProperty(attribute)) {
+          if (entity[attribute] instanceof Entity) {
+            promises.push(entity[attribute].save());
+          }
+        }
+      }
+    }
+
+    var promise = null;
+
+    if (isCreate) {
+      promise = entity.adapter.insertObject(entity);
+    } else {
+      promise = entity.adapter.updateObject(entity);
+    }
+
+    expect(promise).to.not.equal(
+      null,
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
+    );
+
+    expect(typeof promise).to.equal(
+      'object',
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
+    );
+
+    expect(promise).to.respondTo(
+      'then',
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
+    );
+
+    expect(promise).to.respondTo(
+      'catch',
+      'Functions "insertObject" and "updateObject" of an Adapter ' +
+      'specialization should return a Promise'
+    );
+
+    promise
+      .then(function () {
+        entity.isNew = false;
+      });
+
+    promises.push(promise);
+
+    Promise
+      .all(promises)
+      .then(function () {
+        resolve();
+      })
+      .catch(reject);
+  });
+}

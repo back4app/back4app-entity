@@ -3,6 +3,8 @@
 var chai = require('chai');
 var expect = chai.expect;
 var AssertionError = chai.AssertionError;
+var Promise = require('bluebird');
+var uuid = require('node-uuid');
 var settings = require('../../../../src/back').settings;
 var classes = require('../../../../src/back/utils').classes;
 var models = require('../../../../src/back/models');
@@ -14,15 +16,22 @@ var attributes = models.attributes;
 var methods = models.methods;
 var MockAdapter = require('../adapters/MockAdapter');
 var mockery = require('mockery');
+var sinon = require('sinon');
+var EntityProxy = require('./EntityProxy');
 
 require('../../settings');
 
 describe('Entity', function () {
+  function WrongEntityProxy() {
+    Entity.apply(this, Array.prototype.slice.call(arguments));
+  }
+
   var entity;
 
   var C1;
   var C11;
   var C2;
+  var C3;
 
   var c1;
   var c11;
@@ -30,16 +39,35 @@ describe('Entity', function () {
 
   context('interface tests', function () {
     it('expect to instantiate new Entity without error', function () {
-      entity = new Entity();
+      entity = new EntityProxy();
 
-      entity = new Entity(null);
+      entity = new EntityProxy(null, null);
 
-      entity = new Entity({});
+      entity = new EntityProxy({}, {});
+    });
+
+    it('expect to be not directly initialized', function () {
+      expect(function () {
+        entity = new Entity();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        entity = new WrongEntityProxy();
+      }).to.throw(AssertionError);
     });
 
     it('expect to not work with wrong arguments', function () {
       expect(function () {
-        entity = new Entity(null, null);
+        entity = new EntityProxy(null, null, null);
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        entity = new EntityProxy(
+          null,
+          {
+            isNew: null
+          }
+        );
       }).to.throw(AssertionError);
     });
   });
@@ -57,27 +85,35 @@ describe('Entity', function () {
       Entity.specify({
         name: 'MyEntity3',
         attributes: [],
-        methods: {}
+        methods: {},
+        isAbstract: null,
+        dataName: null
       });
 
       Entity.specify({
         name: 'MyEntity4',
         attributes: new attributes.AttributeDictionary(),
-        methods: new methods.MethodDictionary()
+        methods: new methods.MethodDictionary(),
+        isAbstract: false,
+        dataName: {}
       });
 
       Entity.specify(new EntitySpecification('MyEntity5'));
 
-      Entity.specify('MyEntity6', null, null);
+      Entity.specify('MyEntity6', null, null, null);
 
-      Entity.specify('MyEntity7', {}, {});
+      Entity.specify('MyEntity7', {}, {}, {});
 
-      Entity.specify('MyEntity8', [], {});
+      Entity.specify('MyEntity8', [], {}, {});
 
       Entity.specify(
         'MyEntity9',
         new attributes.AttributeDictionary(),
-        new methods.MethodDictionary()
+        new methods.MethodDictionary(),
+        {
+          isAbstract: null,
+          dataName: null
+        }
       );
 
       Entity.specify(
@@ -97,6 +133,7 @@ describe('Entity', function () {
       C1 = require('./C1');
       C11 = require('./C11');
       C2 = require('./C2');
+      C3 = require('./C3');
 
       c1 = new C1();
       c11 = new C11();
@@ -117,7 +154,7 @@ describe('Entity', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify('MyEntity12', {}, {}, {});
+        Entity.specify('MyEntity12', {}, {}, null, {});
       }).to.throw(AssertionError);
 
       expect(function () {
@@ -125,66 +162,49 @@ describe('Entity', function () {
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify(function () {}, {});
+        Entity.specify(function () {}, {}, {});
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify('MyEntity13', function () {}, {});
+        Entity.specify('MyEntity13', function () {}, {}, {});
       }).to.throw(AssertionError);
 
       expect(function () {
-        Entity.specify('MyEntity14', {}, function () {});
+        Entity.specify('MyEntity14', {}, function () {}, {});
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.specify('MyEntity14', {}, {}, function () {});
       }).to.throw(AssertionError);
     });
+  });
 
-    describe('.id', function () {
-      it('expect not be undefined', function () {
-        expect(c1.id).to.not.equal(undefined);
-        expect(c11.id).to.not.equal(undefined);
-        expect(c2.id).to.not.equal(undefined);
-      });
+  describe('.adapterName', function () {
+    it(
+      'expect to exist as a static property and contain the right adapter name',
+      function () {
+        expect(Entity).to.have.property('adapterName')
+          .that.equals('default');
+        expect(C1).to.have.property('adapterName')
+          .that.equals('default');
+        expect(C11).to.have.property('adapterName')
+          .that.equals('default');
+        expect(C2).to.have.property('adapterName')
+          .that.equals('default');
+      }
+    );
 
-      it('expect to be valid', function () {
-        var c1Id = c1.id;
-        var c11Id = c11.id;
-        var c2Id = c2.id;
+    it('expect to not be changed or deleted', function () {
+      expect(function () {
+        delete Entity.adapterName;
+      }).to.throw(Error);
 
-        function isValid(id) {
-          var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
-            '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
-          return new RegExp(regex).test(id);
-        }
+      expect(function () {
+        Entity.adapterName = 'willnotwork';
+      }).to.throw(Error);
 
-        expect(isValid(c1Id)).to.equal(true);
-        expect(isValid(c11Id)).to.equal(true);
-        expect(isValid(c2Id)).to.equal(true);
-      });
-
-      it('expect to generate different ids', function () {
-        expect(c1.id).to.not.equal(c11.id);
-        expect(c1.id).to.not.equal(c2.id);
-        expect(c2.id).to.not.equal(c11.id);
-      });
-
-      it('expect to be given in the constructor', function () {
-        expect(new Entity({
-          id: '00000000-0000-4000-a000-000000000000'
-        }))
-          .to.have.property('id')
-          .that.equals('00000000-0000-4000-a000-000000000000');
-      });
-
-      it('expect to validate if given id is valid', function () {
-        expect(function () {
-          entity = new Entity({id: 'itisnotvalid'});
-        }).to.throw(Error);
-      });
-
-      it('expect to be not writable', function () {
-        expect(function () {
-          c1.id = '00000000-0000-4000-a000-000000000000';
-        }).to.throw(Error);
-      });
+      expect(Entity).to.have.property('adapterName')
+        .that.equals('default');
     });
   });
 
@@ -194,12 +214,14 @@ describe('Entity', function () {
       function () {
         expect(Entity).to.have.property('adapter')
           .that.equals(settings.ADAPTERS.default);
+        expect(Entity).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS[Entity.adapterName]);
         expect(C1).to.have.property('adapter')
-          .that.equals(settings.ADAPTERS.default);
+          .that.equals(settings.ADAPTERS[C1.adapterName]);
         expect(C11).to.have.property('adapter')
-          .that.equals(settings.ADAPTERS.default);
+          .that.equals(settings.ADAPTERS[C11.adapterName]);
         expect(C2).to.have.property('adapter')
-          .that.equals(settings.ADAPTERS.default);
+          .that.equals(settings.ADAPTERS[C2.adapterName]);
       }
     );
 
@@ -213,7 +235,7 @@ describe('Entity', function () {
       }).to.throw(Error);
 
       expect(Entity).to.have.property('adapter')
-        .that.be.an.instanceOf(MockAdapter);
+        .that.equals(settings.ADAPTERS[Entity.adapterName]);
     });
   });
 
@@ -260,6 +282,15 @@ describe('Entity', function () {
       }
     );
 
+    it(
+      'expect specification of Entity base class to have the correct settings',
+      function () {
+        expect(Entity.specification.name).to.equal('Entity');
+        expect(Entity.specification.attributes).to.have.property('id');
+        expect(Entity.specification.isAbstract).to.equal(true);
+      }
+    );
+
     it('expect to not be changed or deleted', function () {
       expect(function () {
         delete MyEntity.specification;
@@ -271,6 +302,36 @@ describe('Entity', function () {
 
       expect(MyEntity.specification).to.equal(entitySpecification);
     });
+  });
+
+  describe('.dataName', function () {
+    it(
+      'expect to exist as a static property and contain the right name',
+      function () {
+        expect(Entity).to.have.property('dataName')
+          .that.equals('Entity');
+        expect(Entity).to.have.property('dataName')
+          .that.equals(Entity.specification.getDataName(Entity.adapterName));
+        expect(C1).to.have.property('dataName')
+          .that.equals(C1.specification.getDataName(C1.adapterName));
+        expect(C11).to.have.property('dataName')
+          .that.equals(C11.specification.getDataName(C11.adapterName));
+        expect(C2).to.have.property('dataName')
+          .that.equals(C2.specification.getDataName(C2.adapterName));
+
+        expect(Entity.specify({
+          name: 'MyNewC111',
+          dataName: 'MyC111DataName'
+        }).dataName).to.equal('MyC111DataName');
+
+        expect(Entity.specify({
+          name: 'MyNewC112',
+          dataName: {
+            default: 'MyC111DataName'
+          }
+        }).dataName).to.equal('MyC111DataName');
+      }
+    );
   });
 
   describe('.attributes', function () {
@@ -554,13 +615,16 @@ describe('Entity', function () {
       'expect to return a function that create new instances of the right' +
       'classes',
       function () {
-        expect(Entity.new()()).to.be.an.instanceof(Entity);
         expect(Entity.new('C1')()).to.be.an.instanceof(C1);
         expect(Entity.new('C11')()).to.be.an.instanceof(C11);
         expect(Entity.new('C2')()).to.be.an.instanceof(C2);
         expect(C1.new()()).to.be.an.instanceof(C1);
         expect(C11.new()()).to.be.an.instanceof(C11);
         expect(C2.new()()).to.be.an.instanceof(C2);
+        expect(C2.new()({})).to.be.an.instanceof(C2);
+        expect(C2.new()({
+          id: uuid.v4()
+        })).to.be.an.instanceof(C2);
       }
     );
 
@@ -568,6 +632,90 @@ describe('Entity', function () {
       expect(function () {
         Entity.new('C1', null);
       }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.new(null)();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        Entity.new()();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        C1.new()(function () {});
+      }).to.throw(AssertionError);
+    });
+  });
+
+  describe('#adapterName', function () {
+    it(
+      'expect to exist as an inner property and contain the right name',
+      function () {
+        expect(entity).to.have.property('adapterName')
+          .that.equals('default');
+        expect(entity).to.have.property('adapterName')
+          .that.equals(entity.Entity.adapterName);
+        expect(c1).to.have.property('adapterName')
+          .that.equals(c1.Entity.adapterName);
+        expect(c11).to.have.property('adapterName')
+          .that.equals(c11.Entity.adapterName);
+        expect(c2).to.have.property('adapterName')
+          .that.equals(c2.Entity.adapterName);
+      }
+    );
+
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.adapterName;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('adapterName')
+        .that.equals('default');
+    });
+
+    it('expect to not be changed', function () {
+      expect(function () {
+        entity.adapterName = null;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('adapterName')
+        .that.equals('default');
+    });
+  });
+
+  describe('#adapter', function () {
+    it(
+      'expect to exist as an inner property and contain the right class',
+      function () {
+        expect(entity).to.have.property('adapter')
+          .that.equals(settings.ADAPTERS.default);
+        expect(entity).to.have.property('adapter')
+          .that.equals(entity.Entity.adapter);
+        expect(c1).to.have.property('adapter')
+          .that.equals(c1.Entity.adapter);
+        expect(c11).to.have.property('adapter')
+          .that.equals(c11.Entity.adapter);
+        expect(c2).to.have.property('adapter')
+          .that.equals(c2.Entity.adapter);
+      }
+    );
+
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.adapter;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('adapter')
+        .that.equals(settings.ADAPTERS.default);
+    });
+
+    it('expect to not be changed', function () {
+      expect(function () {
+        entity.adapter = null;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('adapter')
+        .that.equals(settings.ADAPTERS.default);
     });
   });
 
@@ -585,6 +733,15 @@ describe('Entity', function () {
           .that.equals(C2);
       }
     );
+
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.Entity;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('Entity')
+        .that.equals(Entity);
+    });
 
     it('expect to not be changed', function () {
       expect(function () {
@@ -611,6 +768,15 @@ describe('Entity', function () {
       }
     );
 
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.General;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('General')
+        .that.equals(null);
+    });
+
     it('expect to not be changed', function () {
       expect(function () {
         entity.General = Entity;
@@ -618,6 +784,129 @@ describe('Entity', function () {
 
       expect(entity).to.have.property('General')
         .that.equals(null);
+    });
+  });
+
+  describe('#isNew', function () {
+    it(
+      'expect to exist as an inner property and contain the right information',
+      function () {
+        expect(new C1()).to.have.property('isNew')
+          .that.equals(true);
+
+        expect(new C1({
+          id: uuid.v4()
+        })).to.have.property('isNew')
+          .that.equals(false);
+
+        expect(new C1(
+          {},
+          {isNew: true}
+        )).to.have.property('isNew')
+          .that.equals(true);
+
+        expect(new C1(
+          {},
+          {
+            isNew: false
+          }
+        )).to.have.property('isNew')
+          .that.equals(false);
+
+        expect(new C1(
+          {
+            id: uuid.v4()
+          },
+          {
+            isNew: true
+          }
+        )).to.have.property('isNew')
+          .that.equals(true);
+
+        expect(new C1(
+          {
+            id: uuid.v4()
+          },
+          {
+            isNew: false
+          }
+        )).to.have.property('isNew')
+          .that.equals(false);
+      }
+    );
+
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete entity.isNew;
+      }).to.throw(Error);
+
+      expect(entity).to.have.property('isNew')
+        .that.equals(true);
+    });
+
+    it('expect can be changed', function () {
+      entity.isNew = false;
+
+      expect(entity).to.have.property('isNew')
+        .that.equals(false);
+    });
+  });
+
+  describe('#id', function () {
+    it('expect not be undefined', function () {
+      expect(c1.id).to.not.equal(undefined);
+      expect(c11.id).to.not.equal(undefined);
+      expect(c2.id).to.not.equal(undefined);
+    });
+
+    it('expect to be valid', function () {
+      var c1Id = c1.id;
+      var c11Id = c11.id;
+      var c2Id = c2.id;
+
+      function isValid(id) {
+        var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
+          '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+        return new RegExp(regex).test(id);
+      }
+
+      expect(isValid(c1Id)).to.equal(true);
+      expect(isValid(c11Id)).to.equal(true);
+      expect(isValid(c2Id)).to.equal(true);
+    });
+
+    it('expect to generate different ids', function () {
+      expect(c1.id).to.not.equal(c11.id);
+      expect(c1.id).to.not.equal(c2.id);
+      expect(c2.id).to.not.equal(c11.id);
+    });
+
+    it('expect to be given in the constructor', function () {
+      expect(new EntityProxy({
+        id: '00000000-0000-4000-a000-000000000000'
+      }))
+        .to.have.property('id')
+        .that.equals('00000000-0000-4000-a000-000000000000');
+    });
+
+    it('expect to validate if given id is valid', function () {
+      expect(function () {
+        entity = new EntityProxy({id: 'itisnotvalid'});
+      }).to.throw(Error);
+    });
+
+    it('expect to not be deleted', function () {
+      expect(function () {
+        delete c1.id;
+      }).to.throw(Error);
+
+      expect(c1).to.have.property('id');
+    });
+
+    it('expect to be not writable', function () {
+      expect(function () {
+        c1.id = '00000000-0000-4000-a000-000000000000';
+      }).to.throw(Error);
     });
   });
 
@@ -695,7 +984,7 @@ describe('Entity', function () {
       expect(c11).to.have.property('c1A10').that.deep.equals(new C2());
       expect(c11).to.have.property('c11A1').that.equals(null);
 
-      expect(c2).to.have.property('Entity').that.equals(C2);
+      expect(c2).to.have.property('_Entity').that.deep.equals({});
       expect(c2).to.have.property('c2A2').that.deep.equals({
         default: 'thisIsMyDefault'
       });
@@ -760,6 +1049,61 @@ describe('Entity', function () {
         'c1A6c1A7c1A8c1A9c1A10id'
       );
       expect(c2.constructor()).to.equal('constructor');
+    });
+
+    it('expect to not instantiate abstract Entities', function () {
+      var MyAbstractEntity = Entity.specify({
+        name: 'MyAbstractEntity',
+        isAbstract: true
+      });
+
+      function MyAbstractEntityProxy() {
+        MyAbstractEntity.apply(this, Array.prototype.slice.call(arguments));
+      }
+
+      classes.generalize(MyAbstractEntity, MyAbstractEntityProxy);
+
+      function MyAbstractEntityWrongProxy() {
+        MyAbstractEntity.apply(this, Array.prototype.slice.call(arguments));
+      }
+
+      var MyConcreteEntity = MyAbstractEntity.specify({
+        name: 'MyConcreteEntity',
+        isAbstract: false
+      });
+
+      expect(function () {
+        entity = new MyAbstractEntity();
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        entity = new MyAbstractEntityWrongProxy();
+      }).to.throw(AssertionError);
+
+      entity = new MyAbstractEntityProxy();
+
+      entity = new MyConcreteEntity();
+
+      var MyAbstractEntity2 = null;
+
+      expect(function () {
+        MyAbstractEntity2 = MyConcreteEntity.specify({
+          name: 'MyAbstractEntity2',
+          isAbstract: true
+        });
+      }).to.throw(AssertionError);
+
+      MyAbstractEntity2 = MyAbstractEntity.specify({
+        name: 'MyAbstractEntity2',
+        isAbstract: true
+      });
+
+      var MyConcreteEntity2 = null;
+
+      MyConcreteEntity2 = MyConcreteEntity.specify({
+        name: 'MyConcreteEntity2',
+        isAbstract: false
+      });
     });
   });
 
@@ -853,5 +1197,491 @@ describe('Entity', function () {
 
       expect(myEntity50.isValid()).to.equal(true);
     });
+  });
+
+  describe('#get()', function () {
+    var MyEntity60 = Entity.specify({
+      name: 'MyEntity60'
+    });
+
+    it('should call `getObject` method on adapter', function () {
+      // mock adapter
+      var mock = sinon.mock(settings.ADAPTERS.default);
+
+      var instance = new MyEntity60();
+      var promise = Promise.resolve(instance);
+      mock.expects('getObject').once().withExactArgs(MyEntity60, {id: '0000'})
+        .returns(promise);
+
+      // call method
+      MyEntity60.get({id: '0000'});
+
+      // check for mocked calls
+      mock.verify();
+      mock.restore();
+    });
+  });
+
+  describe('#find()', function () {
+    var MyEntity70 = Entity.specify({
+      name: 'MyEntity70'
+    });
+
+    it('should call `findObjects` method on adapter', function () {
+      // mock adapter
+      var mock = sinon.mock(settings.ADAPTERS.default);
+
+      var instance = new MyEntity70();
+      var promise = Promise.resolve([instance]);
+      mock.expects('findObjects').once().withExactArgs(MyEntity70, {age: 20})
+        .returns(promise);
+
+      // call method
+      MyEntity70.find({age: 20});
+
+      // check for mocked calls
+      mock.verify();
+      mock.restore();
+    });
+  });
+
+  describe('.create', function () {
+    it('expect to not work with wrong arguments', function (done) {
+      expect(function () {
+        C2.create(null, null);
+      }).to.throw(AssertionError);
+
+      C2
+        .create(function () {})
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+          done();
+        });
+    });
+
+    it('expect to work with right arguments', function (done) {
+      var promises = [];
+
+      promises.push(
+        C3.create()
+      );
+
+      promises.push(
+        C3.create(null)
+      );
+
+      promises.push(
+        C3.create({})
+      );
+
+      promises.push(
+        C3.create({
+          c3A1: {
+            myObjectAttributeName: 'myObjectAttributeValue'
+          }
+        }).then(function (c3) {
+          expect(c3.isNew).to.equal(false);
+        })
+      );
+
+      var myC31 = new C3();
+      var myC32 = new C3({
+        c3A2: myC31
+      });
+
+      promises.push(
+        C3.create({
+          c3A2: myC32
+        }).then(function (c3) {
+          expect(c3.isNew).to.equal(false);
+          expect(myC31.isNew).to.equal(false);
+          expect(myC32.isNew).to.equal(false);
+        })
+      );
+
+      Promise
+        .all(promises)
+        .then(function () {
+          done();
+        })
+        .catch(console.log);
+    });
+
+    it('expect to not work if not valid', function (done) {
+      C2
+        .create({ _Entity: function () {} })
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(ValidationError);
+          done();
+        });
+    });
+
+    it('expect to not work if associations not valid', function (done) {
+      var promises = [];
+
+      var myC33 = new C3();
+      var myC34 = new C3({
+        c3A2: myC33
+      });
+      myC33.c3A1 = null;
+
+      promises.push(
+        C3.create({
+          c3A2: myC34
+        }).catch(function (error) {
+          expect(error).to.be.instanceOf(ValidationError);
+          expect(myC33.isNew).to.equal(true);
+          expect(myC34.isNew).to.equal(true);
+        })
+      );
+
+      Promise
+        .all(promises)
+        .then(function () {
+          done();
+        })
+        .catch(console.log);
+    });
+
+    it(
+      'expect to not work if adapter does not return an object',
+      function (done) {
+        var insertObjectFunction = settings.ADAPTERS.default.insertObject;
+        settings.ADAPTERS.default.insertObject = function () {
+          return null;
+        };
+
+        C3
+          .create()
+          .catch(function (error) {
+            expect(error).to.be.an.instanceOf(AssertionError);
+            settings.ADAPTERS.default.insertObject = insertObjectFunction;
+            done();
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter does not return an object',
+      function (done) {
+        var insertObjectFunction = settings.ADAPTERS.default.insertObject;
+        settings.ADAPTERS.default.insertObject = function () {
+          return function () {};
+        };
+
+        C3
+          .create()
+          .catch(function (error) {
+            expect(error).to.be.an.instanceOf(AssertionError);
+            settings.ADAPTERS.default.insertObject = insertObjectFunction;
+            done();
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter does not return a Promise',
+      function (done) {
+        var insertObjectFunction = settings.ADAPTERS.default.insertObject;
+        settings.ADAPTERS.default.insertObject = function () {
+          return {};
+        };
+
+        C3
+          .create()
+          .catch(function (error) {
+            expect(error).to.be.an.instanceOf(AssertionError);
+            settings.ADAPTERS.default.insertObject = insertObjectFunction;
+            done();
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter throws an Error',
+      function (done) {
+        var myNewError = new Error('MyNewError');
+
+        var insertObjectFunction = settings.ADAPTERS.default.insertObject;
+        settings.ADAPTERS.default.insertObject = function () {
+          throw myNewError;
+        };
+
+        C3
+          .create()
+          .catch(function (error) {
+            expect(error).equal(myNewError);
+            settings.ADAPTERS.default.insertObject = insertObjectFunction;
+            done();
+          });
+      }
+    );
+  });
+
+  describe('#save', function () {
+    C3 = require('./C3');
+    var c3 = new C3();
+
+    it('expect to not work with wrong arguments', function (done) {
+      expect(function () {
+        c3.save(null, null);
+      }).to.throw(AssertionError);
+
+      var promises = [];
+
+      promises.push(c3
+        .save(function () {})
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+        }));
+
+      promises.push(c3
+        .save({
+          forceCreate: true,
+          forceUpdate: true
+        })
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+        }));
+
+      promises.push(c3
+        .save({
+          forceCreate: {}
+        })
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+        }));
+
+      promises.push(c3
+        .save({
+          forceUpdate: {}
+        })
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(AssertionError);
+        }));
+
+      Promise.all(promises).then(function () {
+        done();
+      });
+    });
+
+    it('expect to work with right arguments', function (done) {
+      var promises = [];
+
+      promises.push(
+        c3.save()
+      );
+
+      promises.push(
+        c3.save(null)
+      );
+
+      promises.push(
+        c3.save({})
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: false,
+          forceUpate: false
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: true,
+          forceUpate: false
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: false,
+          forceUpate: true
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: true
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceUpate: true
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceUpate: false
+        })
+      );
+
+      promises.push(
+        c3.save({
+          forceCreate: false
+        })
+      );
+
+      var myC31 = new C3();
+      var myC32 = new C3({
+        c3A2: myC31
+      });
+      var myc3 = new C3({
+        c3A2: myC32
+      });
+
+      promises.push(
+        myc3
+          .save()
+          .then(function () {
+            expect(myc3.isNew).to.equal(false);
+            expect(myC31.isNew).to.equal(false);
+            expect(myC32.isNew).to.equal(false);
+          }
+        )
+      );
+
+      Promise
+        .all(promises)
+        .then(function () {
+          done();
+        })
+        .catch(console.log);
+    });
+
+    it('expect to not work if not valid', function (done) {
+      var myC2 = new C2();
+      myC2._Entity = function () {};
+      myC2
+        .save()
+        .catch(function (error) {
+          expect(error).to.be.an.instanceOf(ValidationError);
+          done();
+        });
+    });
+
+    it('expect to not work if associations not valid', function (done) {
+      var promises = [];
+
+      var myC33 = new C3();
+      var myC34 = new C3({
+        c3A2: myC33
+      });
+      myC33.c3A1 = null;
+      var myC35 = new C3({
+        c3A2: myC34
+      });
+
+      promises.push(
+        myC35
+          .save()
+          .catch(function (error) {
+            expect(error).to.be.instanceOf(ValidationError);
+            expect(myC33.isNew).to.equal(true);
+            expect(myC34.isNew).to.equal(true);
+            expect(myC35.isNew).to.equal(true);
+          })
+      );
+
+      Promise
+        .all(promises)
+        .then(function () {
+          done();
+        })
+        .catch(console.log);
+    });
+
+    it(
+      'expect to not work if adapter does not return an object',
+      function (done) {
+        c3
+          .save()
+          .then(function () {
+            var updateObjectFunction = settings.ADAPTERS.default.updateObject;
+            settings.ADAPTERS.default.updateObject = function () {
+              return null;
+            };
+
+            c3
+              .save()
+              .catch(function (error) {
+                expect(error).to.be.an.instanceOf(AssertionError);
+                settings.ADAPTERS.default.updateObject = updateObjectFunction;
+                done();
+              });
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter does not return an object',
+      function (done) {
+        c3
+          .save()
+          .then(function () {
+            var updateObjectFunction = settings.ADAPTERS.default.updateObject;
+            settings.ADAPTERS.default.updateObject = function () {
+              return function () {};
+            };
+
+            c3
+              .save()
+              .catch(function (error) {
+                expect(error).to.be.an.instanceOf(AssertionError);
+                settings.ADAPTERS.default.updateObject = updateObjectFunction;
+                done();
+              });
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter does not return a Promise',
+      function (done) {
+        c3
+          .save()
+          .then(function () {
+            var updateObjectFunction = settings.ADAPTERS.default.updateObject;
+            settings.ADAPTERS.default.updateObject = function () {
+              return {};
+            };
+
+            c3
+              .save()
+              .catch(function (error) {
+                expect(error).to.be.an.instanceOf(AssertionError);
+                settings.ADAPTERS.default.updateObject = updateObjectFunction;
+                done();
+              });
+          });
+      }
+    );
+
+    it(
+      'expect to not work if adapter throws an error',
+      function (done) {
+        var myNewError = new Error('MyNewError');
+
+        c3
+          .save()
+          .then(function () {
+            var updateObjectFunction = settings.ADAPTERS.default.updateObject;
+            settings.ADAPTERS.default.updateObject = function () {
+              throw myNewError;
+            };
+
+            c3
+              .save()
+              .catch(function (error) {
+                expect(error).to.equal(myNewError);
+                settings.ADAPTERS.default.updateObject = updateObjectFunction;
+                done();
+              });
+          });
+      }
+    );
   });
 });

@@ -61,6 +61,22 @@ describe('DateAttribute', function () {
           default: null
         });
 
+        dateAttribute = new DateAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: 'attributeDataName'
+        });
+
+        dateAttribute = new DateAttribute({
+          name: 'attribute',
+          multiplicity: '0..1',
+          default: null,
+          dataName: {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
+        });
       }
     );
 
@@ -80,6 +96,23 @@ describe('DateAttribute', function () {
           '0..1',
           { propertyTest: 'justATest' }
         );
+
+        dateAttribute = new DateAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          'attributeDataName'
+        );
+
+        dateAttribute = new DateAttribute(
+          'attribute',
+          '0..1',
+          { propertyTest: 'justATest' },
+          {
+            default: 'attributeDataName',
+            default2: 'attributeDataName'
+          }
+        );
       }
     );
 
@@ -88,6 +121,7 @@ describe('DateAttribute', function () {
         dateAttribute = new DateAttribute(
           'attribute',
           '0..1',
+          null,
           null,
           null
         );
@@ -100,7 +134,8 @@ describe('DateAttribute', function () {
       expect(function () {
         dateAttribute = new DateAttribute({
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -108,7 +143,8 @@ describe('DateAttribute', function () {
         dateAttribute = new DateAttribute({
           name: null,
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -117,6 +153,7 @@ describe('DateAttribute', function () {
           name: 'attribute',
           multiplicity: '0..1',
           default: null,
+          dataName: 'dataName',
           doesNotExist: null
         });
       }).to.throw(AssertionError);
@@ -126,7 +163,8 @@ describe('DateAttribute', function () {
           name: 'attribute',
           type: 'Date',
           multiplicity: '0..1',
-          default: null
+          default: null,
+          dataName: 'dataName'
         });
       }).to.throw(AssertionError);
 
@@ -134,7 +172,17 @@ describe('DateAttribute', function () {
         dateAttribute = new DateAttribute({
           name: 'attribute',
           multiplicity: null,
-          default: null
+          default: null,
+          dataName: 'dataName'
+        });
+      }).to.throw(AssertionError);
+
+      expect(function () {
+        dateAttribute = new DateAttribute({
+          name: 'attribute',
+          multiplicity: '1',
+          default: null,
+          dataName: function () {}
         });
       }).to.throw(AssertionError);
     });
@@ -165,6 +213,14 @@ describe('DateAttribute', function () {
 
       expect(dateAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest'});
+
+      expect(dateAttribute).to.have.property('dataName')
+        .that.deep.equals(
+        {
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        }
+      );
     });
 
     it('expect to be not extensible', function () {
@@ -205,6 +261,16 @@ describe('DateAttribute', function () {
 
       expect(dateAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        delete dateAttribute.dataName;
+      }).to.throw(Error);
+
+      expect(dateAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to not allow to change property', function () {
@@ -235,6 +301,16 @@ describe('DateAttribute', function () {
 
       expect(dateAttribute).to.have.property('default')
         .that.deep.equals({ propertyTest: 'justATest' });
+
+      expect(function () {
+        dateAttribute.dataName = 'will not change';
+      }).to.throw(Error);
+
+      expect(dateAttribute).to.have.property('dataName')
+        .that.deep.equals({
+          default: 'attributeDataName',
+          default2: 'attributeDataName'
+        });
     });
 
     it('expect to have the right default values', function () {
@@ -244,6 +320,7 @@ describe('DateAttribute', function () {
       expect(dateAttribute.type).to.equal(DateAttribute);
       expect(dateAttribute.multiplicity).to.equal('1');
       expect(dateAttribute.default).to.equal(null);
+      expect(dateAttribute.dataName).to.equal(null);
     });
   });
 
@@ -251,10 +328,10 @@ describe('DateAttribute', function () {
     it('expect to work correctly', function () {
       dateAttribute.validateValue(new Date());
       expect(function () {
-        dateAttribute.validateValue({});
+        dateAttribute.validateValue(null);
       }).to.throw(ValidationError);
       expect(function () {
-        dateAttribute.validateValue(null);
+        dateAttribute.validateValue({});
       }).to.throw(ValidationError);
       expect(function () {
         dateAttribute.validateValue(false);
