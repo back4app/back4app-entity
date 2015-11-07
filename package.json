@@ -20,7 +20,7 @@
     "orm"
   ],
   "author": "BACK4APP SERVICOS DIGITAIS LTDA",
-  "license": "Unlicense",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/back4app/back4app-entity/issues"
   },
