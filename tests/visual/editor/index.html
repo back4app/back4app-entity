@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Code Editor + RequireJS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Code Editor + RequireJS <small>Visual Test</small></h1>
+  <p>Open <em>Developer tools</em> > <em>Console</em></p>
+
+  <div id="editor-container">
+    <pre id="editor">'use strict';
+
+/* Animal.js */
+
+var Entity = require('back4app-entity').models.Entity;
+
+module.exports = Entity.specify({
+  name: 'Animal',
+  attributes: {
+    name: {
+      type: 'String'
+    },
+    createdAt: {
+      type: 'Datetime',
+      default: Date.now
+    }
+  },
+  methods: {
+    getInfo: function () {
+      return 'I am ' + this.name + ', created at ' + new Date(this.createdAt);
+    }
+  }
+});
+</pre>
+  </div>
+
+  <p>
+    <button id="run-code-btn">Run Code</button>
+  </p>
+
+  <script src="../../../node_modules/ace-builds/src-min-noconflict/ace.js"></script>
+  <script src="../../../node_modules/requirejs/require.js"></script>
+  <script src="../../../dist/index.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/back4app/back4app-entity#readme",
   "devDependencies": {
+    "ace-builds": "^1.2.2",
     "del": "^2.0.2",
     "gulp": "^3.9.0",
     "gulp-jscs": "^2.0.0",
