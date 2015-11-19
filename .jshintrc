@@ -23,6 +23,8 @@
     "global": false,
     "alert": false,
     "requirejs": false,
+    "define": false,
+    "ace": false,
 
     // global for tests
     "it": false,
