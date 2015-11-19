@@ -34,7 +34,7 @@
       };
 
       // require user entity
-      require(['commonjs!Animal'], function (Animal) {
+      require(['$commonjs!Animal'], function (Animal) {
         // test entity instance
         var animal = new Animal();
         animal.name = 'Bob';
@@ -63,7 +63,7 @@
   }
 
   function definePlugin(code) {
-    define('commonjs', [], {
+    define('$commonjs', [], {
       load: function (name, req, onload) {
         // wrap CommonJS code in AMD-friendly format
         var amdCode =

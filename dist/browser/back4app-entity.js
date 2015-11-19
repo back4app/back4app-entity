@@ -43,7 +43,7 @@
     var parts = src.split('/');
     parts.pop();
     return parts.length ?
-      parts.join('/') + '/lib/back4app-entity' : './lib/back4app-entity';
+      parts.join('/') + '/back4app-entity-bundle' : './back4app-entity-bundle';
   }
 
   configPath();
