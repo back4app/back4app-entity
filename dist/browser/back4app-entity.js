@@ -16,7 +16,10 @@
         if (src) {
           var path = extractPath(src);
           requirejs.config({
-            paths: {'back4app-entity': path}
+            baseUrl: path,
+            paths: {
+              'back4app-entity': 'back4app-entity-bundle'
+            }
           });
           return true;
         }
@@ -42,8 +45,7 @@
   function extractPath(src) {
     var parts = src.split('/');
     parts.pop();
-    return parts.length ?
-      parts.join('/') + '/back4app-entity-bundle' : './back4app-entity-bundle';
+    return parts.length ? parts.join('/') : '.';
   }
 
   configPath();

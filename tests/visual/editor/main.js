@@ -2,6 +2,7 @@
   'use strict';
 
   var editor;
+  var back4appEntityCode;
 
   setupEditor();
   setupButton();
@@ -23,8 +24,7 @@
   function execute(code) {
     makeNewContext();
     definePlugin(code);
-
-    require(['back4app-entity'], function (entity) {
+    redefineBack4appEntity(function (entity) {
       // set default adapter
       var Adapter = entity.adapters.Adapter;
       var MockAdapter = makeMockAdapter(Adapter);
@@ -74,6 +74,31 @@
         onload.fromText(amdCode);
       }
     });
+  }
+
+  function redefineBack4appEntity(cb) {
+    // define plugin to load `back4app-entity` from string cache
+    define('$cache', [], {
+      load: function (name, req, onload) {
+        onload.fromText(back4appEntityCode);
+      }
+    });
+
+    // check if code is already cached
+    if (typeof back4appEntityCode === 'undefined') {
+      require(['text!back4app-entity.js'], function (code) {
+        back4appEntityCode = code;
+        requireFromCache();
+      });
+    } else {
+      requireFromCache();
+    }
+
+    function requireFromCache() {
+      require(['$cache!back4app-entity'], function (entity) {
+        cb(entity);
+      });
+    }
   }
 
   function makeMockAdapter(Adapter) {
