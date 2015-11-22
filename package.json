@@ -1,6 +1,6 @@
 {
   "name": "@back4app/back4app-entity",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "back{4}app implementations for the plataform's entity layer",
   "main": "index.js",
   "scripts": {
