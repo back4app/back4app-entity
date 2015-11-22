@@ -20,5 +20,5 @@
 
   "name": "back4app-entity",
 
-  "out": "../tmp-build/back4app-entity.js"
+  "out": "../tmp-build/back4app-entity-bundle.js"
 }

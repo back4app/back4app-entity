@@ -110,15 +110,19 @@ gulp.task('dist', ['clean:dist'], function () {
 
   function copyFilesToDist() {
     // copy bundle and index files to dist folder
-    var bundle = path.join(paths.build.tmp, 'back4app-entity.js');
-    var libDir = path.join(paths.build.dest, 'lib');
+    var bundle = path.join(paths.build.tmp, 'back4app-entity-bundle.js');
     gulp.src(bundle)
-      .pipe(gulp.dest(libDir))
+      .pipe(gulp.dest(paths.build.dest))
       .on('end', function () {
-        var index = path.join(paths.build.src, 'index.js');
-        return gulp.src(index)
+        var mainJS = path.join(paths.build.src, 'back4app-entity.js');
+        gulp.src(mainJS)
           .pipe(gulp.dest(paths.build.dest))
-          .on('end', removeTempBuildFiles);
+          .on('end', function () {
+            var textJS = path.join(paths.build.src, 'text.js');
+            gulp.src(textJS)
+              .pipe(gulp.dest(paths.build.dest))
+              .on('end', removeTempBuildFiles);
+          });
       });
   }
 
