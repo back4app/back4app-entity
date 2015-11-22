@@ -19,7 +19,7 @@
 
     "build": {
       "src": "build/",
-      "dest": "dist/",
+      "dest": "dist/browser/",
       "tmp": "tmp-build/"
     },
 
