@@ -12,6 +12,7 @@ back4app entity layer implementations
 * [Gulp] (#gulp)
 * [Building Files] (#building-files)
 * [Best Practices] (#best-practices)
+* [Publishing] (#publishing)
 
 ### Getting Started
 
@@ -78,3 +79,17 @@ gulp lint
 * Create tests to any new major interactions, or changed ones.
 
 * Follow the code comment standards for documentations.
+
+### Publishing
+
+To publish a new *patch* version, checkout the `master` branch, pull the latest changes and run the following commands:
+
+```
+$ gulp dist
+$ git add . & git commit -m 'Update version'
+$ npm version patch
+$ git push && git push --tags
+$ npm publish
+```
+
+The new version should be accessible on npm.
