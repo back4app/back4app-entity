@@ -4,6 +4,7 @@
 
 'use strict';
 
+var expect = require('chai').expect;
 var classes = require('../../../utils/classes');
 var ValidationError = require('../../errors').ValidationError;
 var Attribute = require('../Attribute');
@@ -74,11 +75,47 @@ classes.generalize(Attribute, DateAttribute);
 DateAttribute.typeName = 'Date';
 
 DateAttribute.prototype.validateValue = validateValue;
+DateAttribute.prototype.parseDataValue = parseDataValue;
 
 function validateValue(value) {
-  if (!(value instanceof Date)) {
+  if (!(value instanceof Date) || isNaN(value.getTime())) {
     throw new ValidationError(
       'this attribute\'s value should be a Date'
     );
+  }
+}
+
+function parseDataValue(dataValue) {
+  expect(arguments).to.have.length(
+    1,
+    'Invalid arguments length when parsing the data value of an Attribute ' +
+    '(it has to be passed 1 argument)');
+
+  var attributeValue = dataValue;
+  if (dataValue instanceof Array) {
+    attributeValue = [];
+    for (var i = 0; i < dataValue.length; i++) {
+      attributeValue.push(_parseDataValueItem(dataValue[i]));
+    }
+  } else {
+    attributeValue = _parseDataValueItem(dataValue);
+  }
+  return attributeValue;
+
+  function _parseDataValueItem(dataValueItem) {
+    if (typeof dataValueItem === 'string' && dataValueItem !== null) {
+      try {
+        var date = new Date(dataValueItem);
+        if (isNaN(date.getTime())) {
+          return dataValueItem;
+        } else {
+          return date;
+        }
+      } catch (error) {
+        return dataValueItem;
+      }
+    } else {
+      return dataValueItem;
+    }
   }
 }
