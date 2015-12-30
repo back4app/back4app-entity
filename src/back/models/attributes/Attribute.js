@@ -196,6 +196,9 @@ function Attribute() {
   var _default = null;
   var _dataName = null;
   var dataName = null;
+  var _reservedNames =
+    ['save', 'validate', 'isValid', 'delete', 'adapter', 'Entity', 'General',
+    'adapterName', 'isNew', 'isDirty', 'clean'];
 
   expect(arguments).to.have.length.within(
     1,
@@ -221,6 +224,11 @@ function Attribute() {
       'string',
       'Invalid property "name" when creating an Attribute (it has to be a ' +
       'string)'
+    );
+    expect(_reservedNames).to.not.include(
+      attribute.name,
+      'Invalid attribute "name" (it must not be equal to any of the ' +
+      'reserved names)'
     );
 
     _name = attribute.name;
@@ -286,6 +294,11 @@ function Attribute() {
       'string',
       'Invalid argument "name" when creating an Attribute (it has to be a ' +
       'string)'
+    );
+    expect(_reservedNames).to.not.include(
+      arguments[0],
+      'Invalid attribute "name" (it must not be equal to any of the ' +
+      'reserved names)'
     );
 
     _name = arguments[0];
