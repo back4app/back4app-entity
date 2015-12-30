@@ -197,7 +197,8 @@ function Attribute() {
   var _dataName = null;
   var dataName = null;
   var _reservedNames =
-    ['save', 'validate', 'isValid', 'delete', 'adapter', 'Entity', 'General'];
+    ['save', 'validate', 'isValid', 'delete', 'adapter', 'Entity', 'General',
+    'adapterName', 'isNew', 'isDirty', 'clean', 'id'];
 
   expect(arguments).to.have.length.within(
     1,
