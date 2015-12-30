@@ -227,8 +227,8 @@ function Attribute() {
     );
     expect(_reservedNames).to.not.include(
       attribute.name,
-      'Invalid property "name" when creating an Attribute (it must not ' +
-      'be equal to any of the reserved names)'
+      'Invalid attribute "name" (it must not be equal to any of the ' +
+      'reserved names)'
     );
 
     _name = attribute.name;
@@ -294,6 +294,11 @@ function Attribute() {
       'string',
       'Invalid argument "name" when creating an Attribute (it has to be a ' +
       'string)'
+    );
+    expect(_reservedNames).to.not.include(
+      arguments[0],
+      'Invalid attribute "name" (it must not be equal to any of the ' +
+      'reserved names)'
     );
 
     _name = arguments[0];
