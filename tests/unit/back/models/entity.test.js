@@ -1249,7 +1249,7 @@ describe('Entity', function () {
       mock.restore();
     });
 
-    it.only('should call `findObjects` method on adapter with pagination parameter', function () {
+    it('should call `findObjects` method on adapter with pagination parameter', function () {
       // mock adapter
       var mock = sinon.mock(settings.ADAPTERS.default);
 
