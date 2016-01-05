@@ -1231,17 +1231,37 @@ describe('Entity', function () {
       name: 'MyEntity70'
     });
 
-    it('should call `findObjects` method on adapter', function () {
+    it('should call `findObjects` method on adapter without pagination parameter', function () {
       // mock adapter
       var mock = sinon.mock(settings.ADAPTERS.default);
 
       var instance = new MyEntity70();
       var promise = Promise.resolve([instance]);
-      mock.expects('findObjects').once().withExactArgs(MyEntity70, {age: 20})
+      mock.expects('findObjects').once().withExactArgs(MyEntity70, {age: 20},
+          undefined)
         .returns(promise);
 
       // call method
       MyEntity70.find({age: 20});
+
+      // check for mocked calls
+      mock.verify();
+      mock.restore();
+    });
+
+    it.only('should call `findObjects` method on adapter with pagination parameter', function () {
+      // mock adapter
+      var mock = sinon.mock(settings.ADAPTERS.default);
+
+      var instance = new MyEntity70();
+      var paginationParams =  {skip: mock.DEFAULT_SKIP, limit: mock.MAX_LIMIT};
+      var promise = Promise.resolve([instance]);
+      mock.expects('findObjects').once().withExactArgs(MyEntity70, {age: 20},
+          paginationParams)
+          .returns(promise);
+
+      // call method
+      MyEntity70.find({age: 20}, paginationParams);
 
       // check for mocked calls
       mock.verify();
