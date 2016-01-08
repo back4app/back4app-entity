@@ -6,25 +6,6 @@ var Promise = require('bluebird');
 module.exports = Adapter;
 
 /**
- * Constant that defines the maximum value of pagination limit parameter.
- * @constant {number}
- * @memberof module:back4app-entity/adapters
- */
-Adapter.MAX_LIMIT = 100;
-/**
- * Constant that defines the default value of pagination limit parameter.
- * @constant {number}
- * @memberof module:back4app-entity/adapters
- */
-Adapter.DEFAULT_LIMIT = 30;
-/**
- * Constant that defines the default value of pagination skip parameter.
- * @constant {number}
- * @memberof module:back4app-entity/adapters
- */
-Adapter.DEFAULT_SKIP = 0;
-
-/**
  * Base class for database adapters. It cannot be directly initialized.
  * @constructor
  * @memberof module:back4app-entity/adapters
