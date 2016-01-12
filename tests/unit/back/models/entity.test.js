@@ -1237,8 +1237,10 @@ describe('Entity', function () {
 
       var instance = new MyEntity70();
       var promise = Promise.resolve([instance]);
-      mock.expects('findObjects').once().withExactArgs(MyEntity70, {age: 20})
-        .returns(promise);
+      mock.expects('findObjects')
+          .once()
+          .withExactArgs(MyEntity70, {age: 20}, undefined)
+          .returns(promise);
 
       // call method
       MyEntity70.find({age: 20});
