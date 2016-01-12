@@ -1412,11 +1412,12 @@ Entity.get = _getGetFunction(Entity);
  * Entity.find = _getFindFunction(Entity);
  */
 function _getFindFunction(CurrentEntity) {
-  return function (query) {
-    expect(arguments).to.have.length(
+  return function (query, params) {
+    expect(arguments).to.have.length.within(
       1,
+      2,
       'Invalid arguments length when finding an Entity ' +
-      '(it has to be passed 1 argument)'
+      '(it has to be passed 1 or 2 arguments)'
     );
 
     expect(query).to.be.an(
@@ -1426,7 +1427,7 @@ function _getFindFunction(CurrentEntity) {
 
     return Promise.try(function () {
       var adapter = CurrentEntity.adapter;
-      return adapter.findObjects(CurrentEntity, query);
+      return adapter.findObjects(CurrentEntity, query, params);
     });
   };
 }
