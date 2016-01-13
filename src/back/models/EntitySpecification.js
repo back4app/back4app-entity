@@ -302,6 +302,7 @@ function EntitySpecification() {
   });
 
   var _isAbstract = false;
+  var _nameValidation = true;
   var _dataName, dataName = null;
 
   expect(arguments).to.have.length.within(
@@ -322,12 +323,12 @@ function EntitySpecification() {
 
     for (var property in specification) {
       expect(
-        ['name', 'attributes', 'methods', 'isAbstract', 'dataName']
+        ['name', 'attributes', 'methods', 'isAbstract', 'dataName', 'nameValidation']
       ).to.include(
         property,
         'Invalid property "' + property + '" when creating a new ' +
         'EntitySpecification (valid properties are "name", "attributes", ' +
-        '"methods", "isAbstract" and "dataName")'
+        '"methods", "isAbstract", "dataName" and "nameValidation")'
       );
     }
 
@@ -412,6 +413,16 @@ function EntitySpecification() {
         Object.seal(_dataName);
         Object.freeze(_dataName);
       }
+    }
+
+    if (specification.nameValidation !== undefined) {
+      expect(specification.nameValidation).to.be.a(
+        'boolean',
+        'Invalid property "nameValidation" when creating a new ' +
+        'EntitySpecification (it has to be a boolean)'
+      );
+
+      _nameValidation = specification.nameValidation;
     }
   } else {
     expect(arguments[0]).to.be.a(
@@ -504,6 +515,16 @@ function EntitySpecification() {
           Object.freeze(_dataName);
         }
       }
+
+      if (options.nameValidation !== undefined) {
+        expect(options.nameValidation).to.be.a(
+          'boolean',
+          'Invalid property "nameValidation" when creating a new ' +
+          'EntitySpecification (it has to be a boolean)'
+        );
+
+        _nameValidation = options.nameValidation;
+      }
     }
   }
 
@@ -546,7 +567,7 @@ function EntitySpecification() {
    * _loadEntity();
    */
   function _loadEntity() {
-    if (_Entity && _Entity !== models.Entity) {
+    if (_Entity && _Entity !== models.Entity && _nameValidation) {
       _Entity.adapter.loadEntity(_Entity);
 
       for (var attribute in _attributes) {

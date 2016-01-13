@@ -1,7 +1,7 @@
 'use strict';
 
 var Entity = require('./Entity');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 module.exports = Entity.specify({
   name: 'User',
@@ -42,8 +42,14 @@ module.exports = Entity.specify({
       } else {
         user.save(options);
       }
+    },
+
+    'authenticate': function (password) {
+      return true;
     }
-  }
+  },
+
+  nameValidation: false
 
 });
 

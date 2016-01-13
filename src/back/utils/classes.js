@@ -51,8 +51,10 @@ function generalize(GeneralClass, SpecificClass) {
   util.inherits(SpecificClass, GeneralClass);
 
   for (var property in GeneralClass) {
-    if (property !== 'super_') {
-      SpecificClass[property] = GeneralClass[property];
+    if (SpecificClass.hasOwnProperty(property) === false) {
+      var descriptor = Object.getOwnPropertyDescriptor(GeneralClass, property);
+       descriptor.configurable = true;
+      Object.defineProperty(SpecificClass, property, descriptor);
     }
   }
 }
