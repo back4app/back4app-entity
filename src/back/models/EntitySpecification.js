@@ -323,7 +323,8 @@ function EntitySpecification() {
 
     for (var property in specification) {
       expect(
-        ['name', 'attributes', 'methods', 'isAbstract', 'dataName', 'nameValidation']
+        ['name', 'attributes', 'methods', 'isAbstract', 'dataName',
+          'nameValidation']
       ).to.include(
         property,
         'Invalid property "' + property + '" when creating a new ' +

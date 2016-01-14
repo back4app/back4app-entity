@@ -39,6 +39,6 @@ function authenticate(password) {
     bcrypt.compare(password, user.password, function (err, res) {
       resolve(res);
     });
-  })
+  });
 }
 
