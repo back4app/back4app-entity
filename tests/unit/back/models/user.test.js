@@ -2,8 +2,6 @@
 
 var chai = require('chai');
 var expect = chai.expect;
-var AssertionError = chai.AssertionError;
-var methods = require('../../../../').models.methods;
 var User = require('../../../../').models.User;
 
 require('../../settings');
