@@ -357,20 +357,6 @@ describe('EntitySpecification', function () {
   });
 
   describe('#Entity', function () {
-    it('expect to exist and be set', function () {
-      var MyEntity = function () {};
-
-      classes.generalize(Entity, MyEntity);
-
-      MyEntity.specification = entitySpecification;
-
-      entitySpecification.Entity = MyEntity;
-
-      expect(entitySpecification.Entity).to.equal(MyEntity);
-
-      expect(MyEntity.specification).to.equal(entitySpecification);
-    });
-
     it(
       'expect to not work with classes that are not an Entity specification',
       function () {
