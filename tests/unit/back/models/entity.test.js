@@ -362,7 +362,8 @@ describe('Entity', function () {
           'c1A8',
           'c1A9',
           'c1A10',
-          'id'
+          'id',
+          'permissions'
         ]);
       }
     );
@@ -914,6 +915,64 @@ describe('Entity', function () {
     });
   });
 
+  describe('#permissions', function () {
+    it('expect not be undefined', function () {
+      expect(c1.permissions).to.not.equal(undefined);
+      expect(c11.permissions).to.not.equal(undefined);
+      expect(c2.permissions).to.not.equal(undefined);
+    });
+
+    it.skip('expect to be valid', function () {
+      var c1Id = c1.permissions;
+      var c11Id = c11.permissions;
+      var c2Id = c2.permissions;
+
+      function isValid(id) {
+        var regex = '^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-' +
+          '[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$';
+        return new RegExp(regex).test(id);
+      }
+
+      expect(isValid(c1Id)).to.equal(true);
+      expect(isValid(c11Id)).to.equal(true);
+      expect(isValid(c2Id)).to.equal(true);
+    });
+
+    it.skip('expect to generate different ids', function () {
+      expect(c1.id).to.not.equal(c11.id);
+      expect(c1.id).to.not.equal(c2.id);
+      expect(c2.id).to.not.equal(c11.id);
+    });
+
+    it.skip('expect to be given in the constructor', function () {
+      expect(new EntityProxy({
+        id: '00000000-0000-4000-a000-000000000000'
+      }))
+        .to.have.property('id')
+        .that.equals('00000000-0000-4000-a000-000000000000');
+    });
+
+    it.skip('expect to validate if given id is valid', function () {
+      expect(function () {
+        entity = new EntityProxy({id: 'itisnotvalid'});
+      }).to.throw(Error);
+    });
+
+    it.skip('expect to not be deleted', function () {
+      expect(function () {
+        delete c1.id;
+      }).to.throw(Error);
+
+      expect(c1).to.have.property('id');
+    });
+
+    it.skip('expect to be not writable', function () {
+      expect(function () {
+        c1.id = '00000000-0000-4000-a000-000000000000';
+      }).to.throw(Error);
+    });
+  });
+
   describe('functional tests', function () {
     it('expect correct inheritances', function () {
       expect(classes.isGeneral(Entity, Entity)).to.equal(true);
@@ -1049,8 +1108,8 @@ describe('Entity', function () {
       expect(c11.c1M2(1, 2)).to.equal(3);
       expect(c11.c1M2('a', 'b')).to.equal('ab');
       expect(c11.c11M()).to.equal(
-        'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10idc11A1c1A1c1A2c1A3c1A4c1A5' +
-        'c1A6c1A7c1A8c1A9c1A10id'
+        'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10idpermissionsc11A1c1A1c1A2' +
+        'c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10idpermissions'
       );
       expect(c2.constructor()).to.equal('constructor');
     });

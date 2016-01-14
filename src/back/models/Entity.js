@@ -275,7 +275,7 @@ function Entity(attributeValues, options) {
   }
 
   for (attribute in attributes) {
-    if (!_cleanSet || attribute === 'id') {
+    if (!_cleanSet || attribute === 'id' || attribute === 'permissions') {
       if (this[attribute] === null && attributes[attribute].default !== null) {
         this[attribute] = attributes[attribute].getDefaultValue(this);
       }
@@ -290,8 +290,26 @@ function Entity(attributeValues, options) {
     this.Entity.specification.name + '" (it has to be a valid uuid)'
   );
 
+  if (this.permissions) {
+    expect(this.permissions).to.be.an.instanceOf(Object);
+    for (var property in this.permissions) {
+      expect(this.permissions[property]).to.have.any.keys('write', 'read');
+      this.permissions[property] = {
+        read: Boolean(this.permissions[property].read),
+        write: Boolean(this.permissions[property].write)
+      };
+    }
+  }
+
   Object.defineProperty(this, 'id', {
     value: this.id,
+    enumerable: true,
+    writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(this, 'permissions', {
+    value: this.permissions,
     enumerable: true,
     writable: false,
     configurable: false
@@ -306,7 +324,8 @@ function Entity(attributeValues, options) {
           _cleanSet &&
           !_attributeStorageValues.hasOwnProperty(attributeName) &&
           !_attributeIsSet[attributeName] &&
-          attributeName !== 'id'
+          attributeName !== 'id' &&
+          attributeName !== 'permissions'
         ) {
           throw new errors.NotFetchedError(
             entity.Entity.specification.name,
@@ -322,7 +341,7 @@ function Entity(attributeValues, options) {
         attributeValue = value;
       },
       enumerable: true,
-      configurable: attributeName === 'id'
+      configurable: attributeName === 'id' || attributeName === 'permissions'
     });
   }
 
@@ -372,7 +391,7 @@ function Entity(attributeValues, options) {
     }
 
     for (var attributeName in attributes) {
-      if (_cleanSet) {
+      if (_cleanSet || attributeName === 'permissions') {
         if (_attributeIsSet[attributeName]) {
           if (
             !_attributeStorageValues.hasOwnProperty(attributeName) ||
@@ -581,6 +600,11 @@ var _entityAttributes = new AttributeDictionary({
   id: {
     type: 'String',
     default: uuid.v4
+  },
+  permissions: {
+    type: 'Object',
+    multiplicity: '0..1',
+    default: null
   }
 });
 
