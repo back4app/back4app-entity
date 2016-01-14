@@ -3,6 +3,7 @@
 var chai = require('chai');
 var expect = chai.expect;
 var User = require('../../../../').models.User;
+var Promise = require('bluebird');
 
 require('../../settings');
 
@@ -23,14 +24,14 @@ describe('User', function () {
   it('#authenticate', function () {
     var promises = [
       user.authenticate('teste').then(function (res) {
-        expect(res).to.be.false;
+        expect(res).to.equal(false);
       }),
       user.authenticate('test').then(function (res) {
-        expect(res).to.be.true;
+        expect(res).to.equal(true);
       })
     ];
     return Promise
-      .all(promises)
+      .all(promises);
   });
 });
 
