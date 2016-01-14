@@ -1,6 +1,7 @@
 'use strict';
 
 var Entity = require('./Entity');
+var Promise = require('bluebird');
 var bcrypt = require('bcryptjs');
 
 module.exports = Entity.specify({
@@ -47,11 +48,24 @@ module.exports = Entity.specify({
     'authenticate': function (password) {
       return true;
     }
+    'authenticate': authenticateSync
   },
 
   nameValidation: false
 
 });
 
+function authenticateSync(password) {
+  var user = this;
+  return bcrypt.compareSync(password, user.password);
+}
 
+function authenticate(password) {
+  var user = this;
+  return new Promise(function (resolve) {
+    bcrypt.compare(password, user.password, function (err, res) {
+      resolve(res);
+    });
+  })
+}
 

@@ -567,11 +567,13 @@ function EntitySpecification() {
    * _loadEntity();
    */
   function _loadEntity() {
-    if (_Entity && _Entity !== models.Entity && _nameValidation) {
-      _Entity.adapter.loadEntity(_Entity);
+    if (_Entity && _Entity !== models.Entity) {
+      if (_nameValidation) {
+        _Entity.adapter.loadEntity(_Entity);
 
-      for (var attribute in _attributes) {
-        _loadEntityAttribute(_attributes[attribute]);
+        for (var attribute in _attributes) {
+          _loadEntityAttribute(_attributes[attribute]);
+        }
       }
 
       for (var method in _methods) {
