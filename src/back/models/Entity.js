@@ -312,7 +312,7 @@ function Entity(attributeValues, options) {
   Object.defineProperty(this, 'permissions', {
     value: this.permissions,
     enumerable: true,
-    writable: false,
+    writable: true,
     configurable: false
   });
 
