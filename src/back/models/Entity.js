@@ -275,7 +275,7 @@ function Entity(attributeValues, options) {
   }
 
   for (attribute in attributes) {
-    if (!_cleanSet || attribute === 'id' || attribute === 'permissions') {
+    if (!_cleanSet || attribute === 'id') {
       if (this[attribute] === null && attributes[attribute].default !== null) {
         this[attribute] = attributes[attribute].getDefaultValue(this);
       }
@@ -290,17 +290,26 @@ function Entity(attributeValues, options) {
     this.Entity.specification.name + '" (it has to be a valid uuid)'
   );
 
-  if (this.permissions) {
-    expect(this.permissions).to.be.an.instanceOf(Object);
-    for (var property in this.permissions) {
-      expect(this.permissions[property]).to.have.any.keys('write', 'read');
-      this.permissions[property] = {
-        read: Boolean(this.permissions[property].read),
-        write: Boolean(this.permissions[property].write)
-      };
+  if (!_cleanSet) {
+    if (this.permissions) {
+      for (var propertyName in this.permissions) {
+        try {
+          var property = this.permissions[propertyName];
+          this.permissions[propertyName] = {};
+          if (property.read) {
+            this.permissions[propertyName].read = true;
+          }
+          if (property.write) {
+            this.permissions[propertyName].write = true;
+          }
+        } catch (e) {
+          e.message = e.message + ' ("' + propertyName + '" is invalid)';
+          throw e;
+        }
+      }
     }
+    _attributeStorageValues.permissions = this.permissions;
   }
-  _attributeStorageValues.permissions = this.permissions;
 
   Object.defineProperty(this, 'id', {
     value: this.id,
@@ -310,7 +319,7 @@ function Entity(attributeValues, options) {
   });
 
   Object.defineProperty(this, 'permissions', {
-    value: this.permissions,
+    value: !_cleanSet ? this.permissions : null,
     enumerable: true,
     writable: true,
     configurable: false
@@ -325,8 +334,7 @@ function Entity(attributeValues, options) {
           _cleanSet &&
           !_attributeStorageValues.hasOwnProperty(attributeName) &&
           !_attributeIsSet[attributeName] &&
-          attributeName !== 'id' &&
-          attributeName !== 'permissions'
+          attributeName !== 'id'
         ) {
           throw new errors.NotFetchedError(
             entity.Entity.specification.name,
