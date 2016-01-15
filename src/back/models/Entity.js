@@ -300,6 +300,7 @@ function Entity(attributeValues, options) {
       };
     }
   }
+  _attributeStorageValues.permissions = this.permissions;
 
   Object.defineProperty(this, 'id', {
     value: this.id,
@@ -391,7 +392,7 @@ function Entity(attributeValues, options) {
     }
 
     for (var attributeName in attributes) {
-      if (_cleanSet || attributeName === 'permissions') {
+      if (_cleanSet) {
         if (_attributeIsSet[attributeName]) {
           if (
             !_attributeStorageValues.hasOwnProperty(attributeName) ||
