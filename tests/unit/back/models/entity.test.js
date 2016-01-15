@@ -921,6 +921,64 @@ describe('Entity', function () {
       expect(c11.permissions).to.not.equal(undefined);
       expect(c2.permissions).to.not.equal(undefined);
     });
+
+    it('expect to be null if is undefined or false', function () {
+      expect(new C1(
+        {
+          permissions: false
+        },
+        {
+          isNew: false
+        }
+      )).to.have.property('permissions')
+        .that.equals(null);
+
+      expect(c11.permissions).to.equal(null);
+    });
+
+    it('expect to clean permissions attribute', function () {
+      expect(new C1(
+        {
+          permissions: {
+            'id': {
+              'read': true,
+              'write': false,
+              'extremegohorse': false
+            }
+          }
+        },
+        {
+          isNew: false
+        }
+      )).to.have.property('permissions')
+        .that.deep.equals({
+          'id': {
+            'read': true
+          }
+        });
+    });
+
+    it('expect to have right permissions attribute', function () {
+      expect(new C1(
+        {
+          permissions: {
+            'id': {
+              'read': true,
+              'write': true
+            }
+          }
+        },
+        {
+          isNew: false
+        }
+      )).to.have.property('permissions')
+        .that.deep.equals({
+          'id': {
+            'read': true,
+            'write': true
+          }
+        });
+    });
   });
 
   describe('functional tests', function () {

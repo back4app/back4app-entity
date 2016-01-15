@@ -307,6 +307,8 @@ function Entity(attributeValues, options) {
           throw e;
         }
       }
+    } else {
+      this.permissions = null;
     }
     _attributeStorageValues.permissions = this.permissions;
   }
