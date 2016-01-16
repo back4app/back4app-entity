@@ -86,7 +86,7 @@ To publish a new *patch* version, checkout the `master` branch, pull the latest 
 
 ```
 $ gulp dist
-$ git add . & git commit -m 'Update version'
+$ git add . && git commit -m 'Update version'
 $ npm version patch
 $ git push && git push --tags
 $ npm publish
