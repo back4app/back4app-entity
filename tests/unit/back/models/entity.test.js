@@ -362,7 +362,8 @@ describe('Entity', function () {
           'c1A8',
           'c1A9',
           'c1A10',
-          'id'
+          'id',
+          'permissions'
         ]);
       }
     );
@@ -914,6 +915,72 @@ describe('Entity', function () {
     });
   });
 
+  describe('#permissions', function () {
+    it('expect not be undefined', function () {
+      expect(c1.permissions).to.not.equal(undefined);
+      expect(c11.permissions).to.not.equal(undefined);
+      expect(c2.permissions).to.not.equal(undefined);
+    });
+
+    it('expect to be null if is undefined or false', function () {
+      expect(new C1(
+        {
+          permissions: false
+        },
+        {
+          isNew: false
+        }
+      )).to.have.property('permissions')
+        .that.equals(null);
+
+      expect(c11.permissions).to.equal(null);
+    });
+
+    it('expect to clean permissions attribute', function () {
+      expect(new C1(
+        {
+          permissions: {
+            'id': {
+              'read': true,
+              'write': false,
+              'extremegohorse': false
+            }
+          }
+        },
+        {
+          isNew: false
+        }
+      )).to.have.property('permissions')
+        .that.deep.equals({
+          'id': {
+            'read': true
+          }
+        });
+    });
+
+    it('expect to have right permissions attribute', function () {
+      expect(new C1(
+        {
+          permissions: {
+            'id': {
+              'read': true,
+              'write': true
+            }
+          }
+        },
+        {
+          isNew: false
+        }
+      )).to.have.property('permissions')
+        .that.deep.equals({
+          'id': {
+            'read': true,
+            'write': true
+          }
+        });
+    });
+  });
+
   describe('functional tests', function () {
     it('expect correct inheritances', function () {
       expect(classes.isGeneral(Entity, Entity)).to.equal(true);
@@ -1049,8 +1116,8 @@ describe('Entity', function () {
       expect(c11.c1M2(1, 2)).to.equal(3);
       expect(c11.c1M2('a', 'b')).to.equal('ab');
       expect(c11.c11M()).to.equal(
-        'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10idc11A1c1A1c1A2c1A3c1A4c1A5' +
-        'c1A6c1A7c1A8c1A9c1A10id'
+        'c1A1c1A2c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10idpermissionsc11A1c1A1c1A2' +
+        'c1A3c1A4c1A5c1A6c1A7c1A8c1A9c1A10idpermissions'
       );
       expect(c2.constructor()).to.equal('constructor');
     });

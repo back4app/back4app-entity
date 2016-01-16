@@ -290,10 +290,40 @@ function Entity(attributeValues, options) {
     this.Entity.specification.name + '" (it has to be a valid uuid)'
   );
 
+  if (!_cleanSet) {
+    if (this.permissions) {
+      for (var propertyName in this.permissions) {
+        try {
+          var property = this.permissions[propertyName];
+          this.permissions[propertyName] = {};
+          if (property.read) {
+            this.permissions[propertyName].read = true;
+          }
+          if (property.write) {
+            this.permissions[propertyName].write = true;
+          }
+        } catch (e) {
+          e.message = e.message + ' ("' + propertyName + '" is invalid)';
+          throw e;
+        }
+      }
+    } else {
+      this.permissions = null;
+    }
+    _attributeStorageValues.permissions = this.permissions;
+  }
+
   Object.defineProperty(this, 'id', {
     value: this.id,
     enumerable: true,
     writable: false,
+    configurable: false
+  });
+
+  Object.defineProperty(this, 'permissions', {
+    value: !_cleanSet ? this.permissions : null,
+    enumerable: true,
+    writable: true,
     configurable: false
   });
 
@@ -322,7 +352,7 @@ function Entity(attributeValues, options) {
         attributeValue = value;
       },
       enumerable: true,
-      configurable: attributeName === 'id'
+      configurable: attributeName === 'id' || attributeName === 'permissions'
     });
   }
 
@@ -581,6 +611,11 @@ var _entityAttributes = new AttributeDictionary({
   id: {
     type: 'String',
     default: uuid.v4
+  },
+  permissions: {
+    type: 'Object',
+    multiplicity: '0..1',
+    default: null
   }
 });
 
