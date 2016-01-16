@@ -42,6 +42,13 @@ gulp.task('dist', ['clean:dist'], function () {
           dest: paths.core.dest
         }
       }))
+      .on('end', convertLibBcrypt);
+  }
+
+  function convertLibBcrypt() {
+    // copy vendor lib, wrapping in AMD format if necessary
+    gulp.src(paths.vendor.libs.bcrypt)
+      .pipe(gulp.dest(paths.vendor.dest))
       .on('end', convertLibBluebird);
   }
 

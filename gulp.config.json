@@ -8,6 +8,7 @@
 
     "vendor": {
       "libs": {
+        "bcrypt": "node_modules/bcryptjs/dist/bcrypt.js",
         "bluebird": "node_modules/bluebird/js/browser/bluebird.js",
         "chai": "node_modules/chai/chai.js",
         "uuid": "node_modules/node-uuid/uuid.js",

@@ -11,6 +11,7 @@
   ],
 
   "paths": {
+    "bcryptjs": "vendor/bcrypt",
     "bluebird": "vendor/bluebird",
     "chai": "vendor/chai",
     "node-uuid": "vendor/uuid",
