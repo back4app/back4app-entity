@@ -53,7 +53,7 @@ function generalize(GeneralClass, SpecificClass) {
   for (var property in GeneralClass) {
     if (SpecificClass.hasOwnProperty(property) === false) {
       var descriptor = Object.getOwnPropertyDescriptor(GeneralClass, property);
-      if(descriptor) {
+      if (descriptor) {
         descriptor.configurable = true;
         Object.defineProperty(SpecificClass, property, descriptor);
       }
