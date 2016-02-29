@@ -1652,7 +1652,9 @@ function save(options) {
         if (attributes[attribute] instanceof AssociationAttribute) {
           if (entity.hasOwnProperty(attribute)) {
             if (entity[attribute] instanceof Entity) {
-              promises.push(entity[attribute].save());
+              if (entity.isDirty(attribute)) {
+                promises.push(entity[attribute].save());
+              }
             }
           }
         }
